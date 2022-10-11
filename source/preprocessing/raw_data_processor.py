@@ -15,20 +15,22 @@ class RawDataProcessor:
 
     @staticmethod
     def crop_all(subject_id):
+        
+        #Uncomment for testing
+        subject_id='S01'
+        
         # psg_raw_collection = PSGService.read_raw(subject_id)       # Used to extract PSG details from the reports
-        psg_raw_collection = PSGService.read_precleaned(subject_id)  # Loads already extracted PSG data
+        # psg_raw_collection = PSGService.read_precleaned(subject_id)  # Loads already extracted PSG data
         motion_collection = MotionService.load_raw(subject_id)
         heart_rate_collection = HeartRateService.load_raw(subject_id)
 
-        valid_interval = RawDataProcessor.get_intersecting_interval([psg_raw_collection,
-                                                                     motion_collection,
-                                                                     heart_rate_collection])
+        valid_interval = RawDataProcessor.get_intersecting_interval([motion_collection, heart_rate_collection])
 
-        psg_raw_collection = PSGService.crop(psg_raw_collection, valid_interval)
+        #psg_raw_collection = PSGService.crop(psg_raw_collection, valid_interval)
         motion_collection = MotionService.crop(motion_collection, valid_interval)
         heart_rate_collection = HeartRateService.crop(heart_rate_collection, valid_interval)
 
-        PSGService.write(psg_raw_collection)
+        # PSGService.write(psg_raw_collection)
         MotionService.write(motion_collection)
         HeartRateService.write(heart_rate_collection)
         ActivityCountService.build_activity_counts_without_matlab(subject_id, motion_collection.data)  # Builds activity counts with python, not MATLAB

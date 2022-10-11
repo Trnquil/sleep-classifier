@@ -1,14 +1,13 @@
 import sys
 # caution: path[0] is reserved for script path (or '' in REPL)
-# We are inserting the sleepclassifiers as a module 
-sys.path.insert(1, '/Users/julien/OneDrive/ETH/HS22/Bachelor Thesis/sleepclassifiers')
+# We are inserting the sleepclassifier as a module 
+sys.path.insert(1, '../../..')
 
 
 import numpy as np
 import pandas as pd
 import os
 
-import utils_usi
 from source import utils
 from source.constants import Constants
 from source.preprocessing.heart_rate.heart_rate_collection import HeartRateCollection
@@ -47,7 +46,7 @@ class HeartRateService(object):
 
         heart_rate_array = heart_rate_array[1:]
         
-        timestamps = [(i*data_frequency) for i in range(len(heart_rate_array))]
+        timestamps = [(i*(1/data_frequency)) for i in range(len(heart_rate_array))]
         heart_rate_array = np.stack([timestamps, heart_rate_array], axis=1)
         
         return heart_rate_array
@@ -73,7 +72,7 @@ class HeartRateService(object):
 
     @staticmethod
     def get_raw_file_path(subject_id):
-        subject_dir = utils_usi.get_project_root().joinpath('USI Sleep/E4_Data/' + subject_id)
+        subject_dir = utils.get_project_root().joinpath('USI Sleep/E4_Data/' + subject_id)
         session_dirs = os.listdir(subject_dir)
         session_dirs.sort()
         
@@ -84,6 +83,6 @@ class HeartRateService(object):
         #TODO: Return all directories, not only the first one
         return subject_dir.joinpath(session_dirs[0] + '/HR.csv')
 
-
-subject_id='S01'
-HeartRateService.load_raw(subject_id)
+#Uncomment for testing
+#subject_id='S01'
+#HeartRateService.load_raw(subject_id)

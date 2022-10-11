@@ -1,3 +1,9 @@
+# caution: path[0] is reserved for script path (or '' in REPL)
+# We are inserting the sleepclassifiers as a module 
+import sys
+sys.path.insert(1, '/Users/julien/OneDrive/ETH/HS22/Bachelor Thesis/sleep-classifier')
+
+
 from source.analysis.setup.feature_type import FeatureType
 from source.analysis.setup.subject import Subject
 from source.constants import Constants
@@ -9,18 +15,11 @@ from source.preprocessing.time.time_based_feature_service import TimeBasedFeatur
 
 class SubjectBuilder(object):
 
+    #Modified
     @staticmethod
     def get_all_subject_ids():
 
-        subjects_as_ints = [3509524, 5132496, 1066528, 5498603, 2638030, 2598705, 5383425, 1455390, 4018081, 9961348,
-                            1449548, 8258170, 781756, 9106476, 8686948, 8530312, 3997827, 4314139, 1818471, 4426783,
-                            8173033, 7749105, 5797046, 759667, 8000685, 6220552, 844359, 9618981, 1360686, 46343,
-                            8692923]
-
-        subjects_as_strings = []
-
-        for subject in subjects_as_ints:
-            subjects_as_strings.append(str(subject))
+        subjects_as_strings = ['S01', 'S02', 'S02', 'S03', 'S04', 'S05', 'S06', 'S07', 'S08', 'S09', 'S10', 'S11', 'S12', 'S13', 'S14', 'S15', 'S16']
         return subjects_as_strings
 
     @staticmethod

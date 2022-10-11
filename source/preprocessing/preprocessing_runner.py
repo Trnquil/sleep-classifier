@@ -1,3 +1,8 @@
+import sys
+# caution: path[0] is reserved for script path (or '' in REPL)
+# We are inserting the sleepclassifier as a module to be able to access source.<xxx>
+sys.path.insert(1, '../..')
+
 import time
 
 from source.analysis.figures.data_plot_builder import DataPlotBuilder
