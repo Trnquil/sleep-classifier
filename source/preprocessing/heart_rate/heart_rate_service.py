@@ -1,6 +1,14 @@
+import sys
+# caution: path[0] is reserved for script path (or '' in REPL)
+# We are inserting the sleepclassifiers as a module 
+sys.path.insert(1, '/Users/julien/OneDrive/ETH/HS22/Bachelor Thesis/sleepclassifiers')
+
+
 import numpy as np
 import pandas as pd
+import os
 
+import utils_usi
 from source import utils
 from source.constants import Constants
 from source.preprocessing.heart_rate.heart_rate_collection import HeartRateCollection
@@ -11,6 +19,8 @@ class HeartRateService(object):
     @staticmethod
     def load_raw(subject_id):
         raw_hr_path = HeartRateService.get_raw_file_path(subject_id)
+        
+        #delimiter doesn't do anything but I don't want to break the rest of the program
         heart_rate_array = HeartRateService.load(raw_hr_path, ",")
         heart_rate_array = utils.remove_repeats(heart_rate_array)
         return HeartRateCollection(subject_id=subject_id, data=heart_rate_array)
@@ -21,9 +31,25 @@ class HeartRateService(object):
         heart_rate_array = HeartRateService.load(cropped_hr_path)
         return HeartRateCollection(subject_id=subject_id, data=heart_rate_array)
 
+    #delimiter doesn't do anything but I don't want to break the rest of the program
     @staticmethod
     def load(hr_file, delimiter=" "):
-        heart_rate_array = pd.read_csv(str(hr_file), delimiter=delimiter).values
+        heart_rate_array = pd.read_csv(str(hr_file), delimiter=delimiter)
+        
+        #unix start time of the data
+        #start_time = heart_rate_array.columns.values.tolist()
+        #start_time = float(start_time[0])
+        
+        heart_rate_array = heart_rate_array.values.flatten()
+        
+        #data value frequency in Hertz
+        data_frequency = heart_rate_array[0]
+
+        heart_rate_array = heart_rate_array[1:]
+        
+        timestamps = [(i*data_frequency) for i in range(len(heart_rate_array))]
+        heart_rate_array = np.stack([timestamps, heart_rate_array], axis=1)
+        
         return heart_rate_array
 
     @staticmethod
@@ -47,5 +73,17 @@ class HeartRateService(object):
 
     @staticmethod
     def get_raw_file_path(subject_id):
-        heart_rate_dir = utils.get_project_root().joinpath('data/heart_rate/')
-        return heart_rate_dir.joinpath(subject_id + '_heartrate.txt')
+        subject_dir = utils_usi.get_project_root().joinpath('USI Sleep/E4_Data/' + subject_id)
+        session_dirs = os.listdir(subject_dir)
+        session_dirs.sort()
+        
+        #Removing .DS_Store from the list of directories because we don't care about it
+        session_dirs.remove('.DS_Store')
+        
+        #For now we are simply returning the first session
+        #TODO: Return all directories, not only the first one
+        return subject_dir.joinpath(session_dirs[0] + '/HR.csv')
+
+
+subject_id='S01'
+HeartRateService.load_raw(subject_id)
