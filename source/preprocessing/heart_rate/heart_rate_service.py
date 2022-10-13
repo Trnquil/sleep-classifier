@@ -36,8 +36,11 @@ class HeartRateService(object):
         heart_rate_array = pd.read_csv(str(hr_file), delimiter=delimiter)
         
         #unix start time of the data
-        #start_time = heart_rate_array.columns.values.tolist()
-        #start_time = float(start_time[0])
+        start_time = heart_rate_array.columns.values.tolist()
+        start_time = float(start_time[0])
+        
+        #Let us center the time so that time values aren't too big
+        start_time = start_time - Constants.TIME_CENTER
         
         heart_rate_array = heart_rate_array.values.flatten()
         
@@ -46,7 +49,7 @@ class HeartRateService(object):
 
         heart_rate_array = heart_rate_array[1:]
         
-        timestamps = [(i*(1/data_frequency)) for i in range(len(heart_rate_array))]
+        timestamps = [(start_time + i*(1/data_frequency)) for i in range(len(heart_rate_array))]
         heart_rate_array = np.stack([timestamps, heart_rate_array], axis=1)
         
         return heart_rate_array
@@ -82,7 +85,3 @@ class HeartRateService(object):
         #For now we are simply returning the first session
         #TODO: Return all directories, not only the first one
         return subject_dir.joinpath(session_dirs[0] + '/HR.csv')
-
-#Uncomment for testing
-#subject_id='S01'
-#HeartRateService.load_raw(subject_id)

@@ -1,3 +1,8 @@
+import sys
+# caution: path[0] is reserved for script path (or '' in REPL)
+# We are inserting the sleepclassifier as a module to be able to access source.<xxx>
+sys.path.insert(1, '../..')
+
 import numpy as np
 
 from source import utils
@@ -8,6 +13,7 @@ from source.preprocessing.interval import Interval
 from source.preprocessing.motion.motion_service import MotionService
 from source.preprocessing.psg.psg_service import PSGService
 from source.sleep_stage import SleepStage
+from source.constants import Constants
 
 
 class RawDataProcessor:
@@ -15,9 +21,6 @@ class RawDataProcessor:
 
     @staticmethod
     def crop_all(subject_id):
-        
-        #Uncomment for testing
-        subject_id='S01'
         
         # psg_raw_collection = PSGService.read_raw(subject_id)       # Used to extract PSG details from the reports
         # psg_raw_collection = PSGService.read_precleaned(subject_id)  # Loads already extracted PSG data
@@ -49,34 +52,41 @@ class RawDataProcessor:
     @staticmethod
     def get_valid_epochs(subject_id):
 
-        psg_collection = PSGService.load_cropped(subject_id)
+        #psg_collection = PSGService.load_cropped(subject_id)
         motion_collection = MotionService.load_cropped(subject_id)
         heart_rate_collection = HeartRateService.load_cropped(subject_id)
 
-        start_time = psg_collection.data[0].epoch.timestamp
-        motion_epoch_dictionary = RawDataProcessor.get_valid_epoch_dictionary(motion_collection.timestamps,
+        #Manually setting the start time to 0
+        start_time = 0
+        motion_floored_timestamps, motion_epoch_dictionary = RawDataProcessor.get_valid_epoch_dictionary(motion_collection.timestamps,
                                                                               start_time)
-        hr_epoch_dictionary = RawDataProcessor.get_valid_epoch_dictionary(heart_rate_collection.timestamps,
+        hr_floored_timestamps, hr_epoch_dictionary = RawDataProcessor.get_valid_epoch_dictionary(heart_rate_collection.timestamps,
                                                                           start_time)
 
         valid_epochs = []
-        for stage_item in psg_collection.data:
-            epoch = stage_item.epoch
-
-            if epoch.timestamp in motion_epoch_dictionary and epoch.timestamp in hr_epoch_dictionary \
-                    and stage_item.stage != SleepStage.unscored:
+        for timestamp in motion_floored_timestamps:
+            index = 0
+            if timestamp in motion_epoch_dictionary and timestamp in hr_epoch_dictionary:
+                epoch = Epoch(timestamp, index)
+                index += 1
                 valid_epochs.append(epoch)
-
         return valid_epochs
 
     @staticmethod
     def get_valid_epoch_dictionary(timestamps, start_time):
         epoch_dictionary = {}
+        floored_timestamps = []
 
         for ind in range(np.shape(timestamps)[0]):
             time = timestamps[ind]
+            
+            #This line floors the timespamps to epoch increments
             floored_timestamp = time - np.mod(time - start_time, Epoch.DURATION)
 
             epoch_dictionary[floored_timestamp] = True
+            floored_timestamps.append(floored_timestamp)
 
-        return epoch_dictionary
+        return floored_timestamps, epoch_dictionary
+    
+# subject_id = 'S01'
+# RawDataProcessor.get_valid_epochs(subject_id)
