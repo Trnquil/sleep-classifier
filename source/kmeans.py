@@ -19,6 +19,7 @@ from source.analysis.setup.feature_type import FeatureType
 
 import matplotlib.pyplot as plt
 import numpy as np
+import joblib
 
 def train(subject_ids, subject_dictionary, feature_set: [FeatureType]):
     
@@ -27,10 +28,7 @@ def train(subject_ids, subject_dictionary, feature_set: [FeatureType]):
     training_x = ClassifierInputBuilder.get_array(subject_ids, subject_dictionary, feature_set)
 
     # Here we decide on what classifier that we should be using. We decide for Kmeans in the beginning
-    classifier=KMeans(n_clusters=5, random_state=0)
-
-    # We are now fitting our features to the cluster
-    classifier.fit(training_x)
+    classifier = joblib.load('../data/imported models/kmeans.pkl')
 
     #Here we do some predictions. We can then check how similar y and x are.
     class_predictions = classifier.predict(training_x)
