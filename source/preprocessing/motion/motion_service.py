@@ -24,7 +24,8 @@ class MotionService(object):
     @staticmethod
     def load_cropped(subject_id):
         cropped_motion_path = MotionService.get_cropped_file_path(subject_id)
-        motion_array = MotionService.load(cropped_motion_path)
+        motion_array = pd.read_csv(str(cropped_motion_path), delimiter=' ', header=None)
+        motion_array = motion_array.values
         return MotionCollection(subject_id=subject_id, data=motion_array)
 
     #delimiter doesn't do anything but I don't want to break the rest of the program
@@ -85,4 +86,5 @@ class MotionService(object):
         
         #For now we are simply returning the first session
         #TODO: Return all directories, not only the first one
-        return subject_dir.joinpath(session_dirs[0] + '/ACC.csv')
+        return subject_dir.joinpath(session_dirs[1] + '/ACC.csv')
+

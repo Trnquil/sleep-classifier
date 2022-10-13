@@ -16,7 +16,8 @@ class FeatureBuilder(object):
 
         if Constants.VERBOSE:
             print("Building features...")
-        FeatureBuilder.build_labels(subject_id, valid_epochs)
+        # In the USI dataset we do not have any labels
+        # FeatureBuilder.build_labels(subject_id, valid_epochs)
         FeatureBuilder.build_from_wearables(subject_id, valid_epochs)
         FeatureBuilder.build_from_time(subject_id, valid_epochs)
 

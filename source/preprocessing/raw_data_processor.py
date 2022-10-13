@@ -11,9 +11,6 @@ from source.preprocessing.epoch import Epoch
 from source.preprocessing.heart_rate.heart_rate_service import HeartRateService
 from source.preprocessing.interval import Interval
 from source.preprocessing.motion.motion_service import MotionService
-from source.preprocessing.psg.psg_service import PSGService
-from source.sleep_stage import SleepStage
-from source.constants import Constants
 
 
 class RawDataProcessor:
@@ -84,9 +81,9 @@ class RawDataProcessor:
             floored_timestamp = time - np.mod(time - start_time, Epoch.DURATION)
 
             epoch_dictionary[floored_timestamp] = True
-            floored_timestamps.append(floored_timestamp)
+            
+            if floored_timestamp not in floored_timestamps:
+                floored_timestamps.append(floored_timestamp)
 
         return floored_timestamps, epoch_dictionary
-    
-# subject_id = 'S01'
-# RawDataProcessor.get_valid_epochs(subject_id)
+

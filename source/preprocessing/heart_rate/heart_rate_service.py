@@ -27,7 +27,8 @@ class HeartRateService(object):
     @staticmethod
     def load_cropped(subject_id):
         cropped_hr_path = HeartRateService.get_cropped_file_path(subject_id)
-        heart_rate_array = HeartRateService.load(cropped_hr_path)
+        heart_rate_array = pd.read_csv(str(cropped_hr_path), delimiter=' ', header=None)
+        heart_rate_array = heart_rate_array.values
         return HeartRateCollection(subject_id=subject_id, data=heart_rate_array)
 
     #delimiter doesn't do anything but I don't want to break the rest of the program
@@ -84,4 +85,4 @@ class HeartRateService(object):
         
         #For now we are simply returning the first session
         #TODO: Return all directories, not only the first one
-        return subject_dir.joinpath(session_dirs[0] + '/HR.csv')
+        return subject_dir.joinpath(session_dirs[1] + '/HR.csv')
