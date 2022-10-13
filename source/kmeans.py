@@ -13,7 +13,6 @@ import sys
 sys.path.insert(1, '..')
 
 from source.analysis.classification.classifier_input_builder import ClassifierInputBuilder
-from sklearn.cluster import KMeans
 from source.analysis.setup.subject_builder import SubjectBuilder
 from source.analysis.setup.feature_type import FeatureType
 
