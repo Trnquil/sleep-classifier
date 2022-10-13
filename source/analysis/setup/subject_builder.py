@@ -41,7 +41,7 @@ class SubjectBuilder(object):
         else:
             feature_circadian = None
         feature_cosine = TimeBasedFeatureService.load_cosine(subject_id)
-        labeled_sleep = PSGLabelService.load(subject_id)
+        # labeled_sleep = PSGLabelService.load(subject_id)
 
         feature_dictionary = {FeatureType.count: feature_count,
                               FeatureType.heart_rate: feature_hr,
@@ -50,7 +50,6 @@ class SubjectBuilder(object):
                               FeatureType.cosine: feature_cosine}
 
         subject = Subject(subject_id=subject_id,
-                          labeled_sleep=labeled_sleep,
                           feature_dictionary=feature_dictionary)
 
         # Uncomment to save plots of every subject's data:
