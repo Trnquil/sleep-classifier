@@ -85,4 +85,4 @@ class HeartRateService(object):
         
         #For now we are simply returning the first session
         #TODO: Return all directories, not only the first one
-        return subject_dir.joinpath(session_dirs[1] + '/HR.csv')
+        return subject_dir.joinpath(session_dirs[2] + '/HR.csv')
