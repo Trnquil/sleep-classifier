@@ -22,8 +22,20 @@ class ActivityCountService(object):
         return counts_array
 
     @staticmethod
-    def get_cropped_file_path(subject_id):
-        return Constants.CROPPED_FILE_PATH.joinpath(subject_id + "_cleaned_counts.out")
+    def get_cropped_file_path(subject_id, sleep_session_id):
+        directory_path_string = str(subject_id) + "/" + "sleepsession_" + str(sleep_session_id)
+        
+        subject_folder_path = Constants().CROPPED_FILE_PATH.joinpath(str(subject_id))
+        # creating a subject folder if it doesn't already exist
+        if not os.path.exists(subject_folder_path):
+            os.mkdir(subject_folder_path)
+            
+        sleep_session_path = Constants().CROPPED_FILE_PATH.joinpath(directory_path_string)
+        # creating a sleep session folder if it doesn't already exist
+        if not os.path.exists(sleep_session_path):
+            os.mkdir(sleep_session_path)
+        
+        return Constants.CROPPED_FILE_PATH.joinpath(directory_path_string + "/cropped_counts.out")
 
     @staticmethod
     def build_activity_counts():
@@ -31,7 +43,7 @@ class ActivityCountService(object):
             utils.get_project_root()) + '/source/make_counts.m\'); exit;\"')
 
     @staticmethod
-    def build_activity_counts_without_matlab(subject_id, data):
+    def build_activity_counts_without_matlab(subject_id, data, sleep_session_id):
 
         fs = 50
         time = np.arange(np.amin(data[:, 0]), np.amax(data[:, 0]), 1.0 / fs)
@@ -63,7 +75,7 @@ class ActivityCountService(object):
         counts = np.expand_dims(counts, axis=1)
         output = np.hstack((time_counts, counts))
 
-        activity_count_output_path = ActivityCountService.get_cropped_file_path(subject_id)
+        activity_count_output_path = ActivityCountService.get_cropped_file_path(subject_id, sleep_session_id)
         np.savetxt(activity_count_output_path, output, fmt='%f', delimiter=',')
 
     @staticmethod

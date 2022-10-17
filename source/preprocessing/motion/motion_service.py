@@ -57,8 +57,8 @@ class MotionService(object):
         return motion_array                     
                                  
     @staticmethod
-    def write(motion_collection):
-        motion_output_path = MotionService.get_cropped_file_path(motion_collection.subject_id)
+    def write(motion_collection, sleep_session_id):
+        motion_output_path = MotionService.get_cropped_file_path(motion_collection.subject_id, sleep_session_id)
         np.savetxt(motion_output_path, motion_collection.data, fmt='%f')
 
     @staticmethod
@@ -72,8 +72,20 @@ class MotionService(object):
         return MotionCollection(subject_id=subject_id, data=cropped_data)
 
     @staticmethod
-    def get_cropped_file_path(subject_id):
-        return Constants.CROPPED_FILE_PATH.joinpath(subject_id + "_cleaned_motion.out")
+    def get_cropped_file_path(subject_id, sleep_session_id):
+        directory_path_string = str(subject_id) + "/" + "sleepsession_" + str(sleep_session_id)
+        
+        subject_folder_path = Constants().CROPPED_FILE_PATH.joinpath(str(subject_id))
+        # creating a subject folder if it doesn't already exist
+        if not os.path.exists(subject_folder_path):
+            os.mkdir(subject_folder_path)
+            
+        sleep_session_path = Constants().CROPPED_FILE_PATH.joinpath(directory_path_string)
+        # creating a sleep session folder if it doesn't already exist
+        if not os.path.exists(sleep_session_path):
+            os.mkdir(sleep_session_path)
+        
+        return Constants.CROPPED_FILE_PATH.joinpath(directory_path_string + "/cropped_motion.out")
 
     @staticmethod
     def get_raw_file_path(subject_id):

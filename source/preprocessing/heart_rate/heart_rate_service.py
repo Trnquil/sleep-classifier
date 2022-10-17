@@ -56,8 +56,8 @@ class HeartRateService(object):
         return heart_rate_array
 
     @staticmethod
-    def write(heart_rate_collection):
-        hr_output_path = HeartRateService.get_cropped_file_path(heart_rate_collection.subject_id)
+    def write(heart_rate_collection, sleep_session_id):
+        hr_output_path = HeartRateService.get_cropped_file_path(heart_rate_collection.subject_id, sleep_session_id)
         np.savetxt(hr_output_path, heart_rate_collection.data, fmt='%f')
 
     @staticmethod
@@ -71,8 +71,20 @@ class HeartRateService(object):
         return HeartRateCollection(subject_id=subject_id, data=cropped_data)
 
     @staticmethod
-    def get_cropped_file_path(subject_id):
-        return Constants.CROPPED_FILE_PATH.joinpath(subject_id + "_cleaned_hr.out")
+    def get_cropped_file_path(subject_id, sleep_session_id):
+        directory_path_string = str(subject_id) + "/" + "sleepsession_" + str(sleep_session_id)
+        
+        subject_folder_path = Constants().CROPPED_FILE_PATH.joinpath(str(subject_id))
+        # creating a subject folder if it doesn't already exist
+        if not os.path.exists(subject_folder_path):
+            os.mkdir(subject_folder_path)
+            
+        sleep_session_path = Constants().CROPPED_FILE_PATH.joinpath(directory_path_string)
+        # creating a sleep session folder if it doesn't already exist
+        if not os.path.exists(sleep_session_path):
+            os.mkdir(sleep_session_path)
+        
+        return Constants.CROPPED_FILE_PATH.joinpath(directory_path_string + "/cropped_hr.out")
 
     @staticmethod
     def get_raw_file_path(subject_id):

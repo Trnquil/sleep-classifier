@@ -11,6 +11,8 @@ from source.preprocessing.epoch import Epoch
 from source.preprocessing.heart_rate.heart_rate_service import HeartRateService
 from source.preprocessing.interval import Interval
 from source.preprocessing.motion.motion_service import MotionService
+from source.analysis.setup.sleep_session_service import SleepSessionService
+from source.analysis.setup.feature_type import FeatureType
 
 
 class RawDataProcessor:
@@ -19,21 +21,33 @@ class RawDataProcessor:
     @staticmethod
     def crop_all(subject_id):
         
-        # psg_raw_collection = PSGService.read_raw(subject_id)       # Used to extract PSG details from the reports
-        # psg_raw_collection = PSGService.read_precleaned(subject_id)  # Loads already extracted PSG data
         motion_collection = MotionService.load_raw(subject_id)
         heart_rate_collection = HeartRateService.load_raw(subject_id)
-
+        
         valid_interval = RawDataProcessor.get_intersecting_interval([motion_collection, heart_rate_collection])
 
-        #psg_raw_collection = PSGService.crop(psg_raw_collection, valid_interval)
         motion_collection = MotionService.crop(motion_collection, valid_interval)
         heart_rate_collection = HeartRateService.crop(heart_rate_collection, valid_interval)
-
-        # PSGService.write(psg_raw_collection)
-        MotionService.write(motion_collection)
-        HeartRateService.write(heart_rate_collection)
-        ActivityCountService.build_activity_counts_without_matlab(subject_id, motion_collection.data)  # Builds activity counts with python, not MATLAB
+        
+        motion_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, motion_collection)
+        heart_rate_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, heart_rate_collection)
+        
+        for motion_sleepsession_tuple in motion_sleepsession_tuples:
+            motion_collection = motion_sleepsession_tuple[1]
+            sleep_session_id = motion_sleepsession_tuple[0].session_id
+            
+            if(np.any(motion_collection.data)):
+                MotionService.write(motion_collection, sleep_session_id)
+                ActivityCountService.build_activity_counts_without_matlab(subject_id, motion_collection.data, sleep_session_id)  # Builds activity counts with python, not MATLAB
+            
+        for heart_rate_sleepsession_tuple in heart_rate_sleepsession_tuples:
+            heart_rate_collection = heart_rate_sleepsession_tuple[1]
+            sleep_session_id = heart_rate_sleepsession_tuple[0].session_id
+            
+            if(np.any(heart_rate_collection.data)):
+                HeartRateService.write(heart_rate_collection, sleep_session_id)
+            
+        
 
     @staticmethod
     def get_intersecting_interval(collection_list):
