@@ -19,7 +19,7 @@ class SleepSessionService(object):
     
     @staticmethod
     def get_file_path():
-        return utils.get_project_root().joinpath('USI Sleep/Selfreports/final_labels.csv')
+        return utils.get_project_root().joinpath('data/USI Sleep/Selfreports/final_labels.csv')
     
     @staticmethod
     def load(subject_id):

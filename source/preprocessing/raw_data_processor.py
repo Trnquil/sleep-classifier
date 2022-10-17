@@ -61,11 +61,11 @@ class RawDataProcessor:
         return Interval(start_time=max(start_times), end_time=min(end_times))
 
     @staticmethod
-    def get_valid_epochs(subject_id):
+    def get_valid_epochs(subject_id, session_id):
 
         #psg_collection = PSGService.load_cropped(subject_id)
-        motion_collection = MotionService.load_cropped(subject_id)
-        heart_rate_collection = HeartRateService.load_cropped(subject_id)
+        motion_collection = MotionService.load_cropped(subject_id, session_id)
+        heart_rate_collection = HeartRateService.load_cropped(subject_id, session_id)
 
         #Manually setting the start time to 0
         start_time = 0

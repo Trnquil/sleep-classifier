@@ -7,6 +7,7 @@ from scipy.signal import butter, filtfilt
 from source import utils
 from source.constants import Constants
 from source.preprocessing.activity_count.activity_count_collection import ActivityCountCollection
+from source.preprocessing.path_service import PathService
 
 
 class ActivityCountService(object):
@@ -22,20 +23,8 @@ class ActivityCountService(object):
         return counts_array
 
     @staticmethod
-    def get_cropped_file_path(subject_id, sleep_session_id):
-        directory_path_string = str(subject_id) + "/" + "sleepsession_" + str(sleep_session_id)
-        
-        subject_folder_path = Constants().CROPPED_FILE_PATH.joinpath(str(subject_id))
-        # creating a subject folder if it doesn't already exist
-        if not os.path.exists(subject_folder_path):
-            os.mkdir(subject_folder_path)
-            
-        sleep_session_path = Constants().CROPPED_FILE_PATH.joinpath(directory_path_string)
-        # creating a sleep session folder if it doesn't already exist
-        if not os.path.exists(sleep_session_path):
-            os.mkdir(sleep_session_path)
-        
-        return Constants.CROPPED_FILE_PATH.joinpath(directory_path_string + "/cropped_counts.out")
+    def get_cropped_file_path(subject_id, session_id):
+        return PathService.get_cropped_folder_path(subject_id, session_id) + "/cropped_counts.out"
 
     @staticmethod
     def build_activity_counts():

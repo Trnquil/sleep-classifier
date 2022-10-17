@@ -1,10 +1,12 @@
 import numpy as np
 import pandas as pd
+import os
 
 from source import utils
 from source.constants import Constants
 from source.preprocessing.epoch import Epoch
 from source.preprocessing.heart_rate.heart_rate_service import HeartRateService
+from source.preprocessing.path_service import PathService
 
 
 class HeartRateFeatureService(object):
@@ -17,8 +19,8 @@ class HeartRateFeatureService(object):
         return feature
 
     @staticmethod
-    def get_path(subject_id):
-        return Constants.FEATURE_FILE_PATH.joinpath(subject_id + '_hr_feature.out')
+    def get_path(subject_id, session_id):
+        return PathService.get_feature_folder_path(subject_id, session_id) + '/hr_feature.out'
 
     @staticmethod
     def write(subject_id, feature):
@@ -26,8 +28,8 @@ class HeartRateFeatureService(object):
         np.savetxt(heart_rate_feature_path, feature, fmt='%f')
 
     @staticmethod
-    def build(subject_id, valid_epochs):
-        heart_rate_collection = HeartRateService.load_cropped(subject_id)
+    def build(subject_id, session_id, valid_epochs):
+        heart_rate_collection = HeartRateService.load_cropped(subject_id, session_id)
         return HeartRateFeatureService.build_from_collection(heart_rate_collection, valid_epochs)
 
     @staticmethod

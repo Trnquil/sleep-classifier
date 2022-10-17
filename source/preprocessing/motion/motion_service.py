@@ -10,6 +10,7 @@ import os
 from source import utils
 from source.constants import Constants
 from source.preprocessing.motion.motion_collection import MotionCollection
+from source.preprocessing.path_service import PathService
 
 
 class MotionService(object):
@@ -22,8 +23,8 @@ class MotionService(object):
         return MotionCollection(subject_id=subject_id, data=motion_array)
 
     @staticmethod
-    def load_cropped(subject_id):
-        cropped_motion_path = MotionService.get_cropped_file_path(subject_id)
+    def load_cropped(subject_id, session_id):
+        cropped_motion_path = MotionService.get_cropped_file_path(subject_id, session_id)
         motion_array = pd.read_csv(str(cropped_motion_path), delimiter=' ', header=None)
         motion_array = motion_array.values
         return MotionCollection(subject_id=subject_id, data=motion_array)
@@ -72,31 +73,10 @@ class MotionService(object):
         return MotionCollection(subject_id=subject_id, data=cropped_data)
 
     @staticmethod
-    def get_cropped_file_path(subject_id, sleep_session_id):
-        directory_path_string = str(subject_id) + "/" + "sleepsession_" + str(sleep_session_id)
-        
-        subject_folder_path = Constants().CROPPED_FILE_PATH.joinpath(str(subject_id))
-        # creating a subject folder if it doesn't already exist
-        if not os.path.exists(subject_folder_path):
-            os.mkdir(subject_folder_path)
-            
-        sleep_session_path = Constants().CROPPED_FILE_PATH.joinpath(directory_path_string)
-        # creating a sleep session folder if it doesn't already exist
-        if not os.path.exists(sleep_session_path):
-            os.mkdir(sleep_session_path)
-        
-        return Constants.CROPPED_FILE_PATH.joinpath(directory_path_string + "/cropped_motion.out")
+    def get_cropped_file_path(subject_id, session_id):   
+        return PathService.get_cropped_folder_path(subject_id, session_id) + "/cropped_motion.out"
 
     @staticmethod
     def get_raw_file_path(subject_id):
-        subject_dir = utils.get_project_root().joinpath('USI Sleep/E4_Data/' + subject_id)
-        session_dirs = os.listdir(subject_dir)
-        session_dirs.sort()
-        
-        #Removing .DS_Store from the list of directories because we don't care about it
-        session_dirs.remove('.DS_Store')
-        
-        #For now we are simply returning the first session
-        #TODO: Return all directories, not only the first one
-        return subject_dir.joinpath(session_dirs[2] + '/ACC.csv')
+        return PathService.get_raw_folder_path(subject_id) + '/ACC.csv'
 
