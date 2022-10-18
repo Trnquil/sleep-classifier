@@ -3,6 +3,7 @@
 import sys
 sys.path.insert(1, '/Users/julien/OneDrive/ETH/HS22/Bachelor Thesis/sleep-classifier')
 
+import os
 
 from source.analysis.setup.feature_type import FeatureType
 from source.analysis.setup.subject import Subject
@@ -10,6 +11,7 @@ from source.constants import Constants
 from source.preprocessing.activity_count.activity_count_feature_service import ActivityCountFeatureService
 from source.preprocessing.heart_rate.heart_rate_feature_service import HeartRateFeatureService
 from source.preprocessing.time.time_based_feature_service import TimeBasedFeatureService
+from source.analysis.setup.sleep_session_service import SleepSessionService
 
 
 class SubjectBuilder(object):
@@ -20,6 +22,21 @@ class SubjectBuilder(object):
 
         subjects_as_strings = ['S01', 'S02', 'S02', 'S03', 'S04', 'S05', 'S06', 'S07', 'S08', 'S09', 'S10', 'S11', 'S12', 'S13', 'S14', 'S15', 'S16']
         return subjects_as_strings
+    
+    # returns only subject and sleepsession ids for which there is data
+    @staticmethod
+    def get_subject_and_sleepsession_ids():
+        subject_to_session_dictionary = {}
+        
+        for subject_id in os.listdir(Constants.CROPPED_FILE_PATH):
+                if subject_id in SubjectBuilder.get_all_subject_ids():
+                    for session_id in os.listdir(Constants.CROPPED_FILE_PATH.joinpath(subject_id)):
+                        if session_id in SleepSessionService.get_all_session_ids(subject_id):
+                            if subject_id not in subject_to_session_dictionary.keys():
+                                subject_to_session_dictionary[subject_id] = []
+                                
+                            subject_to_session_dictionary[subject_id].append(session_id)
+        return subject_to_session_dictionary                
 
     @staticmethod
     def get_subject_dictionary():

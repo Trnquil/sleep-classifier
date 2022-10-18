@@ -12,8 +12,8 @@ from source.preprocessing.path_service import PathService
 
 class ActivityCountService(object):
     @staticmethod
-    def load_cropped(subject_id):
-        activity_counts_path = ActivityCountService.get_cropped_file_path(subject_id)
+    def load_cropped(subject_id, session_id):
+        activity_counts_path = ActivityCountService.get_cropped_file_path(subject_id, session_id)
         counts_array = ActivityCountService.load(activity_counts_path)
         return ActivityCountCollection(subject_id=subject_id, data=counts_array)
 

@@ -5,7 +5,6 @@ sys.path.insert(1, '../..')
 
 import time
 
-from source.analysis.figures.data_plot_builder import DataPlotBuilder
 from source.analysis.setup.subject_builder import SubjectBuilder
 from source.constants import Constants
 from source.preprocessing.activity_count.activity_count_service import ActivityCountService
@@ -14,9 +13,10 @@ from source.preprocessing.raw_data_processor import RawDataProcessor
 from source.preprocessing.time.circadian_service import CircadianService
 
 
-def run_preprocessing(subject_set):
+def run_preprocessing():
     start_time = time.time()
 
+    subject_set = SubjectBuilder.get_all_subject_ids()
     for subject in subject_set:
         print("Cropping data from subject " + str(subject) + "...")
         RawDataProcessor.crop_all(str(subject))
@@ -26,15 +26,18 @@ def run_preprocessing(subject_set):
         CircadianService.build_circadian_model()      # Both of the circadian lines require MATLAB to run
         CircadianService.build_circadian_mesa()       # INCLUDE_CIRCADIAN = False by default because most people don't have MATLAB
 
-    for subject in subject_set:
-        FeatureBuilder.build(str(subject))
+        
+    # Only building features for subjects and sleepsession for which folders exist
+    subject_sleepsession_dictionary = SubjectBuilder.get_subject_and_sleepsession_ids()
+    for subject in subject_sleepsession_dictionary.keys():
+        for session in subject_sleepsession_dictionary[subject]:
+            FeatureBuilder.build(subject, session)
 
     end_time = time.time()
     print("Execution took " + str((end_time - start_time) / 60) + " minutes")
 
 
-subject_ids = SubjectBuilder.get_all_subject_ids()
-run_preprocessing(subject_ids)
+run_preprocessing()
 
-for subject_id in subject_ids:
-    DataPlotBuilder.make_data_demo(subject_id, False)
+# for subject_id in subject_ids:
+    # DataPlotBuilder.make_data_demo(subject_id, False)

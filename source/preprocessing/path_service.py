@@ -9,7 +9,7 @@ class PathService(object):
     
     @staticmethod
     def get_cropped_folder_path(subject_id, session_id):
-        directory_path_string = str(subject_id) + "/" + "sleepsession_" + str(session_id)
+        directory_path_string = str(subject_id) + "/" + str(session_id)
         
         subject_folder_path = Constants().CROPPED_FILE_PATH.joinpath(str(subject_id))
         # creating a subject folder if it doesn't already exist
@@ -38,7 +38,7 @@ class PathService(object):
     
     @staticmethod
     def get_feature_folder_path(subject_id, session_id):
-        directory_path_string = Constants.FEATURE_FILE_PATH.joinpath(subject_id + "/" + "sleepsession_" + str(session_id))
+        directory_path_string = Constants.FEATURE_FILE_PATH.joinpath(subject_id + "/" + str(session_id))
         
         if not (os.path.exists(Constants.FEATURE_FILE_PATH.joinpath(subject_id))):
             os.mkdir(Constants.FEATURE_FILE_PATH.joinpath(subject_id))

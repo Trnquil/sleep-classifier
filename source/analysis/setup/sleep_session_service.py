@@ -35,7 +35,7 @@ class SleepSessionService(object):
         sleepsessions = []
         for index, selfreports_row in selfreports_array.iterrows():
             
-            session_id = int(selfreports_row[0])
+            session_id = "SLEEP_SESSION_" + str(selfreports_row[0]).zfill(2)
             start_timestamp = SleepSessionService.convert_to_centered_time(selfreports_row[1])
             end_timestamp = SleepSessionService.convert_to_centered_time(selfreports_row[2])
             sleepquality = int(selfreports_row[3])
@@ -44,6 +44,26 @@ class SleepSessionService(object):
             sleepsessions.append(sleepsession)
         
         return sleepsessions
+    
+    @staticmethod
+    def get_all_session_ids(subject_id):
+        selfreports_file = SleepSessionService.get_file_path()
+        selfreports_array = pd.read_csv(str(selfreports_file))
+        
+        # making sure we only work with data from the requested user (specified by subject_id)
+        selfreports_array = selfreports_array[selfreports_array['User'].eq(subject_id)]
+        
+        # We only keep the labels that we are interested in
+        selfreports_array = selfreports_array[['SessionID']].dropna()
+        
+        sleepsession_ids = []
+        for index, selfreports_row in selfreports_array.iterrows():
+            
+            session_id = "SLEEP_SESSION_" + str(selfreports_row[0]).zfill(2)
+            
+            sleepsession_ids.append(session_id)
+        
+        return sleepsession_ids
     
     # assigning features to each sleepsession based on the features' timestamps
     @staticmethod

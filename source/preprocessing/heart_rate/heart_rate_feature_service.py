@@ -23,8 +23,8 @@ class HeartRateFeatureService(object):
         return PathService.get_feature_folder_path(subject_id, session_id) + '/hr_feature.out'
 
     @staticmethod
-    def write(subject_id, feature):
-        heart_rate_feature_path = HeartRateFeatureService.get_path(subject_id)
+    def write(subject_id, session_id, feature):
+        heart_rate_feature_path = HeartRateFeatureService.get_path(subject_id, session_id)
         np.savetxt(heart_rate_feature_path, feature, fmt='%f')
 
     @staticmethod
