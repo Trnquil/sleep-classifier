@@ -23,7 +23,7 @@ import joblib
 def train(subject_ids, subject_dictionary, feature_set: [FeatureType]):
     
     
-    # Let us get labels as well as features
+    # Let us get labels 
     training_x = ClassifierInputBuilder.get_array(subject_ids, subject_dictionary, feature_set)
 
     # Here we decide on what classifier that we should be using. We decide for Kmeans in the beginning

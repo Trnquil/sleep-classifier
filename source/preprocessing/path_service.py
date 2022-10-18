@@ -46,3 +46,8 @@ class PathService(object):
         if not (os.path.exists(directory_path_string)):
             os.mkdir(directory_path_string)
         return str(Constants.FEATURE_FILE_PATH.joinpath(directory_path_string))
+    
+    @staticmethod
+    def get_models_path():
+        models_dir = utils.get_project_root().joinpath('data/imported models')
+        return str(models_dir)
