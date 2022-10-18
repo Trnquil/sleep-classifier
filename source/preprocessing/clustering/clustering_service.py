@@ -1,6 +1,7 @@
 from source.preprocessing.path_service import PathService
 import joblib
 import numpy as np
+import pandas as pd
 
 
 class ClusteringService(object):
@@ -21,6 +22,12 @@ class ClusteringService(object):
     @staticmethod
     def get_path(subject_id, session_id):
         return PathService.get_feature_folder_path(subject_id, session_id) + '/clusters.out'
+    
+    @staticmethod
+    def load(subject_id, session_id):
+        cluster_feature_path = ClusteringService.get_path(subject_id, session_id)
+        feature = pd.read_csv(str(cluster_feature_path)).values
+        return feature
     
     @staticmethod
     def write(subject_id, session_id, feature):

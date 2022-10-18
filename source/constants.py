@@ -15,6 +15,7 @@ class Constants(object):
     VERBOSE = True
     CROPPED_FILE_PATH = utils.get_project_root().joinpath('outputs/cropped/')
     FEATURE_FILE_PATH = utils.get_project_root().joinpath('outputs/features/')
+    FINAL_FILE_PATH = utils.get_project_root().joinpath('outputs/final/')
     FIGURE_FILE_PATH = utils.get_project_root().joinpath('outputs/figures/')
     LOWER_BOUND = -0.2
     MATLAB_PATH = '/Applications/MATLAB_R2019a.app/bin/matlab'  # Replace with your MATLAB path

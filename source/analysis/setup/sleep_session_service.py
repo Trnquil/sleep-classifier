@@ -22,6 +22,21 @@ class SleepSessionService(object):
         return utils.get_project_root().joinpath('data/USI Sleep/Selfreports/final_labels.csv')
     
     @staticmethod
+    def load_sleepquality(subject_id, session_id):
+        selfreports_file = SleepSessionService.get_file_path()
+        selfreports_array = pd.read_csv(str(selfreports_file))
+        
+        selfreports_array = selfreports_array[selfreports_array['User'].eq(subject_id)]
+        session_id_int = int(session_id[-2:])
+        selfreports_array = selfreports_array[selfreports_array['SessionID'].eq(session_id_int)]
+        
+        selfreports_array = selfreports_array[['Avg_SleepQuality_label']]
+        
+        sleepquality = int(selfreports_array.iloc[0])
+
+        return sleepquality        
+    
+    @staticmethod
     def load(subject_id):
         selfreports_file = SleepSessionService.get_file_path()
         selfreports_array = pd.read_csv(str(selfreports_file))

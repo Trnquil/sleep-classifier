@@ -8,7 +8,7 @@ from source.preprocessing.activity_count.activity_count_feature_service import A
 from source.preprocessing.heart_rate.heart_rate_feature_service import HeartRateFeatureService
 from source.preprocessing.raw_data_processor import RawDataProcessor
 from source.preprocessing.time.time_based_feature_service import TimeBasedFeatureService
-from source.preprocessing.clustering_service import ClusteringService
+from source.preprocessing.clustering.clustering_service import ClusteringService
 
 import numpy as np
 
