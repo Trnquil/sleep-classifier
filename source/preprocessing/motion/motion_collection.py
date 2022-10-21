@@ -10,7 +10,6 @@ class MotionCollection(object):
         self.data = data
         self.timestamps = data[:, 0]
         self.values = data[:, 1:]
-        self.feature_type = FeatureType.motion
 
     def get_interval(self):
         return Interval(start_time=np.amin(self.data[:, 0]),

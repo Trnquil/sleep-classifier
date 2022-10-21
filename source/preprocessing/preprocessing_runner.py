@@ -9,7 +9,7 @@ from source.analysis.setup.subject_builder import SubjectBuilder
 from source.constants import Constants
 from source.preprocessing.activity_count.activity_count_service import ActivityCountService
 from source.preprocessing.feature_builder import FeatureBuilder
-from source.preprocessing.final_feature_builder import FinalFeatureBuilder
+from source.preprocessing.nightly_feature_builder import NightlyFeatureBuilder
 from source.preprocessing.raw_data_processor import RawDataProcessor
 from source.preprocessing.time.circadian_service import CircadianService
 
@@ -29,11 +29,11 @@ def run_preprocessing():
 
         
     # Only building features for subjects and sleepsession for which folders exist
-    subject_sleepsession_dictionary = SubjectBuilder.get_subject_and_sleepsession_ids()
+    subject_sleepsession_dictionary = SubjectBuilder.get_built_subject_and_sleepsession_ids()
     for subject in subject_sleepsession_dictionary.keys():
         for session in subject_sleepsession_dictionary[subject]:
             FeatureBuilder.build(subject, session)
-            FinalFeatureBuilder.build(subject, session)
+            NightlyFeatureBuilder.build(subject, session)
             
     
 

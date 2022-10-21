@@ -25,7 +25,7 @@ class SubjectBuilder(object):
     
     # returns only subject and sleepsession ids for which there is data
     @staticmethod
-    def get_subject_and_sleepsession_ids():
+    def get_built_subject_and_sleepsession_ids():
         subject_to_session_dictionary = {}
         
         for subject_id in os.listdir(Constants.CROPPED_FILE_PATH):
@@ -36,7 +36,17 @@ class SubjectBuilder(object):
                                 subject_to_session_dictionary[subject_id] = []
                                 
                             subject_to_session_dictionary[subject_id].append(session_id)
-        return subject_to_session_dictionary                
+        return subject_to_session_dictionary  
+
+    # returns only sleepsession ids for which there is data
+    @staticmethod 
+    def get_built_sleepsession_ids(subject_id):
+        return SubjectBuilder.get_built_subject_and_sleepsession_ids()[subject_id]    
+
+    # returns only subject ids for which there is data
+    @staticmethod 
+    def get_built_subject_ids():
+        return list(SubjectBuilder.get_built_subject_and_sleepsession_ids().keys())
 
     @staticmethod
     def get_subject_dictionary():

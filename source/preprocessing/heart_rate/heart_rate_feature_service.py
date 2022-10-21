@@ -13,8 +13,8 @@ class HeartRateFeatureService(object):
     WINDOW_SIZE = 10 * 30 - 15
 
     @staticmethod
-    def load(subject_id):
-        heart_rate_feature_path = HeartRateFeatureService.get_path(subject_id)
+    def load(subject_id, session_id):
+        heart_rate_feature_path = HeartRateFeatureService.get_path(subject_id, session_id)
         feature = pd.read_csv(str(heart_rate_feature_path), delimiter=' ').values
         return feature
 

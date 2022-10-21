@@ -13,13 +13,13 @@ import pandas as pd
 
 
 
-class FinalFeatureBuilder(object):
+class NightlyFeatureBuilder(object):
 
     @staticmethod
     def build(subject_id, session_id):
 
         if Constants.VERBOSE:
-            print("Building final features...")
+            print("Building nightly features...")
         
         cluster_final_feature_dict = ClusteringFinalFeatureService.build(subject_id, session_id)
         
@@ -31,9 +31,18 @@ class FinalFeatureBuilder(object):
         final_features_dataframe = pd.DataFrame(final_features)
         
         # Writing all features to their files
-        final_features_path = PathService.get_final_folder_path(subject_id, session_id) + '/final_features.csv'
-        final_features_dataframe.to_csv(final_features_path)
-            
+        final_features_path = NightlyFeatureBuilder.get_path(subject_id, session_id)
+        final_features_dataframe.to_csv(final_features_path, index=False)
+        
+    @staticmethod
+    def load(subject_id, session_id):
+        nightly_feature_path = NightlyFeatureBuilder().get_path(subject_id, session_id)
+        nightly_feature_dataframe = pd.read_csv(str(nightly_feature_path))
+        return nightly_feature_dataframe
+    
+    @staticmethod
+    def get_path(subject_id, session_id):
+        return PathService.get_final_folder_path(subject_id, session_id) + '/nightly_features.csv'
             
                                      
 
