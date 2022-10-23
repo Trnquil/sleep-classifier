@@ -47,6 +47,15 @@ class SubjectBuilder(object):
     @staticmethod 
     def get_built_subject_ids():
         return list(SubjectBuilder.get_built_subject_and_sleepsession_ids().keys())
+    
+    # returns only subject ids for which there is data
+    @staticmethod 
+    def get_built_subject_and_sleepsession_count():
+        count = 0
+        for subject_id in SubjectBuilder.get_built_subject_ids():
+            for session_id in SubjectBuilder.get_built_sleepsession_ids(subject_id):
+                count += 1
+        return count
 
     @staticmethod
     def get_subject_dictionary():

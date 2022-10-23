@@ -15,6 +15,8 @@ class FeatureType(Enum):
     
     nightly = "nightly"
     
+    sleep_quality = "sleep quality"
+    
     def get_cropped_names():
         return [FeatureType.cropped_count.name, 
                 FeatureType.cropped_motion.name, 

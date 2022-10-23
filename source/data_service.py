@@ -9,7 +9,8 @@ from source.preprocessing.clustering.clustering_service import ClusteringService
 from source.preprocessing.time.time_based_feature_service import TimeBasedFeatureService
 from source.preprocessing.heart_rate.heart_rate_feature_service import HeartRateFeatureService
 from source.preprocessing.activity_count.activity_count_feature_service import ActivityCountFeatureService
-from source.preprocessing.nightly_feature_builder import NightlyFeatureBuilder
+from source.preprocessing.nightly_feature_service import NightlyFeatureService
+from source.analysis.setup.sleep_session_service import SleepSessionService
 
 from source.analysis.setup.subject_builder import SubjectBuilder
 from multipledispatch import dispatch
@@ -21,7 +22,7 @@ class DataService(object):
     
     @staticmethod
     @dispatch(str, str, object)
-    def load_feature(subject_id, session_id, feature_type):
+    def load_feature_raw(subject_id, session_id, feature_type):
         
         if FeatureType.cropped_motion.name == feature_type.name: 
             feature = MotionService.load_cropped(subject_id, session_id).data
@@ -40,14 +41,16 @@ class DataService(object):
         elif FeatureType.epoched_count.name == feature_type.name:
             feature = ActivityCountFeatureService.load(subject_id, session_id)
         elif FeatureType.nightly.name == feature_type.name:
-            feature = NightlyFeatureBuilder.load(subject_id, session_id).to_numpy()
+            feature = NightlyFeatureService.load(subject_id, session_id).to_numpy()
+        elif FeatureType.sleep_quality.name == feature_type.name:
+            feature = np.array([SleepSessionService.load_sleepquality(subject_id, session_id)]).reshape(1)
         else:
             raise Exception("FeatureType unknown to DataService")
         return feature
     
     @staticmethod
     @dispatch(str, object)
-    def load_feature(subject_id, feature_type):
+    def load_feature_raw(subject_id, feature_type):
         
         session_ids = SubjectBuilder.get_built_sleepsession_ids(subject_id)
         feature_shape = DataService.__get_feature_shape(subject_id, feature_type)
@@ -57,7 +60,7 @@ class DataService(object):
         current_height = 0
         for session_id in session_ids:
             
-            feature = DataService.load_feature(subject_id, session_id, feature_type)
+            feature = DataService.load_feature_raw(subject_id, session_id, feature_type)
             feature_height = feature.shape[0]
             
             stacked_feature[current_height:(current_height + feature_height)][:] = feature
@@ -68,7 +71,7 @@ class DataService(object):
     
     @staticmethod
     @dispatch(object)
-    def load_feature(feature_type):
+    def load_feature_raw(feature_type):
         
         subject_ids = SubjectBuilder.get_built_subject_ids()
         feature_shape = DataService.__get_feature_shape(feature_type)
@@ -78,7 +81,7 @@ class DataService(object):
         current_height = 0
         for subject_id in subject_ids:
             
-            feature = DataService.load_feature(subject_id, feature_type)
+            feature = DataService.load_feature_raw(subject_id, feature_type)
             feature_height = feature.shape[0]
             
             stacked_feature[current_height:(current_height + feature_height)][:] = feature
@@ -95,7 +98,7 @@ class DataService(object):
         
         for i in range(len(session_ids)):
             
-            feature_shape = DataService.load_feature(subject_id, session_ids[i], feature_type).shape
+            feature_shape = DataService.load_feature_raw(subject_id, session_ids[i], feature_type).shape
                 
             feature_height = feature_shape[0]
             feature_width = feature_shape[1]
