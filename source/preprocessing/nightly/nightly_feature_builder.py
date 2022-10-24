@@ -5,10 +5,12 @@ from source.constants import Constants
 from source.preprocessing.path_service import PathService
 from source.preprocessing.clustering.clustering_nightly_feature_service import ClusteringNightlyFeatureService
 from source.preprocessing.heart_rate.heart_rate_nightly_feature_service import HeartRateNightlyFeatureService
-from source.preprocessing.nightly_feature_service import NightlyFeatureService
+from source.preprocessing.nightly.nightly_feature_service import NightlyFeatureService
 from source.data_service import DataService
 from source.analysis.setup.feature_type import FeatureType
 from source.analysis.setup.subject_builder import SubjectBuilder
+from source.data_service import DataService
+from source.preprocessing.built_service import BuiltService
 
 import pandas as pd
 
@@ -24,8 +26,8 @@ class NightlyFeatureBuilder(object):
             print("Building nightly features...")
             
         i = 0
-        for subject_id in SubjectBuilder.get_built_subject_ids():
-            for session_id in SubjectBuilder.get_built_sleepsession_ids(subject_id):
+        for subject_id in BuiltService.get_built_subject_ids():
+            for session_id in BuiltService.get_built_sleepsession_ids(subject_id):
                 feature_dict = NightlyFeatureBuilder.build_feature_dict(subject_id, session_id)
                 
                 feature_row = pd.DataFrame(feature_dict)
@@ -38,9 +40,7 @@ class NightlyFeatureBuilder(object):
                 i += 1
 
         
-        # Writing all features to their files
-        nightly_feature_path = NightlyFeatureService.get_path()
-        nightly_dataframe.to_csv(nightly_feature_path, index=False)
+        DataService.write_nightly(nightly_dataframe)
         
     @staticmethod
     def build_feature_dict(subject_id, session_id):

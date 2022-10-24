@@ -15,47 +15,7 @@ from source.analysis.setup.sleep_session_service import SleepSessionService
 
 
 class SubjectBuilder(object):
-
-    #Modified
-    @staticmethod
-    def get_all_subject_ids():
-
-        subjects_as_strings = ['S01', 'S02', 'S02', 'S03', 'S04', 'S05', 'S06', 'S07', 'S08', 'S09', 'S10', 'S11', 'S12', 'S13', 'S14', 'S15', 'S16']
-        return subjects_as_strings
     
-    # returns only subject and sleepsession ids for which there is data
-    @staticmethod
-    def get_built_subject_and_sleepsession_ids():
-        subject_to_session_dictionary = {}
-        
-        for subject_id in os.listdir(Constants.CROPPED_FILE_PATH):
-                if subject_id in SubjectBuilder.get_all_subject_ids():
-                    for session_id in os.listdir(Constants.CROPPED_FILE_PATH.joinpath(subject_id)):
-                        if session_id in SleepSessionService.get_all_session_ids(subject_id):
-                            if subject_id not in subject_to_session_dictionary.keys():
-                                subject_to_session_dictionary[subject_id] = []
-                                
-                            subject_to_session_dictionary[subject_id].append(session_id)
-        return subject_to_session_dictionary  
-
-    # returns only sleepsession ids for which there is data
-    @staticmethod 
-    def get_built_sleepsession_ids(subject_id):
-        return SubjectBuilder.get_built_subject_and_sleepsession_ids()[subject_id]    
-
-    # returns only subject ids for which there is data
-    @staticmethod 
-    def get_built_subject_ids():
-        return list(SubjectBuilder.get_built_subject_and_sleepsession_ids().keys())
-    
-    # returns only subject ids for which there is data
-    @staticmethod 
-    def get_built_subject_and_sleepsession_count():
-        count = 0
-        for subject_id in SubjectBuilder.get_built_subject_ids():
-            for session_id in SubjectBuilder.get_built_sleepsession_ids(subject_id):
-                count += 1
-        return count
 
     @staticmethod
     def get_subject_dictionary():

@@ -10,9 +10,9 @@ class HeartRateNightlyFeatureService(object):
     @staticmethod
     def build_feature_dict(subject_id, session_id):
         
-        heart_rate_feature_raw = DataService.load_feature_raw(subject_id, session_id, FeatureType.epoched_heart_rate)
+        heart_rate_feature_raw = DataService.load_feature_raw(subject_id, session_id, FeatureType.cropped_heart_rate)
         
-        features_dict = HeartRateNightlyFeatureService.build_var_features(heart_rate_feature_raw)
+        features_dict = HeartRateNightlyFeatureService.build_var_features(heart_rate_feature_raw[:,1])
         merged_dict = features_dict
                 
         

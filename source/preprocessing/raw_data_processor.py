@@ -13,6 +13,7 @@ from source.preprocessing.interval import Interval
 from source.preprocessing.motion.motion_service import MotionService
 from source.analysis.setup.sleep_session_service import SleepSessionService
 from source.analysis.setup.feature_type import FeatureType
+from source.data_service import DataService
 
 
 class RawDataProcessor:
@@ -37,7 +38,7 @@ class RawDataProcessor:
             sleep_session_id = motion_sleepsession_tuple[0].session_id
             
             if(np.any(motion_collection.data)):
-                MotionService.write(motion_collection, sleep_session_id)
+                DataService.write_cropped(motion_collection, sleep_session_id, FeatureType.cropped_motion)
                 ActivityCountService.build_activity_counts_without_matlab(subject_id, motion_collection.data, sleep_session_id)  # Builds activity counts with python, not MATLAB
             
         for heart_rate_sleepsession_tuple in heart_rate_sleepsession_tuples:
@@ -45,7 +46,7 @@ class RawDataProcessor:
             sleep_session_id = heart_rate_sleepsession_tuple[0].session_id
             
             if(np.any(heart_rate_collection.data)):
-                HeartRateService.write(heart_rate_collection, sleep_session_id)
+                DataService.write_cropped(heart_rate_collection, sleep_session_id, FeatureType.cropped_heart_rate)
             
         
 
@@ -64,8 +65,8 @@ class RawDataProcessor:
     def get_valid_epochs(subject_id, session_id):
 
         #psg_collection = PSGService.load_cropped(subject_id)
-        motion_collection = MotionService.load_cropped(subject_id, session_id)
-        heart_rate_collection = HeartRateService.load_cropped(subject_id, session_id)
+        motion_collection = DataService.load_cropped(subject_id, session_id, FeatureType.cropped_motion)
+        heart_rate_collection = DataService.load_cropped(subject_id, session_id, FeatureType.cropped_heart_rate)
 
         #Manually setting the start time to 0
         start_time = 0

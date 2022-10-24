@@ -9,25 +9,20 @@ import os
 
 from source import utils
 from source.constants import Constants
-from source.preprocessing.motion.motion_collection import MotionCollection
+from source.preprocessing.collection import Collection
 from source.preprocessing.path_service import PathService
+from source.analysis.setup.feature_type import FeatureType
 
 
 class MotionService(object):
 
     @staticmethod
     def load_raw(subject_id):
-        raw_motion_path = MotionService.get_raw_file_path(subject_id)
+        raw_motion_path = PathService.get_raw_file_path(subject_id, FeatureType.raw_acc)
         motion_array = MotionService.load(raw_motion_path, delimiter=',')
         motion_array = utils.remove_repeats(motion_array)
-        return MotionCollection(subject_id=subject_id, data=motion_array)
+        return Collection(subject_id=subject_id, data=motion_array)
 
-    @staticmethod
-    def load_cropped(subject_id, session_id):
-        cropped_motion_path = MotionService.get_cropped_file_path(subject_id, session_id)
-        motion_array = pd.read_csv(str(cropped_motion_path), delimiter=' ', header=None)
-        motion_array = motion_array.values
-        return MotionCollection(subject_id=subject_id, data=motion_array)
 
     #delimiter doesn't do anything but I don't want to break the rest of the program
     @staticmethod
@@ -55,12 +50,7 @@ class MotionService(object):
         
         #There might be a faster way to implement this, but for now this should be ok
         motion_array = np.concatenate([timestamps, motion_array], axis=1)
-        return motion_array                     
-                                 
-    @staticmethod
-    def write(motion_collection, sleep_session_id):
-        motion_output_path = MotionService.get_cropped_file_path(motion_collection.subject_id, sleep_session_id)
-        np.savetxt(motion_output_path, motion_collection.data, fmt='%f')
+        return motion_array
 
     @staticmethod
     def crop(motion_collection, interval):
@@ -70,13 +60,6 @@ class MotionService(object):
                          & (timestamps < interval.end_time)).nonzero()[0]
 
         cropped_data = motion_collection.data[valid_indices, :]
-        return MotionCollection(subject_id=subject_id, data=cropped_data)
+        return Collection(subject_id=subject_id, data=cropped_data)
 
-    @staticmethod
-    def get_cropped_file_path(subject_id, session_id):   
-        return PathService.get_cropped_folder_path(subject_id, session_id) + "/cropped_motion.out"
-
-    @staticmethod
-    def get_raw_file_path(subject_id):
-        return PathService.get_raw_folder_path(subject_id) + '/ACC.csv'
 

@@ -9,6 +9,8 @@ from source.preprocessing.heart_rate.heart_rate_feature_service import HeartRate
 from source.preprocessing.raw_data_processor import RawDataProcessor
 from source.preprocessing.time.time_based_feature_service import TimeBasedFeatureService
 from source.preprocessing.clustering.clustering_service import ClusteringService
+from source.analysis.setup.feature_type import FeatureType
+from source.data_service import DataService
 
 import numpy as np
 
@@ -45,11 +47,11 @@ class FeatureBuilder(object):
 
 
         # Writing all features to their files
-        TimeBasedFeatureService.write_cosine(subject_id, session_id, cosine_feature)
-        TimeBasedFeatureService.write_time(subject_id, session_id, time_feature)
-        ActivityCountFeatureService.write(subject_id, session_id, count_feature)
-        HeartRateFeatureService.write(subject_id, session_id, heart_rate_feature)
-        ClusteringService.write(subject_id, session_id, clusters)
+        DataService.write_epoched(subject_id, session_id, cosine_feature, FeatureType.epoched_cosine)
+        DataService.write_epoched(subject_id, session_id, time_feature, FeatureType.epoched_time)
+        DataService.write_epoched(subject_id, session_id, count_feature, FeatureType.epoched_count)
+        DataService.write_epoched(subject_id, session_id, heart_rate_feature, FeatureType.epoched_heart_rate)
+        DataService.write_epoched(subject_id, session_id, clusters, FeatureType.epoched_cluster)
                                      
 
         

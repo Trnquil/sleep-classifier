@@ -7,50 +7,6 @@ from source.preprocessing.path_service import PathService
 
 
 class TimeBasedFeatureService(object):
-    @staticmethod
-    def load_time(subject_id, session_id):
-        feature_path = TimeBasedFeatureService.get_path_for_time(subject_id, session_id)
-        feature = pd.read_csv(str(feature_path)).values
-        return feature
-
-    @staticmethod
-    def get_path_for_time(subject_id, session_id):
-        return PathService.get_feature_folder_path(subject_id, session_id) + '/time_feature.out'
-
-    @staticmethod
-    def write_time(subject_id, session_id, feature):
-        feature_path = TimeBasedFeatureService.get_path_for_time(subject_id, session_id)
-        np.savetxt(feature_path, feature, fmt='%f')
-
-    @staticmethod
-    def load_circadian_model(subject_id, session_id):
-        feature_path = TimeBasedFeatureService.get_path_for_circadian_model(subject_id, session_id)
-        feature = pd.read_csv(str(feature_path), delimiter=' ').values
-        return feature
-
-    @staticmethod
-    def get_path_for_circadian_model(subject_id, session_id):
-        return PathService.get_feature_folder_path(subject_id, session_id) + '/circadian_feature.out'
-
-    @staticmethod
-    def write_circadian_model(subject_id, session_id, feature):
-        feature_path = TimeBasedFeatureService.get_path_for_circadian_model(subject_id, session_id)
-        np.savetxt(feature_path, feature, fmt='%f')
-
-    @staticmethod
-    def load_cosine(subject_id, session_id):
-        feature_path = TimeBasedFeatureService.get_path_for_cosine(subject_id, session_id)
-        feature = pd.read_csv(str(feature_path)).values
-        return feature
-
-    @staticmethod
-    def get_path_for_cosine(subject_id, session_id):
-        return PathService.get_feature_folder_path(subject_id, session_id) + '/cosine_feature.out'
-
-    @staticmethod
-    def write_cosine(subject_id, session_id, feature):
-        feature_path = TimeBasedFeatureService.get_path_for_cosine(subject_id, session_id)
-        np.savetxt(feature_path, feature, fmt='%f')
 
     @staticmethod
     def build_time(valid_epochs):

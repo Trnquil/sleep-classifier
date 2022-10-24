@@ -5,11 +5,11 @@ sys.path.insert(1, '../..')
 
 import time
 
-from source.analysis.setup.subject_builder import SubjectBuilder
+from source.preprocessing.built_service import BuiltService
 from source.constants import Constants
 from source.preprocessing.activity_count.activity_count_service import ActivityCountService
 from source.preprocessing.feature_builder import FeatureBuilder
-from source.preprocessing.nightly_feature_builder import NightlyFeatureBuilder
+from source.preprocessing.nightly.nightly_feature_builder import NightlyFeatureBuilder
 from source.preprocessing.raw_data_processor import RawDataProcessor
 from source.preprocessing.time.circadian_service import CircadianService
 
@@ -17,7 +17,7 @@ from source.preprocessing.time.circadian_service import CircadianService
 def run_preprocessing():
     start_time = time.time()
 
-    subject_set = SubjectBuilder.get_all_subject_ids()
+    subject_set = Constants.SUBJECT_IDS
     for subject in subject_set:
         print("Cropping data from subject " + str(subject) + "...")
         RawDataProcessor.crop_all(str(subject))
@@ -29,11 +29,12 @@ def run_preprocessing():
 
         
     # Only building features for subjects and sleepsession for which folders exist
-    subject_sleepsession_dictionary = SubjectBuilder.get_built_subject_and_sleepsession_ids()
+    subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids()
     for subject in subject_sleepsession_dictionary.keys():
         for session in subject_sleepsession_dictionary[subject]:
             FeatureBuilder.build(subject, session)
-            NightlyFeatureBuilder.build(subject, session)
+            
+    NightlyFeatureBuilder.build()
             
     
 

@@ -6,25 +6,12 @@ from scipy.signal import butter, filtfilt
 
 from source import utils
 from source.constants import Constants
-from source.preprocessing.activity_count.activity_count_collection import ActivityCountCollection
+from source.preprocessing.collection import Collection
 from source.preprocessing.path_service import PathService
+from source.analysis.setup.feature_type import FeatureType
 
 
 class ActivityCountService(object):
-    @staticmethod
-    def load_cropped(subject_id, session_id):
-        activity_counts_path = ActivityCountService.get_cropped_file_path(subject_id, session_id)
-        counts_array = ActivityCountService.load(activity_counts_path)
-        return ActivityCountCollection(subject_id=subject_id, data=counts_array)
-
-    @staticmethod
-    def load(counts_file):
-        counts_array = pd.read_csv(str(counts_file)).values
-        return counts_array
-
-    @staticmethod
-    def get_cropped_file_path(subject_id, session_id):
-        return PathService.get_cropped_folder_path(subject_id, session_id) + "/cropped_counts.out"
 
     @staticmethod
     def build_activity_counts():
@@ -64,8 +51,8 @@ class ActivityCountService(object):
         counts = np.expand_dims(counts, axis=1)
         output = np.hstack((time_counts, counts))
 
-        activity_count_output_path = ActivityCountService.get_cropped_file_path(subject_id, sleep_session_id)
-        np.savetxt(activity_count_output_path, output, fmt='%f', delimiter=',')
+        activity_count_output_path = PathService.get_cropped_file_path(subject_id, sleep_session_id, FeatureType.cropped_count)
+        np.savetxt(activity_count_output_path, output, fmt='%f', delimiter=' ')
 
     @staticmethod
     def max2epochs(data, fs, epoch):
@@ -97,4 +84,4 @@ class ActivityCountService(object):
                          & (timestamps < interval.end_time)).nonzero()[0]
 
         cropped_data = activity_count_collection.data[valid_indices, :]
-        return ActivityCountCollection(subject_id=subject_id, data=cropped_data)
+        return Collection(subject_id=subject_id, data=cropped_data)

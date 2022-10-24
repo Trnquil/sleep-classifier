@@ -7,25 +7,12 @@ from source.constants import Constants
 from source.preprocessing.activity_count.activity_count_service import ActivityCountService
 from source.preprocessing.epoch import Epoch
 from source.preprocessing.path_service import PathService
+from source.analysis.setup.feature_type import FeatureType
+from source.data_service import DataService
 
 
 class ActivityCountFeatureService(object):
     WINDOW_SIZE = 10 * 30 - 15
-
-    @staticmethod
-    def load(subject_id, session_id):
-        activity_count_feature_path = ActivityCountFeatureService.get_path(subject_id, session_id)
-        feature = pd.read_csv(str(activity_count_feature_path)).values
-        return feature
-
-    @staticmethod
-    def get_path(subject_id, session_id):
-        return PathService.get_feature_folder_path(subject_id, session_id) + '/count_feature.out'
-
-    @staticmethod
-    def write(subject_id, session_id, feature):
-        activity_counts_feature_path = ActivityCountFeatureService.get_path(subject_id, session_id)
-        np.savetxt(activity_counts_feature_path, feature, fmt='%f')
 
     @staticmethod
     def get_window(timestamps, epoch):
@@ -38,7 +25,7 @@ class ActivityCountFeatureService(object):
 
     @staticmethod
     def build(subject_id, session_id, valid_epochs):
-        activity_count_collection = ActivityCountService.load_cropped(subject_id, session_id)
+        activity_count_collection = DataService.load_cropped(subject_id, session_id, FeatureType.cropped_count)
         return ActivityCountFeatureService.build_from_collection(activity_count_collection, valid_epochs)
 
     @staticmethod

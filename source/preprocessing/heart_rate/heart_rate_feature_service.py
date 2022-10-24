@@ -7,29 +7,15 @@ from source.constants import Constants
 from source.preprocessing.epoch import Epoch
 from source.preprocessing.heart_rate.heart_rate_service import HeartRateService
 from source.preprocessing.path_service import PathService
-
+from source.data_service import DataService
+from source.analysis.setup.feature_type import FeatureType
 
 class HeartRateFeatureService(object):
     WINDOW_SIZE = 10 * 30 - 15
 
     @staticmethod
-    def load(subject_id, session_id):
-        heart_rate_feature_path = HeartRateFeatureService.get_path(subject_id, session_id)
-        feature = pd.read_csv(str(heart_rate_feature_path), delimiter=' ').values
-        return feature
-
-    @staticmethod
-    def get_path(subject_id, session_id):
-        return PathService.get_feature_folder_path(subject_id, session_id) + '/hr_feature.out'
-
-    @staticmethod
-    def write(subject_id, session_id, feature):
-        heart_rate_feature_path = HeartRateFeatureService.get_path(subject_id, session_id)
-        np.savetxt(heart_rate_feature_path, feature, fmt='%f')
-
-    @staticmethod
     def build(subject_id, session_id, valid_epochs):
-        heart_rate_collection = HeartRateService.load_cropped(subject_id, session_id)
+        heart_rate_collection = DataService.load_cropped(subject_id, session_id, FeatureType.cropped_heart_rate)
         return HeartRateFeatureService.build_from_collection(heart_rate_collection, valid_epochs)
 
     @staticmethod

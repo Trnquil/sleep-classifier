@@ -2,18 +2,13 @@ import sys
 sys.path.insert(1, '..') # tells system where project root is
 
 from source.analysis.setup.feature_type import FeatureType
-from source.preprocessing.motion.motion_service import MotionService
-from source.preprocessing.heart_rate.heart_rate_service import HeartRateService
-from source.preprocessing.activity_count.activity_count_service import ActivityCountService
-from source.preprocessing.clustering.clustering_service import ClusteringService
-from source.preprocessing.time.time_based_feature_service import TimeBasedFeatureService
-from source.preprocessing.heart_rate.heart_rate_feature_service import HeartRateFeatureService
-from source.preprocessing.activity_count.activity_count_feature_service import ActivityCountFeatureService
-from source.preprocessing.nightly_feature_service import NightlyFeatureService
-from source.analysis.setup.sleep_session_service import SleepSessionService
+from source.preprocessing.path_service import PathService
+from source.preprocessing.collection import Collection
 
-from source.analysis.setup.subject_builder import SubjectBuilder
+from source.analysis.setup.sleep_session_service import SleepSessionService
 from multipledispatch import dispatch
+from source.analysis.setup.feature_type import FeatureType
+from source.preprocessing.built_service import BuiltService
 
 import numpy as np
 import pandas as pd
@@ -24,26 +19,15 @@ class DataService(object):
     @dispatch(str, str, object)
     def load_feature_raw(subject_id, session_id, feature_type):
         
-        if FeatureType.cropped_motion.name == feature_type.name: 
-            feature = MotionService.load_cropped(subject_id, session_id).data
-        elif FeatureType.cropped_heart_rate.name == feature_type.name:
-            feature = HeartRateService.load_cropped(subject_id, session_id).data
-        elif FeatureType.cropped_count.name == feature_type.name:
-            feature  = ActivityCountService.load_cropped(subject_id, session_id).data
-        elif FeatureType.epoched_cluster.name == feature_type.name: 
-            feature = ClusteringService.load(subject_id, session_id)
-        elif FeatureType.epoched_cosine.name == feature_type.name:
-            feature = TimeBasedFeatureService.load_cosine(subject_id, session_id)
-        elif FeatureType.epoched_time.name == feature_type.name:
-            feature  = TimeBasedFeatureService.load_time(subject_id, session_id)
-        elif FeatureType.epoched_heart_rate.name == feature_type.name:
-            feature = HeartRateFeatureService.load(subject_id, session_id)
-        elif FeatureType.epoched_count.name == feature_type.name:
-            feature = ActivityCountFeatureService.load(subject_id, session_id)
-        elif FeatureType.nightly.name == feature_type.name:
-            feature = NightlyFeatureService.load(subject_id, session_id).to_numpy()
+        if feature_type.name in FeatureType.get_cropped_names(): 
+            feature = DataService.load_cropped(subject_id, session_id, feature_type).data
+            
+        elif feature_type.name in FeatureType.get_epoched_names(): 
+            feature = DataService.load_epoched(subject_id, session_id, feature_type)
+            
         elif FeatureType.sleep_quality.name == feature_type.name:
             feature = np.array([SleepSessionService.load_sleepquality(subject_id, session_id)]).reshape(1)
+            
         else:
             raise Exception("FeatureType unknown to DataService")
         return feature
@@ -52,7 +36,7 @@ class DataService(object):
     @dispatch(str, object)
     def load_feature_raw(subject_id, feature_type):
         
-        session_ids = SubjectBuilder.get_built_sleepsession_ids(subject_id)
+        session_ids = BuiltService.get_built_sleepsession_ids(subject_id)
         feature_shape = DataService.__get_feature_shape(subject_id, feature_type)
         
         stacked_feature = np.zeros(feature_shape)
@@ -73,7 +57,7 @@ class DataService(object):
     @dispatch(object)
     def load_feature_raw(feature_type):
         
-        subject_ids = SubjectBuilder.get_built_subject_ids()
+        subject_ids = BuiltService.get_built_subject_ids()
         feature_shape = DataService.__get_feature_shape(feature_type)
         
         stacked_feature = np.zeros(feature_shape)
@@ -90,11 +74,43 @@ class DataService(object):
         
         return stacked_feature
     
+    @staticmethod
+    def load_cropped(subject_id, session_id, feature_type):
+        file_path = PathService.get_cropped_file_path(subject_id, session_id, feature_type)
+        values = pd.read_csv(str(file_path), delimiter=" ").values
+        return Collection(subject_id=subject_id, data=values)
+    
+    @staticmethod
+    def write_cropped(collection, session_id, feature_type):
+        output_path = PathService.get_cropped_file_path(collection.subject_id, session_id, feature_type)
+        np.savetxt(output_path, collection.data, fmt='%f')
+    
+    @staticmethod
+    def load_epoched(subject_id, session_id, feature_type):
+        feature_path = PathService.get_epoched_file_path(subject_id, session_id, feature_type)
+        feature = pd.read_csv(str(feature_path)).values
+        return feature
+    
+    @staticmethod
+    def write_epoched(subject_id, session_id, feature, feature_type):
+        feature_path = PathService.get_epoched_file_path(subject_id, session_id, feature_type)
+        np.savetxt(feature_path, feature, fmt='%f')
+        
+    @staticmethod
+    def load_nightly():
+        nightly_feature_path = PathService.get_nightly_file_path()
+        nightly_feature_dataframe = pd.read_csv(str(nightly_feature_path))
+        return nightly_feature_dataframe
+    
+    @staticmethod
+    def write_nightly(nightly_dataframe):
+        nightly_feature_path = PathService.get_nightly_file_path()
+        nightly_dataframe.to_csv(nightly_feature_path, index=False)
     
     @staticmethod
     @dispatch(str, object)
     def __get_feature_shape(subject_id, feature_type):
-        session_ids = SubjectBuilder.get_built_sleepsession_ids(subject_id)
+        session_ids = BuiltService.get_built_sleepsession_ids(subject_id)
         
         for i in range(len(session_ids)):
             
@@ -114,7 +130,7 @@ class DataService(object):
     @staticmethod
     @dispatch(object)
     def __get_feature_shape(feature_type):
-        subject_ids = SubjectBuilder.get_built_subject_ids()
+        subject_ids = BuiltService.get_built_subject_ids()
         
         for i in range(len(subject_ids)):
             
