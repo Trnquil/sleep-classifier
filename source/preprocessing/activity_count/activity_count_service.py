@@ -19,7 +19,7 @@ class ActivityCountService(object):
             utils.get_project_root()) + '/source/make_counts.m\'); exit;\"')
 
     @staticmethod
-    def build_activity_counts_without_matlab(subject_id, data, sleep_session_id):
+    def build_activity_counts_without_matlab(subject_id, data):
 
         fs = 50
         time = np.arange(np.amin(data[:, 0]), np.amax(data[:, 0]), 1.0 / fs)
@@ -50,9 +50,8 @@ class ActivityCountService(object):
         time_counts = np.expand_dims(time_counts, axis=1)
         counts = np.expand_dims(counts, axis=1)
         output = np.hstack((time_counts, counts))
-
-        activity_count_output_path = PathService.get_cropped_file_path(subject_id, sleep_session_id, FeatureType.cropped_count)
-        np.savetxt(activity_count_output_path, output, fmt='%f', delimiter=' ')
+        
+        return Collection(subject_id, output)
 
     @staticmethod
     def max2epochs(data, fs, epoch):

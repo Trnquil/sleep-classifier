@@ -1,10 +1,10 @@
 import numpy as np
 
 from source.preprocessing.interval import Interval
+from source.analysis.setup.feature_type import FeatureType
 
 
-class Collection(object):
-    
+class MotionCollection(object):
     def __init__(self, subject_id, data):
         self.subject_id = subject_id
         self.data = data
