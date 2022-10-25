@@ -12,6 +12,8 @@ from source.preprocessing.feature_builder import FeatureBuilder
 from source.preprocessing.nightly.nightly_feature_builder import NightlyFeatureBuilder
 from source.preprocessing.raw_data_processor import RawDataProcessor
 from source.preprocessing.time.circadian_service import CircadianService
+from source.preprocessing.clustering.clustering_feature_service import ClusteringFeatureService
+from source.preprocessing.clustering.cluster_feature_builder import ClusterFeatureBuilder
 
 
 def run_preprocessing():
@@ -33,6 +35,13 @@ def run_preprocessing():
     for subject in subject_sleepsession_dictionary.keys():
         for session in subject_sleepsession_dictionary[subject]:
             FeatureBuilder.build(subject, session)
+            
+    clustering_model = ClusteringFeatureService.get_fitted_model()
+    # Only building features for subjects and sleepsession for which folders exist
+    subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids()
+    for subject in subject_sleepsession_dictionary.keys():
+        for session in subject_sleepsession_dictionary[subject]:
+            ClusterFeatureBuilder.build(subject, session, clustering_model)
             
     NightlyFeatureBuilder.build()
             

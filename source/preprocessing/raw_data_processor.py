@@ -24,7 +24,7 @@ class RawDataProcessor:
     def crop_all(subject_id):
         
         
-        '''Loading data normalizing data'''
+        '''Loading data'''
         motion_collection = MotionService.load_raw(subject_id)
         heart_rate_collection = HeartRateService.load_raw(subject_id)
         count_collection = ActivityCountService.build_activity_counts_without_matlab(subject_id, motion_collection.data) # Builds activity counts with python, not MATLAB
