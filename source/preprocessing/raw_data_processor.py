@@ -27,12 +27,13 @@ class RawDataProcessor:
         '''Loading data normalizing data'''
         motion_collection = MotionService.load_raw(subject_id)
         heart_rate_collection = HeartRateService.load_raw(subject_id)
+        count_collection = ActivityCountService.build_activity_counts_without_matlab(subject_id, motion_collection.data) # Builds activity counts with python, not MATLAB
 
         
         '''Normalizing data'''
-        #motion_collection = RawDataProcessor.normalize(motion_collection)
-        #heart_rate_collection = RawDataProcessor.normalize(heart_rate_collection)
-        #count_collection = RawDataProcessor.normalize(count_collection)
+        motion_collection = RawDataProcessor.normalize(motion_collection)
+        heart_rate_collection = RawDataProcessor.normalize(heart_rate_collection)
+        count_collection = RawDataProcessor.normalize(count_collection)
         
         '''Getting intersecting intervals of time for all collections'''
         valid_interval = RawDataProcessor.get_intersecting_interval([motion_collection, heart_rate_collection])
@@ -46,7 +47,7 @@ class RawDataProcessor:
         '''splitting each collection into sleepsessions'''
         motion_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, motion_collection)
         heart_rate_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, heart_rate_collection)
-        # count_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, count_collection)
+        count_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, count_collection)
         
         
         '''writing all the data to disk'''
@@ -56,8 +57,8 @@ class RawDataProcessor:
             
             if(np.any(motion_collection.data)):
                 DataService.write_cropped(motion_collection, sleep_session_id, FeatureType.cropped_motion)
-                count_collection = ActivityCountService.build_activity_counts_without_matlab(subject_id, motion_collection.data) # Builds activity counts with python, not MATLAB
-                DataService.write_cropped(count_collection, sleep_session_id, FeatureType.cropped_count)
+        
+                
             
         for heart_rate_sleepsession_tuple in heart_rate_sleepsession_tuples:
             heart_rate_collection = heart_rate_sleepsession_tuple[1]
@@ -66,14 +67,14 @@ class RawDataProcessor:
             if(np.any(heart_rate_collection.data)):
                 DataService.write_cropped(heart_rate_collection, sleep_session_id, FeatureType.cropped_heart_rate)
                 
-        # for count_sleepsession_tuple in count_sleepsession_tuples:
-        #     count_collection = count_sleepsession_tuple[1]
-        #     sleep_session_id = count_sleepsession_tuple[0].session_id
+        for count_sleepsession_tuple in count_sleepsession_tuples:
+            count_collection = count_sleepsession_tuple[1]
+            sleep_session_id = count_sleepsession_tuple[0].session_id
             
-
+        
             
-        #     if(np.any(count_collection.data)):
-        #         pass
+            if(np.any(count_collection.data)):
+                DataService.write_cropped(count_collection, sleep_session_id, FeatureType.cropped_count)
             
     @staticmethod 
     def normalize(collection):

@@ -97,17 +97,16 @@ class SleepSessionService(object):
             timestamp_index_start = 0
             
             # Going through timestamps until we've got one that is inside the current sleepsession
-            while(timestamp_index_start < len(timestamps)
+            while(timestamp_index_start + 1 < len(timestamps)
                   and timestamps[timestamp_index_start] < sleepsession.start_timestamp):
                 timestamp_index_start += 1
                 
             timestamp_index_end = timestamp_index_start
                 
             # Going through the timestamps that are inside the sleepsession and appending features to the sleepsession
-            while(timestamp_index_end < len(timestamps)
-                  and timestamps[timestamp_index_end] <= sleepsession.end_timestamp):
+            while(timestamp_index_end + 1< len(timestamps)
+                  and timestamps[timestamp_index_end + 1] <= sleepsession.end_timestamp):
                 timestamp_index_end += 1
-            timestamp_index_end -= 1
             
             timestamped_feature = collection.data[timestamp_index_start:timestamp_index_end][:]
             sleepsession_tuple = (sleepsession, Collection(subject_id, timestamped_feature))
