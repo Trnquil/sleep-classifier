@@ -9,6 +9,7 @@ from source.preprocessing.epoch import Epoch
 from source.preprocessing.path_service import PathService
 from source.analysis.setup.feature_type import FeatureType
 from source.data_service import DataService
+from source.preprocessing.feature_service import FeatureService
 
 
 class ActivityCountFeatureService(object):
@@ -32,8 +33,10 @@ class ActivityCountFeatureService(object):
     def build_from_collection(activity_count_collection, valid_epochs):
         count_features = []
 
-        interpolated_timestamps, interpolated_counts = ActivityCountFeatureService.interpolate(
-            activity_count_collection)
+        activity_count_collection = FeatureService.interpolate(activity_count_collection)
+        
+        interpolated_timestamps = activity_count_collection.timestamps
+        interpolated_counts = activity_count_collection.values
 
         for epoch in valid_epochs:
             indices_in_range = ActivityCountFeatureService.get_window(interpolated_timestamps, epoch)
@@ -48,12 +51,3 @@ class ActivityCountFeatureService(object):
     def get_feature(count_values):
         convolution = utils.smooth_gauss(count_values.flatten(), np.shape(count_values.flatten())[0])
         return np.array([convolution])
-
-    @staticmethod
-    def interpolate(activity_count_collection):
-        timestamps = activity_count_collection.timestamps.flatten()
-        activity_count_values = activity_count_collection.values.flatten()
-        interpolated_timestamps = np.arange(np.amin(timestamps),
-                                            np.amax(timestamps), 1)
-        interpolated_counts = np.interp(interpolated_timestamps, timestamps, activity_count_values)
-        return interpolated_timestamps, interpolated_counts
