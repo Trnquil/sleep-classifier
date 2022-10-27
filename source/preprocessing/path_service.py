@@ -47,7 +47,7 @@ class PathService(object):
         return str(Constants.NIGHTLY_FILE_PATH) + "/" + PathService.filenames[FeatureType.nightly.name]
     
     @staticmethod
-    def get_raw_file_path(subject_id, feature_type):
+    def get_raw_file_paths(subject_id, feature_type):
         subject_dir = utils.get_project_root().joinpath('data/USI Sleep/E4_Data/' + subject_id)
         session_dirs = os.listdir(subject_dir)
         session_dirs.sort()
@@ -57,7 +57,9 @@ class PathService(object):
         
         #For now we are simply returning the first session
         #TODO: Return all directories, not only the first one
-        return str(subject_dir.joinpath(session_dirs[2])) + "/" + PathService.filenames[feature_type.name]
+        return [str(subject_dir.joinpath(session_dirs[0])) + "/" + PathService.filenames[feature_type.name],
+                str(subject_dir.joinpath(session_dirs[1])) + "/" + PathService.filenames[feature_type.name],
+                str(subject_dir.joinpath(session_dirs[2])) + "/" + PathService.filenames[feature_type.name]]
     
     @staticmethod
     def get_epoched_file_path(subject_id, session_id, feature_type):
