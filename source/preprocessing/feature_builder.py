@@ -10,7 +10,9 @@ from source.preprocessing.raw_data_processor import RawDataProcessor
 from source.preprocessing.time.time_based_feature_service import TimeBasedFeatureService
 from source.preprocessing.clustering.clustering_feature_service import ClusteringFeatureService
 from source.analysis.setup.feature_type import FeatureType
-from source.data_service import DataService
+from source.data_services.data_service import DataService
+from source.data_services.data_loader import DataLoader
+from source.data_services.data_writer import DataWriter
 
 import numpy as np
 
@@ -39,10 +41,10 @@ class FeatureBuilder(object):
 
 
         # Writing all features to their files
-        DataService.write_epoched(subject_id, session_id, cosine_feature, FeatureType.epoched_cosine)
-        DataService.write_epoched(subject_id, session_id, time_feature, FeatureType.epoched_time)
-        DataService.write_epoched(subject_id, session_id, count_feature, FeatureType.epoched_count)
-        DataService.write_epoched(subject_id, session_id, heart_rate_feature, FeatureType.epoched_heart_rate)
+        DataWriter.write_epoched(subject_id, session_id, cosine_feature, FeatureType.epoched_cosine)
+        DataWriter.write_epoched(subject_id, session_id, time_feature, FeatureType.epoched_time)
+        DataWriter.write_epoched(subject_id, session_id, count_feature, FeatureType.epoched_count)
+        DataWriter.write_epoched(subject_id, session_id, heart_rate_feature, FeatureType.epoched_heart_rate)
                                      
 
         

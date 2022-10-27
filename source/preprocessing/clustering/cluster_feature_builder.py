@@ -1,10 +1,11 @@
 from source.analysis.setup.feature_type import FeatureType
-from source.data_service import DataService
+from source.data_services.data_service import DataService
 from source.constants import Constants
 from matplotlib import cm
 
 import numpy as np
 from matplotlib import pyplot as plt
+from source.data_services.data_writer import DataWriter
 
 
 
@@ -34,7 +35,7 @@ class ClusterFeatureBuilder(object):
         # plt.clf()
 
         # Writing all features to their files
-        DataService.write_epoched(subject_id, session_id, clusters, FeatureType.epoched_cluster)
+        DataWriter.write_epoched(subject_id, session_id, clusters, FeatureType.epoched_cluster)
                                      
 
         

@@ -8,13 +8,14 @@ import numpy as np
 from source import utils
 from source.preprocessing.activity_count.activity_count_service import ActivityCountService
 from source.preprocessing.epoch import Epoch
-from source.preprocessing.heart_rate.heart_rate_service import HeartRateService
 from source.preprocessing.interval import Interval
-from source.preprocessing.motion.motion_service import MotionService
 from source.analysis.setup.sleep_session_service import SleepSessionService
 from source.analysis.setup.feature_type import FeatureType
-from source.data_service import DataService
+from source.data_services.data_service import DataService
 from source.preprocessing.collection import Collection
+from source.data_services.data_loader import DataLoader
+from source.data_services.data_writer import DataWriter
+from source.preprocessing.collection_service import CollectionService
 
 
 class RawDataProcessor:
@@ -25,23 +26,17 @@ class RawDataProcessor:
         
         
         '''Loading data'''
-        motion_collection = MotionService.load_raw(subject_id)
-        heart_rate_collection = HeartRateService.load_raw(subject_id)
+        motion_collection = DataLoader.load_raw(subject_id, FeatureType.raw_acc)
+        heart_rate_collection = DataLoader.load_raw(subject_id,  FeatureType.raw_hr)
         count_collection = ActivityCountService.build_activity_counts_without_matlab(subject_id, motion_collection.data) # Builds activity counts with python, not MATLAB
-
-        
-        '''Normalizing data'''
-        # motion_collection = RawDataProcessor.normalize(motion_collection)
-        # heart_rate_collection = RawDataProcessor.normalize(heart_rate_collection)
-        # count_collection = RawDataProcessor.normalize(count_collection)
         
         '''Getting intersecting intervals of time for all collections'''
         valid_interval = RawDataProcessor.get_intersecting_interval([motion_collection, heart_rate_collection])
 
 
         '''cropping all the data to the valid interval'''
-        motion_collection = MotionService.crop(motion_collection, valid_interval)
-        heart_rate_collection = HeartRateService.crop(heart_rate_collection, valid_interval)
+        motion_collection = CollectionService.crop(motion_collection, valid_interval)
+        heart_rate_collection = CollectionService.crop(heart_rate_collection, valid_interval)
         
         
         '''splitting each collection into sleepsessions'''
@@ -56,7 +51,7 @@ class RawDataProcessor:
             sleep_session_id = motion_sleepsession_tuple[0].session_id
             
             if(np.any(motion_collection.data)):
-                DataService.write_cropped(motion_collection, sleep_session_id, FeatureType.cropped_motion)
+                DataWriter.write_cropped(motion_collection, sleep_session_id, FeatureType.cropped_motion)
         
                 
             
@@ -65,7 +60,7 @@ class RawDataProcessor:
             sleep_session_id = heart_rate_sleepsession_tuple[0].session_id
             
             if(np.any(heart_rate_collection.data)):
-                DataService.write_cropped(heart_rate_collection, sleep_session_id, FeatureType.cropped_heart_rate)
+                DataWriter.write_cropped(heart_rate_collection, sleep_session_id, FeatureType.cropped_heart_rate)
                 
         for count_sleepsession_tuple in count_sleepsession_tuples:
             count_collection = count_sleepsession_tuple[1]
@@ -74,7 +69,7 @@ class RawDataProcessor:
         
             
             if(np.any(count_collection.data)):
-                DataService.write_cropped(count_collection, sleep_session_id, FeatureType.cropped_count)
+                DataWriter.write_cropped(count_collection, sleep_session_id, FeatureType.cropped_count)
             
     @staticmethod 
     def normalize(collection):
@@ -103,8 +98,8 @@ class RawDataProcessor:
     def get_valid_epochs(subject_id, session_id):
 
         #psg_collection = PSGService.load_cropped(subject_id)
-        motion_collection = DataService.load_cropped(subject_id, session_id, FeatureType.cropped_motion)
-        heart_rate_collection = DataService.load_cropped(subject_id, session_id, FeatureType.cropped_heart_rate)
+        motion_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_motion)
+        heart_rate_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_heart_rate)
 
         #Manually setting the start time to 0
         start_time = 0

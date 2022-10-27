@@ -1,4 +1,4 @@
-from source.data_service import DataService
+from source.data_services.data_service import DataService
 from source import utils
 import numpy as np
 from source.preprocessing.collection import Collection

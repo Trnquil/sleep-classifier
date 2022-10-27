@@ -2,16 +2,12 @@ import sys
 sys.path.insert(1, '..') # tells system where project root is
 
 from source.analysis.setup.feature_type import FeatureType
-from source.preprocessing.path_service import PathService
-from source.preprocessing.collection import Collection
-
-from source.analysis.setup.sleep_session_service import SleepSessionService
-from multipledispatch import dispatch
-from source.analysis.setup.feature_type import FeatureType
 from source.preprocessing.built_service import BuiltService
+from source.analysis.setup.sleep_session_service import SleepSessionService
+from source.data_services.data_loader import DataLoader
 
+from multipledispatch import dispatch
 import numpy as np
-import pandas as pd
 
 class DataService(object):
     
@@ -20,10 +16,10 @@ class DataService(object):
     def load_feature_raw(subject_id, session_id, feature_type):
         
         if feature_type.name in FeatureType.get_cropped_names(): 
-            feature = DataService.load_cropped(subject_id, session_id, feature_type).data
+            feature = DataLoader.load_cropped(subject_id, session_id, feature_type).data
             
         elif feature_type.name in FeatureType.get_epoched_names(): 
-            feature = DataService.load_epoched(subject_id, session_id, feature_type)
+            feature = DataLoader.load_epoched(subject_id, session_id, feature_type)
             
         elif FeatureType.sleep_quality.name == feature_type.name:
             feature = np.array([SleepSessionService.load_sleepquality(subject_id, session_id)]).reshape(1)
@@ -73,39 +69,6 @@ class DataService(object):
             current_height += feature_height
         
         return stacked_feature
-    
-    @staticmethod
-    def load_cropped(subject_id, session_id, feature_type):
-        file_path = PathService.get_cropped_file_path(subject_id, session_id, feature_type)
-        values = pd.read_csv(str(file_path), delimiter=" ").values
-        return Collection(subject_id=subject_id, data=values)
-    
-    @staticmethod
-    def write_cropped(collection, session_id, feature_type):
-        output_path = PathService.get_cropped_file_path(collection.subject_id, session_id, feature_type)
-        np.savetxt(output_path, collection.data, fmt='%f')
-    
-    @staticmethod
-    def load_epoched(subject_id, session_id, feature_type):
-        feature_path = PathService.get_epoched_file_path(subject_id, session_id, feature_type)
-        feature = pd.read_csv(str(feature_path)).values
-        return feature
-    
-    @staticmethod
-    def write_epoched(subject_id, session_id, feature, feature_type):
-        feature_path = PathService.get_epoched_file_path(subject_id, session_id, feature_type)
-        np.savetxt(feature_path, feature, fmt='%f')
-        
-    @staticmethod
-    def load_nightly():
-        nightly_feature_path = PathService.get_nightly_file_path()
-        nightly_feature_dataframe = pd.read_csv(str(nightly_feature_path))
-        return nightly_feature_dataframe
-    
-    @staticmethod
-    def write_nightly(nightly_dataframe):
-        nightly_feature_path = PathService.get_nightly_file_path()
-        nightly_dataframe.to_csv(nightly_feature_path, index=False)
     
     @staticmethod
     @dispatch(str, object)

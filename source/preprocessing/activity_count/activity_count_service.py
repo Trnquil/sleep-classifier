@@ -74,13 +74,3 @@ class ActivityCountService(object):
         epoch_data = epoch_data.flatten()
 
         return epoch_data
-
-    @staticmethod
-    def crop(activity_count_collection, interval):
-        subject_id = activity_count_collection.subject_id
-        timestamps = activity_count_collection.timestamps
-        valid_indices = ((timestamps >= interval.start_time)
-                         & (timestamps < interval.end_time)).nonzero()[0]
-
-        cropped_data = activity_count_collection.data[valid_indices, :]
-        return Collection(subject_id=subject_id, data=cropped_data)
