@@ -11,13 +11,24 @@ from source.analysis.setup.feature_type import FeatureType
 from source.data_services.data_service import DataService
 from source.preprocessing.feature_service import FeatureService
 from source.data_services.data_loader import DataLoader
+from source.preprocessing.collection import Collection
+
+from multipledispatch import dispatch
 
 
 class ActivityCountFeatureService(object):
 
     @staticmethod
+    @dispatch(str, str, object)
     def build(subject_id, session_id, valid_epochs):
         activity_count_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_count)
+        return ActivityCountFeatureService.build_from_collection(activity_count_collection, valid_epochs)
+    
+    @staticmethod
+    @dispatch(str, object)
+    def build(subject_id, valid_epochs):
+        activity_count_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_count)
+        activity_count_collection = Collection(subject_id=subject_id, data=activity_count_feature)
         return ActivityCountFeatureService.build_from_collection(activity_count_collection, valid_epochs)
 
     @staticmethod

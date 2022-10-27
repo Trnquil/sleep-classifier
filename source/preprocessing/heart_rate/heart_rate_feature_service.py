@@ -9,13 +9,25 @@ from source.data_services.data_service import DataService
 from source.analysis.setup.feature_type import FeatureType
 from source.preprocessing.feature_service import FeatureService
 from source.data_services.data_loader import DataLoader
+from source.preprocessing.collection import Collection
+
+from multipledispatch import dispatch
 
 class HeartRateFeatureService(object):
 
     @staticmethod
+    @dispatch(str, str, object)
     def build(subject_id, session_id, valid_epochs):
         heart_rate_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_heart_rate)
         return HeartRateFeatureService.build_from_collection(heart_rate_collection, valid_epochs)
+    
+    @staticmethod
+    @dispatch(str, object)
+    def build(subject_id, valid_epochs):
+        heart_rate_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_heart_rate)
+        heart_rate_collection = Collection(subject_id=subject_id, data=heart_rate_feature)
+        return HeartRateFeatureService.build_from_collection(heart_rate_collection, valid_epochs)
+
 
     @staticmethod
     def build_from_collection(heart_rate_collection, valid_epochs):

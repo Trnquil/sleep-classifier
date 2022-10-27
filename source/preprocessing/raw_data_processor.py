@@ -16,7 +16,7 @@ from source.preprocessing.collection import Collection
 from source.data_services.data_loader import DataLoader
 from source.data_services.data_writer import DataWriter
 from source.preprocessing.collection_service import CollectionService
-
+from multipledispatch import dispatch
 
 class RawDataProcessor:
     BASE_FILE_PATH = utils.get_project_root().joinpath('outputs/cropped/')
@@ -95,11 +95,37 @@ class RawDataProcessor:
         return Interval(start_time=max(start_times), end_time=min(end_times))
 
     @staticmethod
+    @dispatch(str, str)
     def get_valid_epochs(subject_id, session_id):
 
-        #psg_collection = PSGService.load_cropped(subject_id)
         motion_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_motion)
         heart_rate_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_heart_rate)
+
+        #Manually setting the start time to 0
+        start_time = 0
+        motion_floored_timestamps, motion_epoch_dictionary = RawDataProcessor.get_valid_epoch_dictionary(motion_collection.timestamps,
+                                                                              start_time)
+        hr_floored_timestamps, hr_epoch_dictionary = RawDataProcessor.get_valid_epoch_dictionary(heart_rate_collection.timestamps,
+                                                                          start_time)
+
+        valid_epochs = []
+        for timestamp in motion_floored_timestamps:
+            index = 0
+            if timestamp in motion_epoch_dictionary and timestamp in hr_epoch_dictionary:
+                epoch = Epoch(timestamp, index)
+                index += 1
+                valid_epochs.append(epoch)
+        return valid_epochs
+    
+    @staticmethod
+    @dispatch(str)
+    def get_valid_epochs(subject_id):
+
+        motion_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_motion)
+        motion_collection = Collection(subject_id, motion_feature)
+        
+        heart_rate_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_heart_rate)
+        heart_rate_collection = Collection(subject_id, heart_rate_feature)
 
         #Manually setting the start time to 0
         start_time = 0

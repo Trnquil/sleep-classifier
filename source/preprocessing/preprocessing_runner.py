@@ -18,7 +18,15 @@ from source.preprocessing.clustering.cluster_feature_builder import ClusterFeatu
 
 def run_preprocessing():
     start_time = time.time()
+    
+    build_cropped()
+    build_epoched()
+    build_nightly()            
 
+    end_time = time.time()
+    print("Execution took " + str((end_time - start_time) / 60) + " minutes")
+
+def build_cropped():
     subject_set = Constants.SUBJECT_IDS
     for subject in subject_set:
         print("Cropping data from subject " + str(subject) + "...")
@@ -29,12 +37,11 @@ def run_preprocessing():
         CircadianService.build_circadian_model()      # Both of the circadian lines require MATLAB to run
         CircadianService.build_circadian_mesa()       # INCLUDE_CIRCADIAN = False by default because most people don't have MATLAB
 
-        
+def build_epoched():
     # Only building features for subjects and sleepsession for which folders exist
-    subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids()
-    for subject in subject_sleepsession_dictionary.keys():
-        for session in subject_sleepsession_dictionary[subject]:
-            FeatureBuilder.build(subject, session)
+    subject_ids = BuiltService.get_built_subject_ids()
+    for subject_id in subject_ids:
+        FeatureBuilder.build(subject_id)
             
     clustering_model = ClusteringFeatureService.get_fitted_model()
     # Only building features for subjects and sleepsession for which folders exist
@@ -42,15 +49,11 @@ def run_preprocessing():
     for subject in subject_sleepsession_dictionary.keys():
         for session in subject_sleepsession_dictionary[subject]:
             ClusterFeatureBuilder.build(subject, session, clustering_model)
-            
+
+def build_nightly():
     NightlyFeatureBuilder.build()
-            
     
-
-    end_time = time.time()
-    print("Execution took " + str((end_time - start_time) / 60) + " minutes")
-
-
+    
 run_preprocessing()
 
 # for subject_id in subject_ids:
