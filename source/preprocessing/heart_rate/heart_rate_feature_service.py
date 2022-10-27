@@ -22,6 +22,7 @@ class HeartRateFeatureService(object):
         heart_rate_features = []
 
         heart_rate_collection = FeatureService.interpolate(heart_rate_collection)
+        heart_rate_collection = FeatureService.convolve(heart_rate_collection)
         
         interpolated_timestamps = heart_rate_collection.timestamps
         interpolated_hr = heart_rate_collection.values

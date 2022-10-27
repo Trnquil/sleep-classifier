@@ -31,9 +31,9 @@ class RawDataProcessor:
 
         
         '''Normalizing data'''
-        motion_collection = RawDataProcessor.normalize(motion_collection)
-        heart_rate_collection = RawDataProcessor.normalize(heart_rate_collection)
-        count_collection = RawDataProcessor.normalize(count_collection)
+        # motion_collection = RawDataProcessor.normalize(motion_collection)
+        # heart_rate_collection = RawDataProcessor.normalize(heart_rate_collection)
+        # count_collection = RawDataProcessor.normalize(count_collection)
         
         '''Getting intersecting intervals of time for all collections'''
         valid_interval = RawDataProcessor.get_intersecting_interval([motion_collection, heart_rate_collection])
