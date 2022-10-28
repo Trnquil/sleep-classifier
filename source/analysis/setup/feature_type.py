@@ -8,6 +8,7 @@ class FeatureType(Enum):
     cropped_count = "cropped count"
     cropped_motion = "cropped motion"
     cropped_heart_rate = "cropped heart rate"
+    normalized_heart_rate = "normalized cropped heart rate"
     
     epoched_heart_rate = "epoched heart rate"
     epoched_count = "epoched count"
@@ -24,7 +25,8 @@ class FeatureType(Enum):
     def get_cropped_names():
         return [FeatureType.cropped_count.name, 
                 FeatureType.cropped_motion.name, 
-                FeatureType.cropped_heart_rate.name]
+                FeatureType.cropped_heart_rate.name,
+                FeatureType.normalized_heart_rate.name]
     
     def get_epoched_names():
         return [FeatureType.epoched_circadian_model.name, 

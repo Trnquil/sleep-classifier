@@ -34,7 +34,8 @@ class SleepSessionService(object):
         
         sleepquality = int(selfreports_array.iloc[0])
 
-        return sleepquality        
+        return sleepquality
+        
     
     @staticmethod
     def load(subject_id):
@@ -58,28 +59,15 @@ class SleepSessionService(object):
             sleepsession = SleepSession(session_id, sleepquality, start_timestamp, end_timestamp)
             sleepsessions.append(sleepsession)
         
+        sleepsessions.sort(key=lambda sleepsession: sleepsession.start_timestamp)
         return sleepsessions
     
     @staticmethod
-    def get_all_session_ids(subject_id):
-        selfreports_file = SleepSessionService.get_file_path()
-        selfreports_array = pd.read_csv(str(selfreports_file))
-        
-        # making sure we only work with data from the requested user (specified by subject_id)
-        selfreports_array = selfreports_array[selfreports_array['User'].eq(subject_id)]
-        
-        # We only keep the labels that we are interested in
-        selfreports_array = selfreports_array[['SessionID']].dropna()
-        
-        sleepsession_ids = []
-        for index, selfreports_row in selfreports_array.iterrows():
-            
-            session_id = "SLEEP_SESSION_" + str(selfreports_row[0]).zfill(2)
-            
-            sleepsession_ids.append(session_id)
-        
-        return sleepsession_ids
+    def get_starttime_ordered_ids(subject_id) :
+        session_ids = [sleepsession.session_id for sleepsession in SleepSessionService.load(subject_id)]
+        return session_ids
     
+
     # assigning features to each sleepsession based on the features' timestamps
     @staticmethod
     def assign_collection_to_sleepsession(subject_id, collection):
@@ -104,7 +92,7 @@ class SleepSessionService(object):
             timestamp_index_end = timestamp_index_start
                 
             # Going through the timestamps that are inside the sleepsession and appending features to the sleepsession
-            while(timestamp_index_end + 1< len(timestamps)
+            while(timestamp_index_end + 1 < len(timestamps)
                   and timestamps[timestamp_index_end + 1] <= sleepsession.end_timestamp):
                 timestamp_index_end += 1
             

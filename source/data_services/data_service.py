@@ -22,7 +22,7 @@ class DataService(object):
             feature = DataLoader.load_epoched(subject_id, session_id, feature_type)
             
         elif FeatureType.sleep_quality.name == feature_type.name:
-            feature = np.array([SleepSessionService.load_sleepquality(subject_id, session_id)]).reshape(1)
+            feature = np.array([SleepSessionService.load_sleepquality(subject_id, session_id)]).reshape(1,1)
             
         else:
             raise Exception("FeatureType unknown to DataService")

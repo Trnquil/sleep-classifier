@@ -24,11 +24,12 @@ class RawDataProcessor:
     @staticmethod
     def crop_all(subject_id):
         
-        
         '''Loading data'''
         motion_collection = DataLoader.load_raw(subject_id, FeatureType.raw_acc)
         heart_rate_collection = DataLoader.load_raw(subject_id,  FeatureType.raw_hr)
         count_collection = ActivityCountService.build_activity_counts_without_matlab(subject_id, motion_collection.data) # Builds activity counts with python, not MATLAB
+        
+        
         
         '''Getting intersecting intervals of time for all collections'''
         valid_interval = RawDataProcessor.get_intersecting_interval([motion_collection, heart_rate_collection])
@@ -37,7 +38,6 @@ class RawDataProcessor:
         '''cropping all the data to the valid interval'''
         motion_collection = CollectionService.crop(motion_collection, valid_interval)
         heart_rate_collection = CollectionService.crop(heart_rate_collection, valid_interval)
-        
         
         '''splitting each collection into sleepsessions'''
         motion_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, motion_collection)
@@ -53,7 +53,6 @@ class RawDataProcessor:
             if(np.any(motion_collection.data)):
                 DataWriter.write_cropped(motion_collection, sleep_session_id, FeatureType.cropped_motion)
         
-                
             
         for heart_rate_sleepsession_tuple in heart_rate_sleepsession_tuples:
             heart_rate_collection = heart_rate_sleepsession_tuple[1]
@@ -66,10 +65,22 @@ class RawDataProcessor:
             count_collection = count_sleepsession_tuple[1]
             sleep_session_id = count_sleepsession_tuple[0].session_id
             
-        
-            
             if(np.any(count_collection.data)):
                 DataWriter.write_cropped(count_collection, sleep_session_id, FeatureType.cropped_count)
+        
+                                     
+        '''Doing all above steps for normalized data'''
+        normalized_heart_rate_collection = Collection(subject_id, DataService.load_feature_raw(subject_id, FeatureType.cropped_heart_rate))
+        normalized_heart_rate_collection = RawDataProcessor.normalize(normalized_heart_rate_collection)
+        normalized_heart_rate_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, normalized_heart_rate_collection)
+           
+
+        for normalized_heart_rate_sleepsession_tuple in normalized_heart_rate_sleepsession_tuples:
+            normalized_heart_rate_collection = normalized_heart_rate_sleepsession_tuple[1]
+            sleep_session_id = normalized_heart_rate_sleepsession_tuple[0].session_id
+            
+            if(np.any(normalized_heart_rate_collection.data)):
+                DataWriter.write_cropped(normalized_heart_rate_collection, sleep_session_id, FeatureType.normalized_heart_rate)
             
     @staticmethod 
     def normalize(collection):

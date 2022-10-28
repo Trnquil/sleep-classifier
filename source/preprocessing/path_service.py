@@ -14,6 +14,7 @@ class PathService(object):
         FeatureType.cropped_count.name: "cropped_counts.out",
         FeatureType.cropped_heart_rate.name: "cropped_hr.out",
         FeatureType.cropped_motion.name: "cropped_motion.out",
+        FeatureType.normalized_heart_rate.name: "normalized_heart_rate.out",
         
         FeatureType.epoched_count.name: "count_feature.out",
         FeatureType.epoched_heart_rate.name: "hr_feature.out",
@@ -57,9 +58,9 @@ class PathService(object):
         
         #For now we are simply returning the first session
         #TODO: Return all directories, not only the first one
-        return [str(subject_dir.joinpath(session_dirs[0])) + "/" + PathService.filenames[feature_type.name],
-                str(subject_dir.joinpath(session_dirs[1])) + "/" + PathService.filenames[feature_type.name],
-                str(subject_dir.joinpath(session_dirs[2])) + "/" + PathService.filenames[feature_type.name]]
+        return [str(subject_dir.joinpath(session_dirs[2])) + "/" + PathService.filenames[feature_type.name],
+                str(subject_dir.joinpath(session_dirs[3])) + "/" + PathService.filenames[feature_type.name],
+                str(subject_dir.joinpath(session_dirs[4])) + "/" + PathService.filenames[feature_type.name]]
     
     @staticmethod
     def get_epoched_file_path(subject_id, session_id, feature_type):

@@ -13,6 +13,7 @@ from source.preprocessing.built_service import BuiltService
 from source.data_services.data_writer import DataWriter
 
 import pandas as pd
+import numpy as np
 
 
 
@@ -48,7 +49,9 @@ class NightlyFeatureBuilder(object):
         subject_session_dict = {'subject_id': subject_id, 'session_id': session_id}
         clustering_features_dict = ClusteringNightlyFeatureService.build_feature_dict(subject_id, session_id)
         
+        sleepquality_avg = np.mean(DataService.load_feature_raw(subject_id, FeatureType.sleep_quality))
         sleepquality = DataService.load_feature_raw(subject_id, session_id, FeatureType.sleep_quality)
+        sleepquality = 0 if sleepquality < sleepquality_avg else 1
         sleepquality_dict = {'sleep_quality': sleepquality}
         
         heart_rate_features_dict = HeartRateNightlyFeatureService.build_feature_dict(subject_id, session_id)

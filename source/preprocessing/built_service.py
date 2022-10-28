@@ -11,10 +11,13 @@ class BuiltService(object):
     def get_built_subject_and_sleepsession_ids():
         subject_to_session_dictionary = {}
         
+        subject_dirs = os.listdir(Constants.CROPPED_FILE_PATH)
+        subject_dirs.sort()
         for subject_id in os.listdir(Constants.CROPPED_FILE_PATH):
                 if subject_id in Constants.SUBJECT_IDS:
-                    for session_id in os.listdir(Constants.CROPPED_FILE_PATH.joinpath(subject_id)):
-                        if session_id in SleepSessionService.get_all_session_ids(subject_id):
+                    session_dirs = os.listdir(Constants.CROPPED_FILE_PATH.joinpath(subject_id))
+                    for session_id in SleepSessionService.get_starttime_ordered_ids(subject_id):
+                        if session_id in session_dirs:
                             if subject_id not in subject_to_session_dictionary.keys():
                                 subject_to_session_dictionary[subject_id] = []
                                 
