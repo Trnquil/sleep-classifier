@@ -6,6 +6,7 @@ from source.analysis.setup.feature_type import FeatureType
 from source.analysis.setup.subject_builder import SubjectBuilder
 from source.analysis.setup.train_test_splitter import TrainTestSplitter
 from source.mesa.mesa_data_service import MesaDataService
+from source.constants import Constants
 
 
 class SleepWakeClassifierSummaryBuilder(object):
@@ -25,7 +26,7 @@ class SleepWakeClassifierSummaryBuilder(object):
     @staticmethod
     def build_leave_one_out(attributed_classifier: AttributedClassifier,
                             feature_sets: [[FeatureType]]) -> ClassifierSummary:
-        subject_ids = SubjectBuilder.get_all_subject_ids()
+        subject_ids = Constants.subject_ids
         subject_dictionary = SubjectBuilder.get_subject_dictionary()
 
         data_splits = TrainTestSplitter.leave_one_out(subject_ids)

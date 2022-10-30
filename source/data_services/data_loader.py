@@ -8,6 +8,8 @@ from source.preprocessing.collection import Collection
 import numpy as np
 import pandas as pd
 
+from multipledispatch import dispatch
+
 class DataLoader(object):
     
     @staticmethod
@@ -87,7 +89,28 @@ class DataLoader(object):
         return feature
     
     @staticmethod
+    @dispatch()
     def load_nightly():
         nightly_feature_path = PathService.get_nightly_file_path()
         nightly_feature_dataframe = pd.read_csv(str(nightly_feature_path))
+        return nightly_feature_dataframe
+    
+    @staticmethod
+    @dispatch(str, str, object)
+    def load_nightly(subject_id, session_id, feature_type):
+        nightly_feature_path = PathService.get_nightly_file_path()
+        nightly_feature_dataframe = pd.read_csv(str(nightly_feature_path))
+    
+        
+        # making sure we only work with data from the requested user and session
+        nightly_feature_dataframe = nightly_feature_dataframe[nightly_feature_dataframe['subject_id'].eq(subject_id)]
+        nightly_feature_dataframe = nightly_feature_dataframe[nightly_feature_dataframe['session_id'].eq(session_id)]
+        
+        if(feature_type.name == FeatureType.nightly_cluster.name):
+            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("c_.*"))
+        elif(feature_type.name == FeatureType.nightly_hr.name):
+            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("hr_.*"))
+        else:
+            raise Exception("FeatureType unknown to DataLoader")
+        
         return nightly_feature_dataframe

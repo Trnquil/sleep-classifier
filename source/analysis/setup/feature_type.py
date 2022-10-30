@@ -1,4 +1,5 @@
 from enum import Enum
+import re
 
 
 class FeatureType(Enum):
@@ -20,19 +21,23 @@ class FeatureType(Enum):
     
     nightly = "nightly"
     
+    nightly_cluster = "nightly cluster features"
+    nightly_hr = "nightly heart rate features"
+    
     sleep_quality = "sleep quality"
     
     def get_cropped_names():
-        return [FeatureType.cropped_count.name, 
-                FeatureType.cropped_motion.name, 
-                FeatureType.cropped_heart_rate.name,
-                FeatureType.normalized_heart_rate.name]
+        r = re.compile("cropped_.*|normalized_.*")
+        feature_type_list = [feature_type.name for feature_type in FeatureType]
+        return list(filter(r.match, feature_type_list))
     
     def get_epoched_names():
-        return [FeatureType.epoched_circadian_model.name, 
-                FeatureType.epoched_motion.name, 
-                FeatureType.epoched_cluster.name, 
-                FeatureType.epoched_cosine.name, 
-                FeatureType.epoched_count.name, 
-                FeatureType.epoched_heart_rate.name, 
-                FeatureType.epoched_time.name]
+        r = re.compile("epoched_.*")
+        feature_type_list = [feature_type.name for feature_type in FeatureType]
+        return list(filter(r.match, feature_type_list))
+    
+    def get_nightly_names():
+        r = re.compile("nightly_.*")
+        feature_type_list = [feature_type.name for feature_type in FeatureType]
+        return list(filter(r.match, feature_type_list))
+

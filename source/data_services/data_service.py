@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(1, '..') # tells system where project root is
+sys.path.insert(1, '../..') # tells system where project root is
 
 from source.analysis.setup.feature_type import FeatureType
 from source.preprocessing.built_service import BuiltService
@@ -20,6 +20,9 @@ class DataService(object):
             
         elif feature_type.name in FeatureType.get_epoched_names(): 
             feature = DataLoader.load_epoched(subject_id, session_id, feature_type)
+            
+        elif feature_type.name in FeatureType.get_nightly_names(): 
+            feature = DataLoader.load_nightly(subject_id, session_id, feature_type).to_numpy()
             
         elif FeatureType.sleep_quality.name == feature_type.name:
             feature = np.array([SleepSessionService.load_sleepquality(subject_id, session_id)]).reshape(1,1)
