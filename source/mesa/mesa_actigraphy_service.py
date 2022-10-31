@@ -3,7 +3,7 @@ import csv
 import numpy as np
 
 from source import utils
-from source.preprocessing.activity_count.activity_count_collection import ActivityCountCollection
+from source.preprocessing.collection import Collection
 
 
 class MesaActigraphyService(object):
@@ -39,4 +39,4 @@ class MesaActigraphyService(object):
         data = np.array(activity)
         data = utils.remove_nans(data)
 
-        return ActivityCountCollection(subject_id=file_id, data=data)
+        return Collection(subject_id=file_id, data=data)

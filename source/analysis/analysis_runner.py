@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(1, '../..')
+
 import time
 
 from sklearn.neural_network import MLPClassifier
@@ -12,8 +15,29 @@ from source.analysis.setup.feature_type import FeatureType
 from source.analysis.setup.subject_builder import SubjectBuilder
 from source.analysis.tables.table_builder import TableBuilder
 from source.constants import Constants
+from sklearn.svm import SVC
 
 
+
+
+
+def figures_leave_one_out():
+    attributed_classifier = AttributedClassifier(name='SVM',
+                                                 classifier=SVC(probability=True, gamma='auto'))
+
+    feature_sets = [[FeatureType.nightly_cluster, FeatureType.nightly_hr]]
+
+    if Constants.VERBOSE:
+        print('Running ' + attributed_classifier.name + '...')
+    classifier_summary = SleepWakeClassifierSummaryBuilder.build_leave_one_out(attributed_classifier, feature_sets)
+
+    PerformancePlotBuilder.make_histogram_with_thresholds(classifier_summary)
+    PerformancePlotBuilder.make_single_threshold_histograms(classifier_summary)
+    CurvePlotBuilder.make_roc_sw(classifier_summary)
+    CurvePlotBuilder.make_pr_sw(classifier_summary)
+    TableBuilder.print_table_sw(classifier_summary)
+    
+    
 def figures_leave_one_out_sleep_wake_performance():
     attributed_classifier = AttributedClassifier(name='Neural Net',
                                                  classifier=MLPClassifier(activation='relu',
@@ -183,7 +207,8 @@ def figures_compare_time_based_features():
 
 if __name__ == "__main__":
     start_time = time.time()
-    figure_leave_one_out_roc_and_pr()
+    figures_leave_one_out()
+    #figure_leave_one_out_roc_and_pr()
     #
     # figures_mc_sleep_wake()
     # figures_mc_three_class()

@@ -1,7 +1,6 @@
 # caution: path[0] is reserved for script path (or '' in REPL)
 # We are inserting the sleepclassifiers as a module 
-import sys
-sys.path.insert(1, '/Users/julien/OneDrive/ETH/HS22/Bachelor Thesis/sleep-classifier')
+
 
 import os
 
@@ -12,6 +11,7 @@ from source.preprocessing.activity_count.activity_count_feature_service import A
 from source.preprocessing.heart_rate.heart_rate_feature_service import HeartRateFeatureService
 from source.preprocessing.time.time_based_feature_service import TimeBasedFeatureService
 from source.analysis.setup.sleep_session_service import SleepSessionService
+from source.data_services.data_service import DataService
 
 
 class SubjectBuilder(object):
@@ -20,7 +20,7 @@ class SubjectBuilder(object):
     @staticmethod
     def get_subject_dictionary():
         subject_dictionary = {}
-        all_subject_ids = SubjectBuilder.get_all_subject_ids()
+        all_subject_ids = Constants.SUBJECT_IDS
         for subject_id in all_subject_ids:
             subject_dictionary[subject_id] = SubjectBuilder.build(subject_id)
 
@@ -28,20 +28,13 @@ class SubjectBuilder(object):
 
     @staticmethod
     def build(subject_id):
-        feature_count = ActivityCountFeatureService.load(subject_id)
-        feature_hr = HeartRateFeatureService.load(subject_id)
-        feature_time = TimeBasedFeatureService.load_time(subject_id)
-        if Constants.INCLUDE_CIRCADIAN:
-            feature_circadian = TimeBasedFeatureService.load_circadian_model(subject_id)
-        else:
-            feature_circadian = None
-        feature_cosine = TimeBasedFeatureService.load_cosine(subject_id)
-
-        feature_dictionary = {FeatureType.count: feature_count,
-                              FeatureType.heart_rate: feature_hr,
-                              FeatureType.time: feature_time,
-                              FeatureType.circadian_model: feature_circadian,
-                              FeatureType.cosine: feature_cosine}
+        
+        feature_dictionary = {}
+        
+        for feature_type in FeatureType.get_nightly_featuretypes():
+            feature = DataService.load_feature_raw(subject_id, feature_type)
+            feature_dictionary[feature_type.name] = feature
+            
 
         subject = Subject(subject_id=subject_id,
                           feature_dictionary=feature_dictionary)

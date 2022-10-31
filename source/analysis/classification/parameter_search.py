@@ -3,6 +3,7 @@ from sklearn.model_selection import GridSearchCV
 
 class ParameterSearch(object):
     parameter_dictionary = {
+        'SVM': {'gamma': ['auto']},
         'Logistic Regression': {'C': [0.001, 0.01, 0.1, 1, 10, 100], 'penalty': ['l1', 'l2']},
         'Random Forest': {'max_depth': [10, 50, 100]},
         'k-Nearest Neighbors': {'n_neighbors': [500, 1000]},

@@ -1,6 +1,7 @@
 import numpy as np
 
 from source.analysis.setup.sleep_labeler import SleepLabeler
+from source.analysis.setup.feature_type import FeatureType
 
 
 class ClassifierInputBuilder(object):
@@ -17,16 +18,16 @@ class ClassifierInputBuilder(object):
             feature_dictionary = subject.feature_dictionary
 
             for feature in feature_set:
-                feature_data = feature_dictionary[feature]
+                feature_data = feature_dictionary[feature.name]
                 subject_features = ClassifierInputBuilder.__append_feature(subject_features, feature_data)
 
             all_subjects_features = ClassifierInputBuilder.__stack(all_subjects_features, subject_features)
-            all_subjects_labels = ClassifierInputBuilder.__stack(all_subjects_labels, subject.labeled_sleep)
+            all_subjects_labels = ClassifierInputBuilder.__stack(all_subjects_labels, feature_dictionary[FeatureType.nightly_sleep_quality.name])
 
         return all_subjects_features, all_subjects_labels
 
     @staticmethod
-    def get_sleep_wake_inputs(subject_ids, subject_dictionary, feature_set):
+    def get_sleep_quality_inputs(subject_ids, subject_dictionary, feature_set):
         values, raw_labels = ClassifierInputBuilder.get_array(subject_ids, subject_dictionary, feature_set)
         processed_labels = SleepLabeler.label_sleep_wake(raw_labels)
         return values, processed_labels
@@ -39,8 +40,6 @@ class ClassifierInputBuilder(object):
 
     @staticmethod
     def __append_feature(array, feature):
-        if len(np.shape(feature)) < 2:
-            feature = np.transpose([feature])
         if np.shape(array)[0] == 0:
             array = feature
         else:

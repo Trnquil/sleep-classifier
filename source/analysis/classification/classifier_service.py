@@ -16,8 +16,8 @@ class ClassifierService(object):
     @staticmethod
     def run_sw(data_splits, classifier, subject_dictionary, feature_set):
         return ClassifierService.run_in_parallel(ClassifierService.run_single_data_split_sw,
-                                                 data_splits, classifier,
-                                                 subject_dictionary, feature_set)
+                                                  data_splits, classifier,
+                                                  subject_dictionary, feature_set)
 
     @staticmethod
     def run_three_class(data_splits, classifier, subject_dictionary, feature_set):
@@ -63,10 +63,10 @@ class ClassifierService(object):
     @staticmethod
     def run_single_data_split_sw(data_split, attributed_classifier, subject_dictionary, feature_set):
 
-        training_x, training_y = ClassifierInputBuilder.get_sleep_wake_inputs(data_split.training_set,
+        training_x, training_y = ClassifierInputBuilder.get_sleep_quality_inputs(data_split.training_set,
                                                                               subject_dictionary=subject_dictionary,
                                                                               feature_set=feature_set)
-        testing_x, testing_y = ClassifierInputBuilder.get_sleep_wake_inputs(data_split.testing_set,
+        testing_x, testing_y = ClassifierInputBuilder.get_sleep_quality_inputs(data_split.testing_set,
                                                                             subject_dictionary=subject_dictionary,
                                                                             feature_set=feature_set)
 

@@ -2,7 +2,7 @@ import numpy as np
 import pyedflib as pyedflib
 
 from source import utils
-from source.preprocessing.heart_rate.heart_rate_collection import HeartRateCollection
+from source.preprocessing.collection import Collection
 
 
 class MesaHeartRateService(object):
@@ -25,4 +25,4 @@ class MesaHeartRateService(object):
 
         data = np.transpose(np.vstack((time_hr, heart_rate)))
         data = utils.remove_nans(data)
-        return HeartRateCollection(subject_id=file_id, data=data)
+        return Collection(subject_id=file_id, data=data)
