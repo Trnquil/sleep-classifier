@@ -23,7 +23,7 @@ from sklearn.svm import SVC
 
 def figures_leave_one_out():
     attributed_classifier = AttributedClassifier(name='SVM',
-                                                 classifier=SVC(probability=True, gamma='auto'))
+                                                 classifier=SVC(probability=True, tol=0.000001, gamma='auto'))
 
     feature_sets = [[FeatureType.nightly_cluster, FeatureType.nightly_hr]]
 

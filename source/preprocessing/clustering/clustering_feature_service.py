@@ -24,9 +24,9 @@ class ClusteringFeatureService(object):
     def get_fitted_model():
         
         features = np.stack([DataService.load_feature_raw(FeatureType.epoched_count),
-                    DataService.load_feature_raw(FeatureType.epoched_heart_rate),
-                    DataService.load_feature_raw(FeatureType.epoched_cosine),
-                    DataService.load_feature_raw(FeatureType.epoched_time)
+                    DataService.load_feature_raw(FeatureType.epoched_heart_rate)
+                    # DataService.load_feature_raw(FeatureType.epoched_cosine),
+                    # DataService.load_feature_raw(FeatureType.epoched_time)
                     ]).transpose().squeeze()
         
         classifier=KMeans(n_clusters=6, random_state=0)

@@ -19,9 +19,9 @@ class ClusterFeatureBuilder(object):
         
         # TODO: I need to implement this in a cleaner way as to avoid making mistakes
         features = np.stack([DataService.load_feature_raw(subject_id, session_id, FeatureType.epoched_count),
-                    DataService.load_feature_raw(subject_id, session_id, FeatureType.epoched_heart_rate),
-                    DataService.load_feature_raw(subject_id, session_id, FeatureType.epoched_cosine),
-                    DataService.load_feature_raw(subject_id, session_id, FeatureType.epoched_time)
+                    DataService.load_feature_raw(subject_id, session_id, FeatureType.epoched_heart_rate)
+                    # DataService.load_feature_raw(subject_id, session_id, FeatureType.epoched_cosine),
+                    # DataService.load_feature_raw(subject_id, session_id, FeatureType.epoched_time)
                     ]).transpose().squeeze()
         
         clusters = clustering_model.predict(features)
@@ -29,10 +29,13 @@ class ClusterFeatureBuilder(object):
         
         ### PLOTTING
         
-        # timestamps = np.arange(0, len(clusters)*30/3600, 30/3600, dtype=float)
-        # plt.scatter(timestamps, clusters, color=cm.cool(30*np.abs(clusters)), edgecolors='none')
-        # plt.show()
-        # plt.clf()
+        if Constants.MAKE_PLOTS_PREPROCESSING:
+            timestamps = np.arange(0, len(clusters)*30/3600, 30/3600, dtype=float)[0:len(clusters)]
+            plt.scatter(timestamps, clusters, color=cm.cool(30*np.abs(clusters)), edgecolors='none')
+            plt.savefig(str(Constants.FIGURE_FILE_PATH) + "/clusters/" + subject_id + "_" + session_id)
+            plt.clf()
+            
+            
 
         # Writing all features to their files
         DataWriter.write_epoched(subject_id, session_id, clusters, FeatureType.epoched_cluster)

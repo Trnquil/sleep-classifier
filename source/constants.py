@@ -13,6 +13,7 @@ class Constants(object):
     SECONDS_PER_DAY = 3600 * 24
     SECONDS_PER_HOUR = 3600
     VERBOSE = True
+    MAKE_PLOTS_PREPROCESSING = True
     CROPPED_FILE_PATH = utils.get_project_root().joinpath('outputs/cropped features/')
     EPOCHED_FILE_PATH = utils.get_project_root().joinpath('outputs/epoched features/')
     NIGHTLY_FILE_PATH = utils.get_project_root().joinpath('outputs/nightly features/')
