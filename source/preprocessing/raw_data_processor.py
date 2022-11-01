@@ -38,6 +38,7 @@ class RawDataProcessor:
         '''cropping all the data to the valid interval'''
         motion_collection = CollectionService.crop(motion_collection, valid_interval)
         heart_rate_collection = CollectionService.crop(heart_rate_collection, valid_interval)
+        x = heart_rate_collection.data
         
         '''splitting each collection into sleepsessions'''
         motion_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, motion_collection)
@@ -46,26 +47,17 @@ class RawDataProcessor:
         
         
         '''writing all the data to disk'''
-        for motion_sleepsession_tuple in motion_sleepsession_tuples:
-            motion_collection = motion_sleepsession_tuple[1]
-            sleep_session_id = motion_sleepsession_tuple[0].session_id
-            
-            if(np.any(motion_collection.data)):
-                DataWriter.write_cropped(motion_collection, sleep_session_id, FeatureType.cropped_motion)
         
+        for i in range(len(motion_sleepsession_tuples)):
+            motion_collection = motion_sleepsession_tuples[i][1]
+            heart_rate_collection = heart_rate_sleepsession_tuples[i][1]
+            count_collection = count_sleepsession_tuples[i][1]
             
-        for heart_rate_sleepsession_tuple in heart_rate_sleepsession_tuples:
-            heart_rate_collection = heart_rate_sleepsession_tuple[1]
-            sleep_session_id = heart_rate_sleepsession_tuple[0].session_id
+            sleep_session_id = motion_sleepsession_tuples[i][0].session_id
             
-            if(np.any(heart_rate_collection.data)):
+            if(np.any(motion_collection.data) and np.any(heart_rate_collection.data) and np.any(count_collection.data)):
+                DataWriter.write_cropped(motion_collection, sleep_session_id, FeatureType.cropped_motion)
                 DataWriter.write_cropped(heart_rate_collection, sleep_session_id, FeatureType.cropped_heart_rate)
-                
-        for count_sleepsession_tuple in count_sleepsession_tuples:
-            count_collection = count_sleepsession_tuple[1]
-            sleep_session_id = count_sleepsession_tuple[0].session_id
-            
-            if(np.any(count_collection.data)):
                 DataWriter.write_cropped(count_collection, sleep_session_id, FeatureType.cropped_count)
         
                                      
