@@ -11,6 +11,7 @@ from source.analysis.setup.subject_builder import SubjectBuilder
 from source.data_services.data_service import DataService
 from source.preprocessing.built_service import BuiltService
 from source.data_services.data_writer import DataWriter
+from source.constants import Constants
 
 import pandas as pd
 import numpy as np
@@ -27,8 +28,8 @@ class NightlyFeatureBuilder(object):
             print("Building nightly features...")
             
         i = 0
-        for subject_id in BuiltService.get_built_subject_ids():
-            for session_id in BuiltService.get_built_sleepsession_ids(subject_id):
+        for subject_id in BuiltService.get_built_subject_ids(Constants.CROPPED_FILE_PATH):
+            for session_id in BuiltService.get_built_sleepsession_ids(subject_id, Constants.CROPPED_FILE_PATH):
                 feature_dict = NightlyFeatureBuilder.build_feature_dict(subject_id, session_id)
                 
                 feature_row = pd.DataFrame(feature_dict)

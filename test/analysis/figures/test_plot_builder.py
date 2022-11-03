@@ -305,8 +305,8 @@ class TestPlotBuilder(TestCase):
         mock_build_roc.assert_called_once_with(classifier_summary)
         mock_tidy_plot.assert_called_once_with()
         mock_set_labels.assert_called_once_with(attributed_classifier,
-                                                'Fraction of wake scored as sleep',
-                                                'Fraction of sleep scored as sleep',
+                                                'Fraction of low Q scored as high Q',
+                                                'Fraction of high Q scored as high Q',
                                                 (1.0, 0.4))
 
         mock_plt.savefig.assert_called_once_with(str(
@@ -332,8 +332,8 @@ class TestPlotBuilder(TestCase):
         mock_build_pr.assert_called_once_with(classifier_summary)
         mock_tidy_plot.assert_called_once_with()
         mock_set_labels.assert_called_once_with(attributed_classifier,
-                                                'Fraction of wake scored as wake',
-                                                'Fraction of predicted wake correct', (0.5, 1.0))
+                                                'Fraction of low Q scored as low Q',
+                                                'Fraction of predicted low Q correct', (0.5, 1.0))
 
         mock_plt.savefig.assert_called_once_with(str(
             Constants.FIGURE_FILE_PATH.joinpath(

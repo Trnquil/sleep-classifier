@@ -39,13 +39,13 @@ def build_cropped():
 
 def build_epoched():
     # Only building features for subjects and sleepsession for which folders exist
-    subject_ids = BuiltService.get_built_subject_ids()
+    subject_ids = BuiltService.get_built_subject_ids(Constants.CROPPED_FILE_PATH)
     for subject_id in subject_ids:
         FeatureBuilder.build(subject_id)
             
     clustering_model = ClusteringFeatureService.get_fitted_model()
     # Only building features for subjects and sleepsession for which folders exist
-    subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids()
+    subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(Constants.CROPPED_FILE_PATH)
     for subject in subject_sleepsession_dictionary.keys():
         for session in subject_sleepsession_dictionary[subject]:
             ClusterFeatureBuilder.build(subject, session, clustering_model)

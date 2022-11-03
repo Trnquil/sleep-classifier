@@ -28,36 +28,39 @@ class FeatureBuilder(object):
         hr_mean = np.mean(heart_rate_feature_subject, axis=0)
         hr_std = np.std(heart_rate_feature_subject, axis=0)
         
-        sleepsessions = BuiltService.get_built_sleepsession_ids(subject_id)
+        sleepsessions = BuiltService.get_built_sleepsession_ids(subject_id, Constants.CROPPED_FILE_PATH)
         for session_id in sleepsessions:
-            if Constants.VERBOSE:
-                print("Getting valid epochs...")
-            valid_epochs = RawDataProcessor.get_valid_epochs(subject_id, session_id)
-    
-            if Constants.VERBOSE:
-                print("Building features...")
+            subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(Constants.EPOCHED_FILE_PATH)
+            # making sure that features haven't already been built for this particular sleep session
+            if session_id not in subject_sleepsession_dictionary[subject_id]:
+                if Constants.VERBOSE:
+                    print("Getting valid epochs...")
+                valid_epochs = RawDataProcessor.get_valid_epochs(subject_id, session_id)
+        
+                if Constants.VERBOSE:
+                    print("Building features...")
+                    
+                count_feature = ActivityCountFeatureService.build(subject_id, session_id, valid_epochs)
                 
-            count_feature = ActivityCountFeatureService.build(subject_id, session_id, valid_epochs)
-            
-            # Normalizing count feature
-            count_feature = count_feature/count_std
-            
-            # Normalizing heart rate feature
-            heart_rate_feature = HeartRateFeatureService.build(subject_id, session_id, valid_epochs)
-            heart_rate_feature = (heart_rate_feature - hr_mean)/hr_std
-            
-            if Constants.INCLUDE_CIRCADIAN:
-                circadian_feature = TimeBasedFeatureService.build_circadian_model(subject_id, session_id, valid_epochs)
-                TimeBasedFeatureService.write_circadian_model(subject_id, session_id, circadian_feature)
-    
-            cosine_feature = TimeBasedFeatureService.build_cosine(valid_epochs)
-            time_feature = TimeBasedFeatureService.build_time(valid_epochs)
-    
-    
-            # Writing all features to their files
-            DataWriter.write_epoched(subject_id, session_id, cosine_feature, FeatureType.epoched_cosine)
-            DataWriter.write_epoched(subject_id, session_id, time_feature, FeatureType.epoched_time)
-            DataWriter.write_epoched(subject_id, session_id, count_feature, FeatureType.epoched_count)
-            DataWriter.write_epoched(subject_id, session_id, heart_rate_feature, FeatureType.epoched_heart_rate)
+                # Normalizing count feature
+                count_feature = count_feature/count_std
+                
+                # Normalizing heart rate feature
+                heart_rate_feature = HeartRateFeatureService.build(subject_id, session_id, valid_epochs)
+                heart_rate_feature = (heart_rate_feature - hr_mean)/hr_std
+                
+                if Constants.INCLUDE_CIRCADIAN:
+                    circadian_feature = TimeBasedFeatureService.build_circadian_model(subject_id, session_id, valid_epochs)
+                    TimeBasedFeatureService.write_circadian_model(subject_id, session_id, circadian_feature)
+        
+                cosine_feature = TimeBasedFeatureService.build_cosine(valid_epochs)
+                time_feature = TimeBasedFeatureService.build_time(valid_epochs)
+        
+        
+                # Writing all features to their files
+                DataWriter.write_epoched(subject_id, session_id, cosine_feature, FeatureType.epoched_cosine)
+                DataWriter.write_epoched(subject_id, session_id, time_feature, FeatureType.epoched_time)
+                DataWriter.write_epoched(subject_id, session_id, count_feature, FeatureType.epoched_count)
+                DataWriter.write_epoched(subject_id, session_id, heart_rate_feature, FeatureType.epoched_heart_rate)
 
         

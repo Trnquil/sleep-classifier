@@ -117,12 +117,12 @@ class PerformancePlotBuilder(object):
             ax[0, 1].set_xlim((0, 1))
 
             ax[1, 0].hist(all_fraction_wake_correct, bins=np.arange(0, 1 + dt, dt), color="skyblue", ec="skyblue")
-            ax[1, 0].set_xlabel('Fraction wake correct (specificity)', fontsize=font_size, fontname=font_name)
+            ax[1, 0].set_xlabel('Fraction low Q correct (specificity)', fontsize=font_size, fontname=font_name)
             ax[1, 0].set_ylabel('Count', fontsize=font_size, fontname=font_name)
             ax[1, 0].set_xlim((0, 1))
 
             ax[1, 1].hist(all_fraction_sleep_correct, bins=np.arange(0, 1 + dt, dt), color="skyblue", ec="skyblue")
-            ax[1, 1].set_xlabel('Fraction sleep correct (sensitivity)', fontsize=font_size, fontname=font_name)
+            ax[1, 1].set_xlabel('Fraction high Q correct (sensitivity)', fontsize=font_size, fontname=font_name)
             ax[1, 1].set_xlim((0, 1))
             plt.tight_layout()
             file_save_name = str(

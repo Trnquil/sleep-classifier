@@ -47,7 +47,6 @@ class RawDataProcessor:
         
         
         '''writing all the data to disk'''
-        
         for i in range(len(motion_sleepsession_tuples)):
             motion_collection = motion_sleepsession_tuples[i][1]
             heart_rate_collection = heart_rate_sleepsession_tuples[i][1]

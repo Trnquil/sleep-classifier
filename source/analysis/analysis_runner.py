@@ -16,14 +16,12 @@ from source.analysis.setup.subject_builder import SubjectBuilder
 from source.analysis.tables.table_builder import TableBuilder
 from source.constants import Constants
 from sklearn.svm import SVC
-
-
-
+from sklearn.neighbors import KNeighborsClassifier
 
 
 def figures_leave_one_out():
-    attributed_classifier = AttributedClassifier(name='SVM',
-                                                 classifier=SVC(probability=True, tol=0.000001, gamma='auto'))
+    attributed_classifier = AttributedClassifier(name='Nearest Neighbors',
+                                                 classifier=KNeighborsClassifier())
 
     feature_sets = [[FeatureType.nightly_cluster, FeatureType.nightly_hr]]
 

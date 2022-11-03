@@ -40,8 +40,8 @@ class CurvePlotBuilder(object):
         CurvePlotBuilder.build_roc_plot(classifier_summary)
         CurvePlotBuilder.tidy_plot()
         CurvePlotBuilder.set_labels(classifier_summary.attributed_classifier,
-                                    'Fraction of wake scored as sleep',
-                                    'Fraction of sleep scored as sleep', (1.0, 0.4))
+                                    'Fraction of low Q scored as high Q',
+                                    'Fraction of high Q scored as high Q', (1.0, 0.4))
 
         number_of_trials = len(next(iter(classifier_summary.performance_dictionary.values())))
         plt.savefig(str(Constants.FIGURE_FILE_PATH.joinpath(
@@ -55,7 +55,7 @@ class CurvePlotBuilder(object):
         CurvePlotBuilder.tidy_plot()
         CurvePlotBuilder.set_labels(classifier_summary.attributed_classifier,
                                     'Fraction of REM or NREM scored as wake',
-                                    'Fraction of wake scored as wake', (1.0, 0.4))
+                                    'Fraction of low Q scored as low Q', (1.0, 0.4))
 
         number_of_trials = len(next(iter(classifier_summary.performance_dictionary.values())))
         plt.savefig(str(Constants.FIGURE_FILE_PATH.joinpath(
@@ -104,8 +104,8 @@ class CurvePlotBuilder(object):
         CurvePlotBuilder.build_pr_plot(classifier_summary)
         CurvePlotBuilder.tidy_plot()
         CurvePlotBuilder.set_labels(classifier_summary.attributed_classifier,
-                                    'Fraction of wake scored as wake',
-                                    'Fraction of predicted wake correct', (0.5, 1.0))
+                                    'Fraction of low Q scored as low Q',
+                                    'Fraction of predicted low Q correct', (0.5, 1.0))
 
         number_of_trials = len(next(iter(classifier_summary.performance_dictionary.values())))
         plt.savefig(str(Constants.FIGURE_FILE_PATH.joinpath(

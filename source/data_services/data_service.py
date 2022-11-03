@@ -5,6 +5,7 @@ from source.analysis.setup.feature_type import FeatureType
 from source.preprocessing.built_service import BuiltService
 from source.analysis.setup.sleep_session_service import SleepSessionService
 from source.data_services.data_loader import DataLoader
+from source.constants import Constants
 
 from multipledispatch import dispatch
 import numpy as np
@@ -35,7 +36,7 @@ class DataService(object):
     @dispatch(str, object)
     def load_feature_raw(subject_id, feature_type):
         
-        session_ids = BuiltService.get_built_sleepsession_ids(subject_id)
+        session_ids = BuiltService.get_built_sleepsession_ids(subject_id, Constants.CROPPED_FILE_PATH)
         feature_shape = DataService.__get_feature_shape(subject_id, feature_type)
         
         stacked_feature = np.zeros(feature_shape)
@@ -56,7 +57,7 @@ class DataService(object):
     @dispatch(object)
     def load_feature_raw(feature_type):
         
-        subject_ids = BuiltService.get_built_subject_ids()
+        subject_ids = BuiltService.get_built_subject_ids(Constants.CROPPED_FILE_PATH)
         feature_shape = DataService.__get_feature_shape(feature_type)
         
         stacked_feature = np.zeros(feature_shape)
@@ -76,7 +77,7 @@ class DataService(object):
     @staticmethod
     @dispatch(str, object)
     def __get_feature_shape(subject_id, feature_type):
-        session_ids = BuiltService.get_built_sleepsession_ids(subject_id)
+        session_ids = BuiltService.get_built_sleepsession_ids(subject_id, Constants.CROPPED_FILE_PATH)
         
         for i in range(len(session_ids)):
             
@@ -96,7 +97,7 @@ class DataService(object):
     @staticmethod
     @dispatch(object)
     def __get_feature_shape(feature_type):
-        subject_ids = BuiltService.get_built_subject_ids()
+        subject_ids = BuiltService.get_built_subject_ids(Constants.CROPPED_FILE_PATH)
         
         for i in range(len(subject_ids)):
             

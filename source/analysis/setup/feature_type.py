@@ -5,6 +5,7 @@ import re
 class FeatureType(Enum):
     raw_hr = "raw heart rate"
     raw_acc = "raw acceleration"
+    raw_bvp = "raw bvp signal"
     
     cropped_count = "cropped count"
     cropped_motion = "cropped motion"
