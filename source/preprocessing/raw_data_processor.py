@@ -26,52 +26,51 @@ class RawDataProcessor:
         
         '''Loading data'''
         motion_collection = DataLoader.load_raw(subject_id, FeatureType.raw_acc)
-        heart_rate_collection = DataLoader.load_raw(subject_id,  FeatureType.raw_hr)
+        ibi_collection = DataLoader.load_raw(subject_id,  FeatureType.raw_ibi)
         count_collection = ActivityCountService.build_activity_counts_without_matlab(subject_id, motion_collection.data) # Builds activity counts with python, not MATLAB
         
         
         
         '''Getting intersecting intervals of time for all collections'''
-        valid_interval = RawDataProcessor.get_intersecting_interval([motion_collection, heart_rate_collection])
+        valid_interval = RawDataProcessor.get_intersecting_interval([motion_collection, ibi_collection])
 
 
         '''cropping all the data to the valid interval'''
         motion_collection = CollectionService.crop(motion_collection, valid_interval)
-        heart_rate_collection = CollectionService.crop(heart_rate_collection, valid_interval)
-        x = heart_rate_collection.data
+        ibi_collection = CollectionService.crop(ibi_collection, valid_interval)
         
         '''splitting each collection into sleepsessions'''
         motion_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, motion_collection)
-        heart_rate_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, heart_rate_collection)
+        ibi_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, ibi_collection)
         count_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, count_collection)
         
         
         '''writing all the data to disk'''
         for i in range(len(motion_sleepsession_tuples)):
             motion_collection = motion_sleepsession_tuples[i][1]
-            heart_rate_collection = heart_rate_sleepsession_tuples[i][1]
+            ibi_collection = ibi_sleepsession_tuples[i][1]
             count_collection = count_sleepsession_tuples[i][1]
             
             sleep_session_id = motion_sleepsession_tuples[i][0].session_id
             
-            if(np.any(motion_collection.data) and np.any(heart_rate_collection.data) and np.any(count_collection.data)):
+            if(np.any(motion_collection.data) and np.any(ibi_collection.data) and np.any(count_collection.data)):
                 DataWriter.write_cropped(motion_collection, sleep_session_id, FeatureType.cropped_motion)
-                DataWriter.write_cropped(heart_rate_collection, sleep_session_id, FeatureType.cropped_heart_rate)
+                DataWriter.write_cropped(ibi_collection, sleep_session_id, FeatureType.cropped_ibi)
                 DataWriter.write_cropped(count_collection, sleep_session_id, FeatureType.cropped_count)
         
                                      
-        '''Doing all above steps for normalized data'''
-        normalized_heart_rate_collection = Collection(subject_id, DataService.load_feature_raw(subject_id, FeatureType.cropped_heart_rate))
-        normalized_heart_rate_collection = RawDataProcessor.normalize(normalized_heart_rate_collection)
-        normalized_heart_rate_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, normalized_heart_rate_collection)
+        # '''Doing all above steps for normalized data'''
+        # normalized_heart_rate_collection = Collection(subject_id, DataService.load_feature_raw(subject_id, FeatureType.cropped_heart_rate))
+        # normalized_heart_rate_collection = RawDataProcessor.normalize(normalized_heart_rate_collection)
+        # normalized_heart_rate_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, normalized_heart_rate_collection)
            
 
-        for normalized_heart_rate_sleepsession_tuple in normalized_heart_rate_sleepsession_tuples:
-            normalized_heart_rate_collection = normalized_heart_rate_sleepsession_tuple[1]
-            sleep_session_id = normalized_heart_rate_sleepsession_tuple[0].session_id
+        # for normalized_heart_rate_sleepsession_tuple in normalized_heart_rate_sleepsession_tuples:
+        #     normalized_heart_rate_collection = normalized_heart_rate_sleepsession_tuple[1]
+        #     sleep_session_id = normalized_heart_rate_sleepsession_tuple[0].session_id
             
-            if(np.any(normalized_heart_rate_collection.data)):
-                DataWriter.write_cropped(normalized_heart_rate_collection, sleep_session_id, FeatureType.normalized_heart_rate)
+        #     if(np.any(normalized_heart_rate_collection.data)):
+        #         DataWriter.write_cropped(normalized_heart_rate_collection, sleep_session_id, FeatureType.normalized_heart_rate)
             
     @staticmethod 
     def normalize(collection):

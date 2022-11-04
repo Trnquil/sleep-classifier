@@ -14,6 +14,10 @@ class DataLoader(object):
     
     @staticmethod
     def load_raw(subject_id, feature_type):
+        
+        if(feature_type.name == FeatureType.raw_ibi.name):
+            return DataLoader.load_raw_ibi(subject_id)
+        
         raw_paths = PathService.get_raw_file_paths(subject_id, feature_type)
         
         final_feature_shape = DataLoader.load_raw_shape(subject_id, feature_type)
@@ -55,6 +59,37 @@ class DataLoader(object):
             
         return Collection(subject_id=subject_id, data=final_feature_array)
     
+    
+    @staticmethod
+    def load_raw_ibi(subject_id):
+        raw_paths = PathService.get_raw_file_paths(subject_id, FeatureType.raw_ibi)
+        
+        final_feature_shape = DataLoader.load_raw_shape(subject_id, FeatureType.raw_ibi)
+        final_feature_array = np.zeros(final_feature_shape)
+
+        current_height = 0
+        for raw_path in raw_paths:
+            feature_array = pd.read_csv(str(raw_path), delimiter=",")
+            
+            #unix start time of the data
+            start_time = feature_array.columns.values.tolist()
+            start_time = float(start_time[0])
+            
+            #Let us center the time so that time values aren't too big
+            start_time = start_time - Constants.TIME_CENTER
+            
+            feature_array = feature_array.to_numpy()
+    
+            feature_height = feature_array.shape[0]
+            
+            #We bring the times into our centered time format
+            feature_array[:,0] = feature_array[:,0] + start_time
+            
+            final_feature_array[current_height:(current_height + feature_height)][:] = feature_array
+            current_height += feature_height
+            
+        return Collection(subject_id=subject_id, data=final_feature_array)
+        
     @staticmethod
     def load_raw_shape(subject_id, feature_type):
         raw_paths = PathService.get_raw_file_paths(subject_id, feature_type)
@@ -68,11 +103,11 @@ class DataLoader(object):
             
             feature_array = feature_array.to_numpy()
             
-            # We subtract one because of the data frequency row
-            feature_height += feature_array.shape[0] - 1
+            # We subtract one because of the data frequency row, except in ibi
+            feature_height += feature_array.shape[0] + (0 if feature_type.name == FeatureType.raw_ibi.name else -1)
             
-            # We add one because of the time column
-            feature_width = feature_array.shape[1] + 1
+            # We add one because of the time column, except in ibi
+            feature_width = feature_array.shape[1] + (0 if feature_type.name == FeatureType.raw_ibi.name else 1)
             
         return (feature_height, feature_width)
     
