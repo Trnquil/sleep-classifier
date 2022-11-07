@@ -25,6 +25,7 @@ class PathService(object):
         FeatureType.epoched_circadian_model.name:"circadian_feature.out",
         FeatureType.epoched_cosine.name: "cosine_feature.out",
         FeatureType.epoched_cluster.name: "clusters.out",
+        FeatureType.epoched_dataframe.name: "epoched_features.csv",
         
         FeatureType.nightly.name: "nightly_features.csv"
         }

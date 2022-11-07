@@ -11,9 +11,9 @@ class DataWriter(object):
         np.savetxt(output_path, collection.data, fmt='%f')
     
     @staticmethod
-    def write_epoched(subject_id, session_id, feature, feature_type):
+    def write_epoched(subject_id, session_id, epoched_dataframe, feature_type):
         feature_path = PathService.get_epoched_file_path(subject_id, session_id, feature_type)
-        np.savetxt(feature_path, feature, fmt='%f')
+        epoched_dataframe.to_csv(feature_path, index=False)
     
     @staticmethod
     def write_nightly(nightly_dataframe):

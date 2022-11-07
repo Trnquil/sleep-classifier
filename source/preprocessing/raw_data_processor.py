@@ -100,19 +100,19 @@ class RawDataProcessor:
     def get_valid_epochs(subject_id, session_id):
 
         motion_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_motion)
-        heart_rate_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_heart_rate)
+        ibi_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_ibi)
 
         #Manually setting the start time to 0
         start_time = 0
         motion_floored_timestamps, motion_epoch_dictionary = RawDataProcessor.get_valid_epoch_dictionary(motion_collection.timestamps,
                                                                               start_time)
-        hr_floored_timestamps, hr_epoch_dictionary = RawDataProcessor.get_valid_epoch_dictionary(heart_rate_collection.timestamps,
+        ibi_floored_timestamps, ibi_epoch_dictionary = RawDataProcessor.get_valid_epoch_dictionary(ibi_collection.timestamps,
                                                                           start_time)
 
         valid_epochs = []
         for timestamp in motion_floored_timestamps:
             index = 0
-            if timestamp in motion_epoch_dictionary and timestamp in hr_epoch_dictionary:
+            if timestamp in motion_epoch_dictionary and timestamp in ibi_epoch_dictionary:
                 epoch = Epoch(timestamp, index)
                 index += 1
                 valid_epochs.append(epoch)
@@ -125,20 +125,20 @@ class RawDataProcessor:
         motion_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_motion)
         motion_collection = Collection(subject_id, motion_feature)
         
-        heart_rate_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_heart_rate)
-        heart_rate_collection = Collection(subject_id, heart_rate_feature)
+        ibi_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_ibi)
+        ibi_collection = Collection(subject_id, ibi_feature)
 
         #Manually setting the start time to 0
         start_time = 0
         motion_floored_timestamps, motion_epoch_dictionary = RawDataProcessor.get_valid_epoch_dictionary(motion_collection.timestamps,
                                                                               start_time)
-        hr_floored_timestamps, hr_epoch_dictionary = RawDataProcessor.get_valid_epoch_dictionary(heart_rate_collection.timestamps,
+        ibi_floored_timestamps, ibi_epoch_dictionary = RawDataProcessor.get_valid_epoch_dictionary(ibi_collection.timestamps,
                                                                           start_time)
 
         valid_epochs = []
         for timestamp in motion_floored_timestamps:
             index = 0
-            if timestamp in motion_epoch_dictionary and timestamp in hr_epoch_dictionary:
+            if timestamp in motion_epoch_dictionary and timestamp in ibi_epoch_dictionary:
                 epoch = Epoch(timestamp, index)
                 index += 1
                 valid_epochs.append(epoch)

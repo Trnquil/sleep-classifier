@@ -120,8 +120,8 @@ class DataLoader(object):
     @staticmethod
     def load_epoched(subject_id, session_id, feature_type):
         feature_path = PathService.get_epoched_file_path(subject_id, session_id, feature_type)
-        feature = pd.read_csv(str(feature_path)).values
-        return feature
+        feature_dataframe = pd.read_csv(str(feature_path))
+        return feature_dataframe
     
     @staticmethod
     @dispatch()

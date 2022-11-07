@@ -20,13 +20,13 @@ class ActivityCountFeatureService(object):
 
     @staticmethod
     @dispatch(str, str, object)
-    def build(subject_id, session_id, valid_epochs):
+    def build_count_feature(subject_id, session_id, valid_epochs):
         activity_count_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_count)
         return ActivityCountFeatureService.build_from_collection(activity_count_collection, valid_epochs)
     
     @staticmethod
     @dispatch(str, object)
-    def build(subject_id, valid_epochs):
+    def build_count_feature(subject_id, valid_epochs):
         activity_count_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_count)
         activity_count_collection = Collection(subject_id=subject_id, data=activity_count_feature)
         return ActivityCountFeatureService.build_from_collection(activity_count_collection, valid_epochs)
@@ -45,11 +45,13 @@ class ActivityCountFeatureService(object):
             activity_counts_in_range = interpolated_counts[indices_in_range]
 
             feature = ActivityCountFeatureService.get_feature(activity_counts_in_range)
-            count_features.append(feature)
+            count_features.append([epoch.timestamp, feature])
 
-        return np.array(count_features)
+        count_feature_array = np.array(count_features)
+        count_feature_df = pd.DataFrame(count_feature_array, columns=["epoch_timestamp","count"])
+        return count_feature_df
 
     @staticmethod
     def get_feature(count_values):
         convolution = utils.smooth_gauss(count_values.flatten(), np.shape(count_values.flatten())[0])
-        return np.array([convolution])
+        return convolution

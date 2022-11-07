@@ -20,6 +20,7 @@ class FeatureType(Enum):
     epoched_circadian_model = "epoched circadian model"
     epoched_time = "epoched time"
     epoched_cluster = "epoched cluster"
+    epoched_dataframe = "epoched dataframe"
     
     nightly = "nightly"
     
