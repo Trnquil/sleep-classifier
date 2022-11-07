@@ -22,6 +22,9 @@ class DataService(object):
         elif feature_type.name in FeatureType.get_epoched_names(): 
             feature = DataLoader.load_epoched(subject_id, session_id, feature_type)
             
+        elif feature_type.name in FeatureType.epoched.name: 
+            feature = DataLoader.load_epoched(subject_id, session_id, feature_type).values
+            
         elif feature_type.name in FeatureType.get_nightly_names(): 
             feature = DataLoader.load_nightly(subject_id, session_id, feature_type).to_numpy()
             
@@ -35,8 +38,11 @@ class DataService(object):
     @staticmethod
     @dispatch(str, object)
     def load_feature_raw(subject_id, feature_type):
-        
-        session_ids = BuiltService.get_built_sleepsession_ids(subject_id, Constants.CROPPED_FILE_PATH)
+        if feature_type.name in FeatureType.get_cropped_names():   
+            session_ids = BuiltService.get_built_sleepsession_ids(subject_id, Constants.CROPPED_FILE_PATH)
+        else:
+            session_ids = BuiltService.get_built_sleepsession_ids(subject_id, Constants.EPOCHED_FILE_PATH)
+            
         feature_shape = DataService.__get_feature_shape(subject_id, feature_type)
         
         stacked_feature = np.zeros(feature_shape)
@@ -57,7 +63,11 @@ class DataService(object):
     @dispatch(object)
     def load_feature_raw(feature_type):
         
-        subject_ids = BuiltService.get_built_subject_ids(Constants.CROPPED_FILE_PATH)
+        if feature_type.name in FeatureType.get_cropped_names():     
+            subject_ids = BuiltService.get_built_subject_ids(Constants.CROPPED_FILE_PATH)
+        else:
+            subject_ids = BuiltService.get_built_subject_ids(Constants.EPOCHED_FILE_PATH)
+            
         feature_shape = DataService.__get_feature_shape(feature_type)
         
         stacked_feature = np.zeros(feature_shape)
@@ -77,7 +87,10 @@ class DataService(object):
     @staticmethod
     @dispatch(str, object)
     def __get_feature_shape(subject_id, feature_type):
-        session_ids = BuiltService.get_built_sleepsession_ids(subject_id, Constants.CROPPED_FILE_PATH)
+        if feature_type.name in FeatureType.get_cropped_names():     
+            session_ids = BuiltService.get_built_sleepsession_ids(subject_id, Constants.CROPPED_FILE_PATH)
+        else:
+            session_ids = BuiltService.get_built_sleepsession_ids(subject_id, Constants.EPOCHED_FILE_PATH)
         
         for i in range(len(session_ids)):
             
@@ -97,7 +110,10 @@ class DataService(object):
     @staticmethod
     @dispatch(object)
     def __get_feature_shape(feature_type):
-        subject_ids = BuiltService.get_built_subject_ids(Constants.CROPPED_FILE_PATH)
+        if feature_type.name in FeatureType.get_cropped_names():   
+            subject_ids = BuiltService.get_built_subject_ids(Constants.CROPPED_FILE_PATH)
+        else:
+            subject_ids = BuiltService.get_built_subject_ids(Constants.EPOCHED_FILE_PATH)
         
         for i in range(len(subject_ids)):
             

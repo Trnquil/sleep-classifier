@@ -28,8 +28,8 @@ class NightlyFeatureBuilder(object):
             print("Building nightly features...")
             
         i = 0
-        for subject_id in BuiltService.get_built_subject_ids(Constants.CROPPED_FILE_PATH):
-            for session_id in BuiltService.get_built_sleepsession_ids(subject_id, Constants.CROPPED_FILE_PATH):
+        for subject_id in BuiltService.get_built_subject_ids(Constants.EPOCHED_FILE_PATH):
+            for session_id in BuiltService.get_built_sleepsession_ids(subject_id, Constants.EPOCHED_FILE_PATH):
                 feature_dict = NightlyFeatureBuilder.build_feature_dict(subject_id, session_id)
                 
                 feature_row = pd.DataFrame(feature_dict)
@@ -41,7 +41,8 @@ class NightlyFeatureBuilder(object):
                 
                 i += 1
 
-        
+        if Constants.VERBOSE:
+            print("Normalizing nightly features...")
         DataWriter.write_nightly(nightly_dataframe)
         
     @staticmethod

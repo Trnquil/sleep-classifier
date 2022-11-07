@@ -13,6 +13,8 @@ class FeatureType(Enum):
     cropped_ibi = "cropped inter beat intervals"
     normalized_heart_rate = "normalized cropped heart rate"
     
+    epoched = "epoched"
+    
     epoched_heart_rate = "epoched heart rate"
     epoched_count = "epoched count"
     epoched_cosine = "epoched cosine"
@@ -20,7 +22,6 @@ class FeatureType(Enum):
     epoched_circadian_model = "epoched circadian model"
     epoched_time = "epoched time"
     epoched_cluster = "epoched cluster"
-    epoched_dataframe = "epoched dataframe"
     
     nightly = "nightly"
     

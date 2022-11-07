@@ -19,8 +19,9 @@ from source.preprocessing.clustering.cluster_feature_builder import ClusterFeatu
 def run_preprocessing():
     start_time = time.time()
     
-    build_cropped()
-    build_epoched()
+    #build_cropped()
+    #build_epoched()
+    build_clusters()
     build_nightly()            
 
     end_time = time.time()
@@ -43,9 +44,11 @@ def build_epoched():
     for subject_id in subject_ids:
         FeatureBuilder.build(subject_id)
             
+
+def build_clusters():
     clustering_model = ClusteringFeatureService.get_fitted_model()
     # Only building features for subjects and sleepsession for which folders exist
-    subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(Constants.CROPPED_FILE_PATH)
+    subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(Constants.EPOCHED_FILE_PATH)
     for subject in subject_sleepsession_dictionary.keys():
         for session in subject_sleepsession_dictionary[subject]:
             ClusterFeatureBuilder.build(subject, session, clustering_model)

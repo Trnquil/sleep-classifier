@@ -18,11 +18,7 @@ class ClusterFeatureBuilder(object):
             print("Predicting clusters...")
         
         # TODO: I need to implement this in a cleaner way as to avoid making mistakes
-        features = np.stack([DataService.load_feature_raw(subject_id, session_id, FeatureType.epoched_count),
-                    DataService.load_feature_raw(subject_id, session_id, FeatureType.epoched_heart_rate)
-                    # DataService.load_feature_raw(subject_id, session_id, FeatureType.epoched_cosine),
-                    # DataService.load_feature_raw(subject_id, session_id, FeatureType.epoched_time)
-                    ]).transpose().squeeze()
+        features = DataService.load_feature_raw(subject_id, session_id, FeatureType.epoched)[:,1:].squeeze()
         
         clusters = clustering_model.predict(features)
         

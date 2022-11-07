@@ -16,7 +16,10 @@ from source.preprocessing.collection import Collection
 from source.data_services.data_loader import DataLoader
 from source.data_services.data_writer import DataWriter
 from source.preprocessing.collection_service import CollectionService
+from source.preprocessing.path_service import PathService
+
 from multipledispatch import dispatch
+
 
 class RawDataProcessor:
     BASE_FILE_PATH = utils.get_project_root().joinpath('outputs/cropped/')
@@ -54,6 +57,8 @@ class RawDataProcessor:
             sleep_session_id = motion_sleepsession_tuples[i][0].session_id
             
             if(np.any(motion_collection.data) and np.any(ibi_collection.data) and np.any(count_collection.data)):
+                PathService.create_cropped_file_path(subject_id, sleep_session_id)
+                
                 DataWriter.write_cropped(motion_collection, sleep_session_id, FeatureType.cropped_motion)
                 DataWriter.write_cropped(ibi_collection, sleep_session_id, FeatureType.cropped_ibi)
                 DataWriter.write_cropped(count_collection, sleep_session_id, FeatureType.cropped_count)

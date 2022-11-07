@@ -46,7 +46,7 @@ class IbiFeatureService(object):
             ibi_values_delta = np.sum(ibi_values_in_range)
             ibi_timestamps_delta = ibi_timestamps_in_range[-1] - ibi_timestamps_in_range[0]
             
-            x = ibi_values_delta/ibi_timestamps_delta 
+
             if(ibi_values_delta/ibi_timestamps_delta < IbiFeatureService.DataRatio):
                 continue
             
@@ -63,9 +63,13 @@ class IbiFeatureService(object):
             ibi_features[i,:] = np.array(list(feature_dict.items()))[:,1]
                 
             i += 1
-            
-        ibi_features = ibi_features[~np.isnan(ibi_features).any(axis=1), :]
-        ibi_dataframe = pd.DataFrame(ibi_features, columns=np.array(list(feature_dict.items()))[:,0])
+        
+        if np.any(ibi_features):
+            ibi_features = ibi_features[~np.isnan(ibi_features).any(axis=1), :]
+            ibi_dataframe = pd.DataFrame(ibi_features, columns=np.array(list(feature_dict.items()))[:,0])
+
+        else:
+            ibi_dataframe = pd.DataFrame([])
         return ibi_dataframe
 
     @staticmethod

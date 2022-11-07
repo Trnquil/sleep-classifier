@@ -25,13 +25,19 @@ class PathService(object):
         FeatureType.epoched_circadian_model.name:"circadian_feature.out",
         FeatureType.epoched_cosine.name: "cosine_feature.out",
         FeatureType.epoched_cluster.name: "clusters.out",
-        FeatureType.epoched_dataframe.name: "epoched_features.csv",
+        FeatureType.epoched.name: "epoched_features.csv",
         
         FeatureType.nightly.name: "nightly_features.csv"
         }
     
     @staticmethod
     def get_cropped_file_path(subject_id, session_id, feature_type):
+        directory_path_string = str(subject_id) + "/" + str(session_id)
+        
+        return str(Constants.CROPPED_FILE_PATH.joinpath(directory_path_string)) + "/" + PathService.filenames[feature_type.name]
+    
+    @staticmethod
+    def create_cropped_file_path(subject_id, session_id):
         directory_path_string = str(subject_id) + "/" + str(session_id)
         
         subject_folder_path = Constants.CROPPED_FILE_PATH.joinpath(str(subject_id))
@@ -43,8 +49,7 @@ class PathService(object):
         # creating a sleep session folder if it doesn't already exist
         if not os.path.exists(sleep_session_path):
             os.mkdir(sleep_session_path)
-        
-        return str(Constants.CROPPED_FILE_PATH.joinpath(directory_path_string)) + "/" + PathService.filenames[feature_type.name]
+
     
     @staticmethod
     def get_nightly_file_path():
@@ -66,13 +71,17 @@ class PathService(object):
     @staticmethod
     def get_epoched_file_path(subject_id, session_id, feature_type):
         directory_path_string = Constants.EPOCHED_FILE_PATH.joinpath(subject_id + "/" + str(session_id))
+        return str(Constants.EPOCHED_FILE_PATH.joinpath(directory_path_string)) + "/" + PathService.filenames[feature_type.name]
+    
+    @staticmethod
+    def create_epoched_file_path(subject_id, session_id):
+        directory_path_string = Constants.EPOCHED_FILE_PATH.joinpath(subject_id + "/" + str(session_id))
         
         if not (os.path.exists(Constants.EPOCHED_FILE_PATH.joinpath(subject_id))):
             os.mkdir(Constants.EPOCHED_FILE_PATH.joinpath(subject_id))
         
         if not (os.path.exists(directory_path_string)):
             os.mkdir(directory_path_string)
-        return str(Constants.EPOCHED_FILE_PATH.joinpath(directory_path_string)) + "/" + PathService.filenames[feature_type.name]
     
     @staticmethod
     def get_model_path():
