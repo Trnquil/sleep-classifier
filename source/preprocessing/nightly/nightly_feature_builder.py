@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(1, '../..')
+sys.path.insert(1, '../../..')
 
 from source.constants import Constants
 from source.preprocessing.path_service import PathService
@@ -27,23 +27,36 @@ class NightlyFeatureBuilder(object):
         if Constants.VERBOSE:
             print("Building nightly features...")
             
-        i = 0
+        subject_index = 0
         for subject_id in BuiltService.get_built_subject_ids(Constants.EPOCHED_FILE_PATH):
+            
+            session_index = 0
             for session_id in BuiltService.get_built_sleepsession_ids(subject_id, Constants.EPOCHED_FILE_PATH):
                 feature_dict = NightlyFeatureBuilder.build_feature_dict(subject_id, session_id)
                 
                 feature_row = pd.DataFrame(feature_dict)
                 
-                if i == 0:
-                    nightly_dataframe = feature_row
+                if session_index == 0:
+                    subject_dataframe = feature_row
                 else:    
-                    nightly_dataframe = pd.concat([nightly_dataframe, feature_row], axis=0)
-                
-                i += 1
-
-        if Constants.VERBOSE:
-            print("Normalizing nightly features...")
-        DataWriter.write_nightly(nightly_dataframe)
+                    subject_dataframe = pd.concat([subject_dataframe, feature_row], axis=0)
+                    
+                session_index += 1
+            
+            # Normalizing features across the subject and filling 0 for features with std 0
+            subject_mean = np.mean(subject_dataframe.iloc[:,2:], axis=0)
+            subject_std = np.std(subject_dataframe.iloc[:,2:], axis=0)
+            subject_dataframe[subject_dataframe.columns[2:]] = (subject_dataframe.iloc[:,2:] - subject_mean)/subject_std
+            subject_dataframe = subject_dataframe.fillna(0)
+            
+            if subject_index == 0:
+                nightly_dataframe = subject_dataframe
+            else:
+                nightly_dataframe = pd.concat([nightly_dataframe, subject_dataframe], axis=0)
+            
+            subject_index += 1
+        
+        
         
     @staticmethod
     def build_feature_dict(subject_id, session_id):
