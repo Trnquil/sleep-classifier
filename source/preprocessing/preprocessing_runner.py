@@ -19,8 +19,8 @@ from source.preprocessing.clustering.cluster_feature_builder import ClusterFeatu
 def run_preprocessing():
     start_time = time.time()
     
-    #build_cropped()
-    #build_epoched()
+    build_cropped()
+    build_epoched()
     build_clusters()
     build_nightly()            
 
