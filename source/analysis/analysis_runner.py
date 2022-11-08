@@ -23,7 +23,7 @@ def figures_leave_one_out():
     attributed_classifier = AttributedClassifier(name='Nearest Neighbors',
                                                  classifier=KNeighborsClassifier())
 
-    feature_sets = [[FeatureType.nightly_cluster, FeatureType.nightly_hr]]
+    feature_sets = [[FeatureType.nightly_cluster, FeatureType.nightly_ibi]]
 
     if Constants.VERBOSE:
         print('Running ' + attributed_classifier.name + '...')

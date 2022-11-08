@@ -5,7 +5,7 @@ from source.preprocessing.ibi_feature_service import IbiFeatureService
 import numpy as np
 import pandas as pd
 
-class HeartRateNightlyFeatureService(object):
+class IbiNightlyFeatureService(object):
     
     @staticmethod
     def build_feature_dict(subject_id, session_id):

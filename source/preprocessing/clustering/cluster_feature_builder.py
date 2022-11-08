@@ -18,7 +18,9 @@ class ClusterFeatureBuilder(object):
             print("Predicting clusters...")
         
         # TODO: I need to implement this in a cleaner way as to avoid making mistakes
-        features = DataService.load_feature_raw(subject_id, session_id, FeatureType.epoched)[:,1:].squeeze()
+        data = DataService.load_feature_raw(subject_id, session_id, FeatureType.epoched)
+        features = data[:,1:].squeeze()
+        timestamps = data[:,0].squeeze()
         
         clusters = clustering_model.predict(features)
         
@@ -26,8 +28,7 @@ class ClusterFeatureBuilder(object):
         ### PLOTTING
         
         if Constants.MAKE_PLOTS_PREPROCESSING:
-            timestamps = np.arange(0, len(clusters)*30/3600, 30/3600, dtype=float)[0:len(clusters)]
-            plt.scatter(timestamps, clusters, color=cm.cool(30*np.abs(clusters)), edgecolors='none')
+            plt.scatter((timestamps - timestamps[0])/3600, clusters, color=cm.cool(30*np.abs(clusters)), edgecolors='none')
             plt.savefig(str(Constants.FIGURE_FILE_PATH) + "/clusters/" + subject_id + "_" + session_id)
             plt.clf()
             
