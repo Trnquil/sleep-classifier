@@ -2,7 +2,7 @@ import sys
 sys.path.insert(1, '../..')
 
 from source.constants import Constants
-from source.preprocessing.ibi_feature_service import IbiFeatureService
+from source.preprocessing.ibi.ibi_feature_service import IbiFeatureService
 from source.preprocessing.activity_count.activity_count_feature_service import ActivityCountFeatureService
 from source.preprocessing.raw_data_processor import RawDataProcessor
 from source.preprocessing.time.time_based_feature_service import TimeBasedFeatureService

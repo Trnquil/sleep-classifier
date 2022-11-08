@@ -4,7 +4,7 @@ sys.path.insert(1, '../../..')
 from source.constants import Constants
 from source.preprocessing.path_service import PathService
 from source.preprocessing.clustering.clustering_nightly_feature_service import ClusteringNightlyFeatureService
-from source.preprocessing.ibi_nightly_feature_service import IbiNightlyFeatureService
+from source.preprocessing.ibi.ibi_nightly_feature_service import IbiNightlyFeatureService
 from source.data_services.data_service import DataService
 from source.analysis.setup.feature_type import FeatureType
 from source.analysis.setup.subject_builder import SubjectBuilder

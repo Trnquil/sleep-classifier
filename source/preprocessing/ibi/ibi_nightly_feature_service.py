@@ -1,6 +1,6 @@
 from source.data_services.data_service import DataService
 from source.analysis.setup.feature_type import FeatureType
-from source.preprocessing.ibi_feature_service import IbiFeatureService
+from source.preprocessing.ibi.ibi_feature_service import IbiFeatureService
 
 import numpy as np
 import pandas as pd
