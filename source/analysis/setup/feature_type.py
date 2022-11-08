@@ -9,18 +9,10 @@ class FeatureType(Enum):
     
     cropped_count = "cropped count"
     cropped_motion = "cropped motion"
-    cropped_heart_rate = "cropped heart rate"
     cropped_ibi = "cropped inter beat intervals"
-    normalized_heart_rate = "normalized cropped heart rate"
     
     epoched = "epoched"
     
-    epoched_heart_rate = "epoched heart rate"
-    epoched_count = "epoched count"
-    epoched_cosine = "epoched cosine"
-    epoched_motion = "epoched motion"
-    epoched_circadian_model = "epoched circadian model"
-    epoched_time = "epoched time"
     epoched_cluster = "epoched cluster"
     
     nightly = "nightly"

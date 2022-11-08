@@ -43,6 +43,9 @@ class IbiFeatureService(object):
             ibi_values_in_range = ibi_collection.values[indices_in_range].squeeze()
             ibi_timestamps_in_range = ibi_collection.timestamps[indices_in_range].squeeze()
             
+            if ibi_timestamps_in_range.ndim == 0:
+                continue
+            
             ibi_values_delta = np.sum(ibi_values_in_range)
             ibi_timestamps_delta = ibi_timestamps_in_range[-1] - ibi_timestamps_in_range[0]
             
@@ -56,7 +59,8 @@ class IbiFeatureService(object):
                 
             epoch_timestamp_dict = {'epoch_timestamp': epoch.timestamp}
             feature_dict = epoch_timestamp_dict | feature_dict
-                        
+                     
+            # initializing an array filled with nans
             if(i == 0):
                 ibi_features = np.full((len(valid_epochs),len(list(feature_dict.keys()))),np.nan)
                 
@@ -65,6 +69,7 @@ class IbiFeatureService(object):
             i += 1
         
         if np.any(ibi_features):
+            #removing any leftover nans
             ibi_features = ibi_features[~np.isnan(ibi_features).any(axis=1), :]
             ibi_dataframe = pd.DataFrame(ibi_features, columns=np.array(list(feature_dict.items()))[:,0])
 

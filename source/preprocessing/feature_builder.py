@@ -27,12 +27,14 @@ class FeatureBuilder(object):
         count_std = np.std(count_feature_subject.iloc[:,1:])
         
         ibi_features_subject = IbiFeatureService.build_hr_features(subject_id, valid_epochs)
-        hr_mean = np.mean(ibi_features_subject.iloc[:,1:], axis=0)
-        hr_std = np.std(ibi_features_subject.iloc[:,1:], axis=0)
+        ibi_mean = np.mean(ibi_features_subject.iloc[:,1:], axis=0)
+        ibi_std = np.std(ibi_features_subject.iloc[:,1:], axis=0)
         
+        # If there is nothing inside ibi_features_subject, we return
         if not np.any(ibi_features_subject):
             return
         
+        # Merging all features together
         features_df = pd.merge(count_feature_subject, ibi_features_subject, how="inner", on=["epoch_timestamp"])
         
         sleepsessions = BuiltService.get_built_sleepsession_ids(subject_id, Constants.CROPPED_FILE_PATH)
@@ -45,18 +47,24 @@ class FeatureBuilder(object):
             
             count_feature = ActivityCountFeatureService.build_count_feature(subject_id, session_id, valid_epochs)
             
-            # Normalizing count feature
+            # Normalizing count feature, the first row is a timestamp
             count_feature.iloc[:,1:] = count_feature.iloc[:,1:]/count_std
             
-            # Normalizing heart rate feature
+            # Normalizing ibi features, the first row is a timestamp
             ibi_features = IbiFeatureService.build_hr_features(subject_id, session_id, valid_epochs)
-            ibi_features.iloc[:,1:] = (ibi_features.iloc[:,1:] - hr_mean)/hr_std        
+            ibi_features.iloc[:,1:] = (ibi_features.iloc[:,1:] - ibi_mean)/ibi_std      
             
+            # If there is nothing inside ibi_features, we continue with the next loop
+            if not np.any(ibi_features):
+                continue
+            
+            # merging all features together
             features_df = pd.merge(count_feature, ibi_features, how="inner", on=["epoch_timestamp"]).fillna(0)
     
             
-            # Writing all features to their files
+            # Writing features to disk
             if(np.any(features_df)):
+                # Create needed folders if they don't already exist
                 PathService.create_epoched_file_path(subject_id, session_id)
                 DataWriter.write_epoched(subject_id, session_id, features_df, FeatureType.epoched)
 

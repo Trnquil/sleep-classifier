@@ -11,10 +11,8 @@ class BuiltService(object):
     def get_built_subject_and_sleepsession_ids(path):
         subject_to_session_dictionary = {}
         
-        subject_dirs = os.listdir(path)
-        subject_dirs.sort()
-        for subject_id in os.listdir(path):
-                if subject_id in Constants.SUBJECT_IDS:
+        for subject_id in Constants.SUBJECT_IDS:
+                if subject_id in os.listdir(path):
                     session_dirs = os.listdir(path.joinpath(subject_id))
                     for session_id in SleepSessionService.get_starttime_ordered_ids(subject_id):
                         if session_id in session_dirs:

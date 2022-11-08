@@ -7,6 +7,7 @@ from source.preprocessing.collection import Collection
 
 import numpy as np
 import pandas as pd
+import os
 
 from multipledispatch import dispatch
 
@@ -25,7 +26,9 @@ class DataLoader(object):
 
         current_height = 0
         for raw_path in raw_paths:
-            feature_array = pd.read_csv(str(raw_path), delimiter=",")
+            if os.path.getsize(str(raw_path))==0:
+                continue
+            feature_array = pd.read_csv(str(raw_path))
             
             #unix start time of the data
             start_time = feature_array.columns.values.tolist()
@@ -69,7 +72,9 @@ class DataLoader(object):
 
         current_height = 0
         for raw_path in raw_paths:
-            feature_array = pd.read_csv(str(raw_path), delimiter=",")
+            if os.path.getsize(str(raw_path))==0:
+                continue
+            feature_array = pd.read_csv(str(raw_path))
             
             #unix start time of the data
             start_time = feature_array.columns.values.tolist()
@@ -96,7 +101,9 @@ class DataLoader(object):
         feature_height = 0
 
         for raw_path in raw_paths:
-            feature_array = pd.read_csv(str(raw_path), delimiter=",")
+            if os.path.getsize(str(raw_path))==0:
+                continue
+            feature_array = pd.read_csv(str(raw_path))
             
             if(feature_array.ndim == 1):
                 np.expand_dims(feature_array, axis=1)

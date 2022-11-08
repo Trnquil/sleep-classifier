@@ -33,7 +33,6 @@ class RawDataProcessor:
         count_collection = ActivityCountService.build_activity_counts_without_matlab(subject_id, motion_collection.data) # Builds activity counts with python, not MATLAB
         
         
-        
         '''Getting intersecting intervals of time for all collections'''
         valid_interval = RawDataProcessor.get_intersecting_interval([motion_collection, ibi_collection])
 
@@ -62,20 +61,7 @@ class RawDataProcessor:
                 DataWriter.write_cropped(motion_collection, sleep_session_id, FeatureType.cropped_motion)
                 DataWriter.write_cropped(ibi_collection, sleep_session_id, FeatureType.cropped_ibi)
                 DataWriter.write_cropped(count_collection, sleep_session_id, FeatureType.cropped_count)
-        
-                                     
-        # '''Doing all above steps for normalized data'''
-        # normalized_heart_rate_collection = Collection(subject_id, DataService.load_feature_raw(subject_id, FeatureType.cropped_heart_rate))
-        # normalized_heart_rate_collection = RawDataProcessor.normalize(normalized_heart_rate_collection)
-        # normalized_heart_rate_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, normalized_heart_rate_collection)
-           
-
-        # for normalized_heart_rate_sleepsession_tuple in normalized_heart_rate_sleepsession_tuples:
-        #     normalized_heart_rate_collection = normalized_heart_rate_sleepsession_tuple[1]
-        #     sleep_session_id = normalized_heart_rate_sleepsession_tuple[0].session_id
-            
-        #     if(np.any(normalized_heart_rate_collection.data)):
-        #         DataWriter.write_cropped(normalized_heart_rate_collection, sleep_session_id, FeatureType.normalized_heart_rate)
+                                        
             
     @staticmethod 
     def normalize(collection):
