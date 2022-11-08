@@ -58,7 +58,7 @@ class PerformancePlotBuilder(object):
 
                 row_count = row_count + 1
 
-            file_save_name = str(Constants.FIGURE_FILE_PATH) + '/' + FeatureSetService.get_label(feature_set) + '_' \
+            file_save_name = str(Constants.ANALYSIS_FILE_PATH) + '/' + FeatureSetService.get_label(feature_set) + '_' \
                              + classifier_summary.attributed_classifier.name + '_histograms_with_thresholds.png'
 
             plt.tight_layout()
@@ -79,7 +79,7 @@ class PerformancePlotBuilder(object):
             draw.text((int(scale_factor * width / 3), int(height * 0.9 * 0.625)), "TPR = 0.93", (0, 0, 0), font=font)
             draw.text((int(scale_factor * width / 3), int(height * 0.9 * 0.875)), "TPR = 0.95", (0, 0, 0), font=font)
 
-            new_image.save(str(Constants.FIGURE_FILE_PATH) + '/' + 'figure_threshold_histogram.png')
+            new_image.save(str(Constants.ANALYSIS_FILE_PATH) + '/' + 'figure_threshold_histogram.png')
 
     @staticmethod
     def make_single_threshold_histograms(classifier_summary: ClassifierSummary, description=''):
@@ -126,7 +126,7 @@ class PerformancePlotBuilder(object):
             ax[1, 1].set_xlim((0, 1))
             plt.tight_layout()
             file_save_name = str(
-                Constants.FIGURE_FILE_PATH) + '/figure_' + classifier_summary.attributed_classifier.name + '_' + \
+                Constants.ANALYSIS_FILE_PATH) + '/figure_' + classifier_summary.attributed_classifier.name + '_' + \
                              description + '_single_threshold_histograms.png'
 
             plt.savefig(file_save_name, dpi=300)
@@ -214,7 +214,7 @@ class PerformancePlotBuilder(object):
 
         plt.tight_layout()
         file_save_name = str(
-            Constants.FIGURE_FILE_PATH) + '/figure_' + classifier_summary.attributed_classifier.name + '_' + \
+            Constants.ANALYSIS_FILE_PATH) + '/figure_' + classifier_summary.attributed_classifier.name + '_' + \
                          description + '_bland_altman.png'
 
         plt.savefig(file_save_name, dpi=300)

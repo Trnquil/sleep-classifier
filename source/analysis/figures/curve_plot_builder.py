@@ -44,7 +44,7 @@ class CurvePlotBuilder(object):
                                     'Fraction of high Q scored as high Q', (1.0, 0.4))
 
         number_of_trials = len(next(iter(classifier_summary.performance_dictionary.values())))
-        plt.savefig(str(Constants.FIGURE_FILE_PATH.joinpath(
+        plt.savefig(str(Constants.ANALYSIS_FILE_PATH.joinpath(
             classifier_summary.attributed_classifier.name + '_' + str(
                 number_of_trials) + '_' + description + '_sw_roc.png')))
         plt.close()
@@ -58,7 +58,7 @@ class CurvePlotBuilder(object):
                                     'Fraction of low Q scored as low Q', (1.0, 0.4))
 
         number_of_trials = len(next(iter(classifier_summary.performance_dictionary.values())))
-        plt.savefig(str(Constants.FIGURE_FILE_PATH.joinpath(
+        plt.savefig(str(Constants.ANALYSIS_FILE_PATH.joinpath(
             classifier_summary.attributed_classifier.name + '_' + str(
                 number_of_trials) + '_' + description + '_ovr_wake_roc.png')))
         plt.close()
@@ -70,7 +70,7 @@ class CurvePlotBuilder(object):
                                     'Fraction of NREM scored as NREM', (1.0, 0.4))
 
         number_of_trials = len(next(iter(classifier_summary.performance_dictionary.values())))
-        plt.savefig(str(Constants.FIGURE_FILE_PATH.joinpath(
+        plt.savefig(str(Constants.ANALYSIS_FILE_PATH.joinpath(
             classifier_summary.attributed_classifier.name + '_' + str(
                 number_of_trials) + '_' + description + '_ovr_nrem_roc.png')))
         plt.close()
@@ -82,7 +82,7 @@ class CurvePlotBuilder(object):
                                     'Fraction of REM scored as REM', (1.0, 0.4))
 
         number_of_trials = len(next(iter(classifier_summary.performance_dictionary.values())))
-        plt.savefig(str(Constants.FIGURE_FILE_PATH.joinpath(
+        plt.savefig(str(Constants.ANALYSIS_FILE_PATH.joinpath(
             classifier_summary.attributed_classifier.name + '_' + str(
                 number_of_trials) + '_' + description + '_ovr_rem_roc.png')))
         plt.close()
@@ -108,7 +108,7 @@ class CurvePlotBuilder(object):
                                     'Fraction of predicted low Q correct', (0.5, 1.0))
 
         number_of_trials = len(next(iter(classifier_summary.performance_dictionary.values())))
-        plt.savefig(str(Constants.FIGURE_FILE_PATH.joinpath(
+        plt.savefig(str(Constants.ANALYSIS_FILE_PATH.joinpath(
             classifier_summary.attributed_classifier.name + '_' + str(
                 number_of_trials) + '_' + description + '_sw_pr.png')))
         plt.close()
@@ -142,7 +142,7 @@ class CurvePlotBuilder(object):
                                     'Fraction of REM, NREM scored correctly', (1.0, 0.4))
 
         number_of_trials = len(next(iter(classifier_summary.performance_dictionary.values())))
-        plt.savefig(str(Constants.FIGURE_FILE_PATH.joinpath(
+        plt.savefig(str(Constants.ANALYSIS_FILE_PATH.joinpath(
             classifier_summary.attributed_classifier.name + '_' + str(
                 number_of_trials) + '_' + description + '_three_class_roc.png')))
         plt.close()
@@ -167,7 +167,7 @@ class CurvePlotBuilder(object):
     def combine_plots_as_grid(classifiers, number_of_trials, plot_extension):
         combined_filenames = []
         for attributed_classifier in classifiers:
-            combined_filenames.append(str(Constants.FIGURE_FILE_PATH) + '/' +
+            combined_filenames.append(str(Constants.ANALYSIS_FILE_PATH) + '/' +
                                       attributed_classifier.name + '_' +
                                       str(number_of_trials) + '_' + plot_extension + '.png')
 
@@ -186,14 +186,14 @@ class CurvePlotBuilder(object):
             new_image.paste(im, (x_offset, y_offset))
             count = count + 1
 
-        new_image.save(str(Constants.FIGURE_FILE_PATH) + '/figure_' + str(number_of_trials) + plot_extension + '.png')
+        new_image.save(str(Constants.ANALYSIS_FILE_PATH) + '/figure_' + str(number_of_trials) + plot_extension + '.png')
 
     @staticmethod
     def combine_sw_and_three_class_plots(attributed_classifier, number_of_trials, plot_extension):
-        combined_filenames = [str(Constants.FIGURE_FILE_PATH) + '/' +
+        combined_filenames = [str(Constants.ANALYSIS_FILE_PATH) + '/' +
                               attributed_classifier.name + '_' +
                               str(number_of_trials) + '__' + plot_extension + '_sw_roc.png',
-                              str(Constants.FIGURE_FILE_PATH) + '/' +
+                              str(Constants.ANALYSIS_FILE_PATH) + '/' +
                               attributed_classifier.name + '_' +
                               str(number_of_trials) + '__' + plot_extension + '_three_class_roc.png']
 
@@ -213,5 +213,5 @@ class CurvePlotBuilder(object):
             count = count + 1
 
         new_image.save(
-            str(Constants.FIGURE_FILE_PATH) + '/figure_' + attributed_classifier.name + str(
+            str(Constants.ANALYSIS_FILE_PATH) + '/figure_' + attributed_classifier.name + str(
                 number_of_trials) + plot_extension + '_combined.png')

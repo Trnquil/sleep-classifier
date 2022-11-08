@@ -18,6 +18,7 @@ class Constants(object):
     EPOCHED_FILE_PATH = utils.get_project_root().joinpath('outputs/epoched features/')
     NIGHTLY_FILE_PATH = utils.get_project_root().joinpath('outputs/nightly features/')
     FIGURE_FILE_PATH = utils.get_project_root().joinpath('outputs/figures/')
+    ANALYSIS_FILE_PATH = FIGURE_FILE_PATH.joinpath('analysis')
     LOWER_BOUND = -0.2
     MATLAB_PATH = '/Applications/MATLAB_R2019a.app/bin/matlab'  # Replace with your MATLAB path
     TIME_CENTER = 1614400000.000000

@@ -21,7 +21,7 @@ def run_preprocessing():
     
     #build_cropped()
     #build_epoched()
-    #build_clusters()
+    build_clusters()
     build_nightly()            
 
     end_time = time.time()

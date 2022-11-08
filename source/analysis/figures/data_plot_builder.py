@@ -55,7 +55,7 @@ class DataPlotBuilder(object):
 
         data_path = str(Constants.CROPPED_FILE_PATH) + '/'
         circadian_data_path = str(utils.get_project_root().joinpath('data/circadian_predictions/')) + '/'
-        output_path = str(Constants.FIGURE_FILE_PATH) + '/'
+        output_path = str(Constants.ANALYSIS_FILE_PATH) + '/'
 
         if snippet is False:
             fig = plt.figure(figsize=(10, 12))
