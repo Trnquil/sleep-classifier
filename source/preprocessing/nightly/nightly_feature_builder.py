@@ -12,6 +12,7 @@ from source.data_services.data_service import DataService
 from source.preprocessing.built_service import BuiltService
 from source.data_services.data_writer import DataWriter
 from source.constants import Constants
+from source.preprocessing.activity_count.activity_count_nightly_feature_service import ActivityCountNightlyFeatureService
 
 import pandas as pd
 import numpy as np
@@ -44,9 +45,9 @@ class NightlyFeatureBuilder(object):
                 session_index += 1
             
             # Normalizing features across the subject and filling 0 for features with std 0
-            subject_mean = np.mean(subject_dataframe.filter(regex=("ibi_.*")), axis=0)
-            subject_std = np.std(subject_dataframe.filter(regex=("ibi_.*")), axis=0)
-            subject_dataframe[subject_dataframe.filter(regex=("ibi_.*")).columns] = (subject_dataframe.filter(regex=("ibi_.*")) - subject_mean)/subject_std
+            subject_mean = np.mean(subject_dataframe.filter(regex=("ibi_.*|count_.*")), axis=0)
+            subject_std = np.std(subject_dataframe.filter(regex=("ibi_.*|count_.*")), axis=0)
+            subject_dataframe[subject_dataframe.filter(regex=("ibi_.*|count_.*")).columns] = (subject_dataframe.filter(regex=("ibi_.*|count_.*")) - subject_mean)/subject_std
             subject_dataframe = subject_dataframe.fillna(0)
             
             if subject_index == 0:
@@ -74,7 +75,9 @@ class NightlyFeatureBuilder(object):
         ibi_features_dict = IbiNightlyFeatureService.build_feature_dict(subject_id, session_id)
         ibi_features_dict = {'ibi_' + str(key): val for key, val in ibi_features_dict.items()}
         
-        merged_dict = subject_session_dict | clustering_features_dict | ibi_features_dict | sleepquality_dict
+        count_features_dict = ActivityCountNightlyFeatureService.build_feature_dict(subject_id, session_id)
+        
+        merged_dict = subject_session_dict | clustering_features_dict | ibi_features_dict | count_features_dict | sleepquality_dict
         
         return merged_dict
 
