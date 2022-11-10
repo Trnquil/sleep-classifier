@@ -153,6 +153,8 @@ class DataLoader(object):
         
         if(feature_type.name == FeatureType.nightly_cluster.name):
             nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("c_.*"))
+        elif(feature_type.name == FeatureType.nightly_count.name):
+            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("count_.*"))
         elif(feature_type.name == FeatureType.nightly_ibi.name):
             nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("ibi_.*"))
         elif(feature_type.name == FeatureType.nightly_sleep_quality.name):

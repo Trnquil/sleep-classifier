@@ -56,12 +56,10 @@ class PathService(object):
         #Removing .DS_Store from the list of directories because we don't care about it
         session_dirs.remove('.DS_Store')
         
-        #For now we are simply returning the first session
-        #TODO: Return all directories, not only the first one
-        return [str(subject_dir.joinpath(session_dirs[4])) + "/" + PathService.filenames[feature_type.name],
-                str(subject_dir.joinpath(session_dirs[5])) + "/" + PathService.filenames[feature_type.name],
-                str(subject_dir.joinpath(session_dirs[6])) + "/" + PathService.filenames[feature_type.name],
-                str(subject_dir.joinpath(session_dirs[7])) + "/" + PathService.filenames[feature_type.name]]
+        session_dirs = [str(subject_dir.joinpath(session_dirs[i])) + "/" + PathService.filenames[feature_type.name] 
+         for i in range(len(session_dirs))]
+     
+        return session_dirs[:20]
     
     @staticmethod
     def get_epoched_file_path(subject_id, session_id, feature_type):
