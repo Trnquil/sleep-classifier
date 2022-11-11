@@ -122,7 +122,7 @@ class DataLoader(object):
     def load_cropped(subject_id, session_id, feature_type):
         file_path = PathService.get_cropped_file_path(subject_id, session_id, feature_type)
         values = pd.read_csv(str(file_path), delimiter=" ").values
-        return Collection(subject_id=subject_id, data=values)
+        return Collection(subject_id=subject_id, data=values, data_frequency=0)
     
     @staticmethod
     def load_epoched(subject_id, session_id, feature_type):

@@ -28,6 +28,8 @@ from scipy.signal import butter,filtfilt, iirnotch
 
 class RawDataProcessor:
     BASE_FILE_PATH = utils.get_project_root().joinpath('outputs/cropped/')
+    IBI_LOWER_BOUND = 0.4
+    IBI_UPPER_BOUND = 2
 
     @staticmethod
     def crop_all(subject_id):
@@ -82,7 +84,7 @@ class RawDataProcessor:
                     assert bvp_collection.timestamps[-1] - timestamps_ibi[-1] < 10, "Ibi drift over 10 seconds"
                     
                     #only keeping IBI values between 0.4 and 2
-                    mask = [0.4 < x < 2 for x in ibi_values]
+                    mask = [RawDataProcessor.IBI_LOWER_BOUND < x < RawDataProcessor.IBI_UPPER_BOUND for x in ibi_values]
                     data = data[mask]
                     ibi_collection = Collection(subject_id, data, 0)
                 
