@@ -12,6 +12,7 @@ from source.preprocessing.heart_rate.heart_rate_feature_service import HeartRate
 from source.preprocessing.time.time_based_feature_service import TimeBasedFeatureService
 from source.analysis.setup.sleep_session_service import SleepSessionService
 from source.data_services.data_service import DataService
+from source.preprocessing.built_service import BuiltService
 
 
 class SubjectBuilder(object):
@@ -20,7 +21,7 @@ class SubjectBuilder(object):
     @staticmethod
     def get_subject_dictionary():
         subject_dictionary = {}
-        all_subject_ids = Constants.SUBJECT_IDS
+        all_subject_ids = BuiltService.get_built_subject_ids(Constants.EPOCHED_FILE_PATH)
         for subject_id in all_subject_ids:
             subject_dictionary[subject_id] = SubjectBuilder.build(subject_id)
 

@@ -20,8 +20,8 @@ def run_preprocessing():
     start_time = time.time()
     
     #build_cropped()
-    build_epoched()
-    build_clusters()
+    #build_epoched()
+    #build_clusters()
     build_nightly()            
 
     end_time = time.time()
