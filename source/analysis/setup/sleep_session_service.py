@@ -97,7 +97,7 @@ class SleepSessionService(object):
                 timestamp_index_end += 1
             
             timestamped_feature = collection.data[timestamp_index_start:timestamp_index_end][:]
-            sleepsession_tuple = (sleepsession, Collection(subject_id, timestamped_feature))
+            sleepsession_tuple = (sleepsession, Collection(subject_id, timestamped_feature, collection.data_frequency))
             sleepsession_tuples.append(sleepsession_tuple)
             
         

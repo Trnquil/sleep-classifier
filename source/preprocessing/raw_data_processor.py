@@ -17,8 +17,13 @@ from source.data_services.data_loader import DataLoader
 from source.data_services.data_writer import DataWriter
 from source.preprocessing.collection_service import CollectionService
 from source.preprocessing.path_service import PathService
+from source.constants import Constants
 
 from multipledispatch import dispatch
+import heartpy as hp
+from matplotlib import pyplot as plt
+import scipy.signal as s
+from scipy.signal import butter,filtfilt, iirnotch
 
 
 class RawDataProcessor:
@@ -31,8 +36,7 @@ class RawDataProcessor:
         motion_collection = DataLoader.load_raw(subject_id, FeatureType.raw_acc)
         ibi_collection = DataLoader.load_raw(subject_id,  FeatureType.raw_ibi)
         count_collection = ActivityCountService.build_activity_counts_without_matlab(subject_id, motion_collection.data) # Builds activity counts with python, not MATLAB
-        
-        
+
         '''Getting intersecting intervals of time for all collections'''
         valid_interval = RawDataProcessor.get_intersecting_interval([motion_collection, ibi_collection])
 
@@ -40,27 +44,52 @@ class RawDataProcessor:
         '''cropping all the data to the valid interval'''
         motion_collection = CollectionService.crop(motion_collection, valid_interval)
         ibi_collection = CollectionService.crop(ibi_collection, valid_interval)
+
         
         '''splitting each collection into sleepsessions'''
         motion_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, motion_collection)
         ibi_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, ibi_collection)
         count_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, count_collection)
         
-        
+        if Constants.USE_BVP:
+            bvp_collection = DataLoader.load_raw(subject_id, FeatureType.raw_bvp)
+            bvp_collection = CollectionService.crop(bvp_collection, valid_interval)
+            bvp_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, bvp_collection)
+
         '''writing all the data to disk'''
         for i in range(len(motion_sleepsession_tuples)):
             motion_collection = motion_sleepsession_tuples[i][1]
             ibi_collection = ibi_sleepsession_tuples[i][1]
             count_collection = count_sleepsession_tuples[i][1]
+            bvp_collection = bvp_sleepsession_tuples[i][1]
             
             sleep_session_id = motion_sleepsession_tuples[i][0].session_id
             
             if(np.any(motion_collection.data) and np.any(ibi_collection.data) and np.any(count_collection.data)):
+                
                 PathService.create_cropped_file_path(subject_id, sleep_session_id)
+                
+                if Constants.USE_BVP:
+                    # Working on BVP values to produce IBI sequence
+                    bvp_values = bvp_collection.values.squeeze()
+                    filtered = RawDataProcessor.bvp_filter(bvp_values)
+                    working_data, measures = hp.process(filtered, bvp_collection.data_frequency)
+                    ibi_values = working_data['RR_list']/1000
+                    timestamps_ibi = np.cumsum(ibi_values) + bvp_collection.timestamps[0]
+                    data = np.stack((timestamps_ibi, ibi_values), axis=1)
+                    
+                    # Making sure that the timestamp drift between derived ibi and original BVP timestamps is not too large
+                    assert bvp_collection.timestamps[-1] - timestamps_ibi[-1] < 10, "Ibi drift over 10 seconds"
+                    
+                    #only keeping IBI values between 0.4 and 2
+                    mask = [0.4 < x < 2 for x in ibi_values]
+                    data = data[mask]
+                    ibi_collection = Collection(subject_id, data, 0)
                 
                 DataWriter.write_cropped(motion_collection, sleep_session_id, FeatureType.cropped_motion)
                 DataWriter.write_cropped(ibi_collection, sleep_session_id, FeatureType.cropped_ibi)
                 DataWriter.write_cropped(count_collection, sleep_session_id, FeatureType.cropped_count)
+            
                                         
             
     @staticmethod 
@@ -74,6 +103,49 @@ class RawDataProcessor:
         normalized_data = np.concatenate((timestamps, normalized_feature), axis=1)
         
         return Collection(subject_id= collection.subject_id, data = normalized_data)
+
+    @staticmethod
+    def bvp_filter(signal):
+        fH = 10
+        fL = 0.5
+        freq = 64
+        nyquist = freq / 2
+        sos = s.cheby2(4, 20, Wn=(fL / nyquist, fH / nyquist), btype='bandpass', output = 'sos')
+        filtered = s.sosfiltfilt(sos, signal)
+        return filtered
+    
+    def bvp_alternative_filter(signal, signal_frequency):
+        
+        def butter_lowpass_filter(signal, cutoff, fs, order):
+            normal_cutoff = cutoff / nyq
+            # Get the filter coefficients 
+            b, a = butter(order, normal_cutoff, btype='high', analog=False)
+            signal = filtfilt(b, a, signal)
+            return signal
+        
+        def notch_filter(signal, cutoff, fs, Q):
+            cutoff = 0.67
+            # Get the filter coefficients 
+            b, a = iirnotch(cutoff, Q, fs)
+            signal = filtfilt(b, a, signal)
+            return signal
+            
+        
+        # Filter requirements.
+        T = len(signal)/signal_frequency        # Sample Period
+        fs = signal_frequency       # sample rate, Hz
+        cutoff = 0.67     # desired cutoff frequency of the filter, Hz ,      slightly higher than actual 1.2 Hz
+        nyq = 0.5 * fs  # Nyquist Frequency
+        order = 4       # sin wave can be approx represented as quadratic
+        n = int(T * fs) # total number of samples
+        
+        signal = butter_lowpass_filter(signal, cutoff, fs, order)
+
+        Q = 5
+        cutoff = 0.67
+        signal = notch_filter(signal, cutoff, fs, Q)
+        return signal
+
     
     @staticmethod
     def get_intersecting_interval(collection_list):

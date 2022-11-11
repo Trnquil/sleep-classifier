@@ -72,7 +72,7 @@ class PerformancePlotBuilder(object):
             new_image = Image.new('RGB', (int((1 + scale_factor) * width), height), "white")
             new_image.paste(image, (int(scale_factor * width), 0))
             draw = ImageDraw.Draw(new_image)
-            font = ImageFont.truetype('/Library/Fonts/Arial Unicode.ttf', 75)
+            font = ImageFont.load_default()
 
             draw.text((int(scale_factor * width / 3), int((height * 0.9) * 0.125)), "TPR = 0.8", (0, 0, 0), font=font)
             draw.text((int(scale_factor * width / 3), int(height * 0.9 * 0.375)), "TPR = 0.9", (0, 0, 0), font=font)

@@ -6,6 +6,7 @@ class FeatureType(Enum):
     raw_hr = "raw heart rate"
     raw_acc = "raw acceleration"
     raw_ibi = "raw inter beat interval"
+    raw_bvp = "raw BVP signal"
     
     cropped_count = "cropped count"
     cropped_motion = "cropped motion"

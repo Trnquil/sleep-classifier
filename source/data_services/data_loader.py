@@ -60,7 +60,7 @@ class DataLoader(object):
             final_feature_array[current_height:(current_height + feature_height)][:] = feature_array
             current_height += feature_height
             
-        return Collection(subject_id=subject_id, data=final_feature_array)
+        return Collection(subject_id=subject_id, data=final_feature_array, data_frequency=data_frequency)
     
     
     @staticmethod
@@ -93,7 +93,7 @@ class DataLoader(object):
             final_feature_array[current_height:(current_height + feature_height)][:] = feature_array
             current_height += feature_height
             
-        return Collection(subject_id=subject_id, data=final_feature_array)
+        return Collection(subject_id=subject_id, data=final_feature_array, data_frequency=0)
         
     @staticmethod
     def load_raw_shape(subject_id, feature_type):
