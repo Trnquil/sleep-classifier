@@ -66,6 +66,6 @@ class FeatureBuilder(object):
             if(np.any(features_df)):
                 # Create needed folders if they don't already exist
                 PathService.create_epoched_file_path(subject_id, session_id)
-                DataWriter.write_epoched(subject_id, session_id, features_df, FeatureType.epoched)
+                DataWriter.write_epoched(subject_id, session_id, ibi_features, FeatureType.epoched)
 
         

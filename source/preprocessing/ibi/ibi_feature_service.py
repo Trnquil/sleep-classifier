@@ -75,7 +75,7 @@ class IbiFeatureService(object):
 
         else:
             ibi_dataframe = pd.DataFrame([])
-        return ibi_dataframe
+        return ibi_dataframe[['epoch_timestamp','mean_hr', 'std_hr']]
 
     @staticmethod
     def get_features(ibi_values):

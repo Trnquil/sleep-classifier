@@ -40,6 +40,7 @@ class RawDataProcessor:
             motion_collection = DataLoader.load_raw(subject_id, FeatureType.raw_acc)
             count_collection = ActivityCountService.build_activity_counts_without_matlab(subject_id, motion_collection.data) # Builds activity counts with python, not MATLAB
             bvp_collection = DataLoader.load_raw(subject_id, FeatureType.raw_bvp)
+            ibi_collection = DataLoader.load_raw(subject_id, FeatureType.raw_ibi)
             
             '''Getting intersecting intervals of time for all collections'''
             valid_interval = RawDataProcessor.get_intersecting_interval([motion_collection, bvp_collection])
@@ -49,12 +50,15 @@ class RawDataProcessor:
             count_collection = CollectionService.crop(count_collection, valid_interval)
             hr_collection = CollectionService.crop(hr_collection, valid_interval)
             bvp_collection = CollectionService.crop(bvp_collection, valid_interval)
+            ibi_collection = CollectionService.crop(ibi_collection, valid_interval)
+
             
             '''splitting each collection into sleepsessions'''
             motion_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, motion_collection)
             count_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, count_collection)
             hr_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, hr_collection)
             bvp_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, bvp_collection)
+            ibi_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, ibi_collection)
             
                     
 
@@ -64,6 +68,7 @@ class RawDataProcessor:
                 count_collection = count_sleepsession_tuples[i][1]
                 hr_collection = hr_sleepsession_tuples[i][1]
                 bvp_collection = bvp_sleepsession_tuples[i][1]
+                ibi_collection2 = ibi_sleepsession_tuples[i][1]
                 
                 sleep_session_id = motion_sleepsession_tuples[i][0].session_id
                 
@@ -72,6 +77,13 @@ class RawDataProcessor:
                     PathService.create_cropped_file_path(subject_id, sleep_session_id)
                     
                     ibi_collection = RawDataProcessor.get_ibi_from_bvp(bvp_collection)
+                    
+                    hr_from_bvp = 60/ibi_collection.values
+                    hr_from_ibi = 60/ibi_collection2.values
+                    hr_from_usi = hr_collection.values
+                    
+                    print("hr mean from bvp: " + str(np.mean(hr_from_bvp)) + ", hr mean from usi: " + str(np.mean(hr_from_usi)) + ", hr mean from ibi: " + str(np.mean(hr_from_ibi)))
+                    print("hr std from bvp: " + str(np.std(hr_from_bvp)) + ", hr std from usi: " + str(np.std(hr_from_usi)) + ", hr std from ibi: " + str(np.std(hr_from_ibi)))
                     
                     DataWriter.write_cropped(motion_collection, sleep_session_id, FeatureType.cropped_motion)
                     DataWriter.write_cropped(ibi_collection, sleep_session_id, FeatureType.cropped_ibi)
@@ -125,8 +137,8 @@ class RawDataProcessor:
                                         
     
     def get_ibi_from_bvp(bvp_collection):
-                    # Working on BVP values to produce IBI sequence
-        bvp_values = bvp_collection.values.squeeze()
+        # Working on BVP values to produce IBI sequence
+        bvp_values = bvp_collection.values.squeeze()[:350]
         filtered = RawDataProcessor.bvp_filter(bvp_values)
         working_data, measures = hp.process(filtered, bvp_collection.data_frequency)
         ibi_values = working_data['RR_list']/1000
@@ -141,6 +153,8 @@ class RawDataProcessor:
         data = data[mask]
         ibi_collection = Collection(bvp_collection.subject_id, data, 0)
         return ibi_collection
+    
+    
     @staticmethod 
     def normalize(collection):
         feature = collection.values
@@ -155,7 +169,7 @@ class RawDataProcessor:
 
     @staticmethod
     def bvp_filter(signal):
-        fH = 10
+        fH = 4
         fL = 0.5
         freq = 64
         nyquist = freq / 2
