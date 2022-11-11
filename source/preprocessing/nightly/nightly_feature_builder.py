@@ -45,10 +45,10 @@ class NightlyFeatureBuilder(object):
                 session_index += 1
             
             # Normalizing features across the subject and filling 0 for features with std 0
-            subject_mean = np.mean(subject_dataframe.filter(regex=("ibi_.*|count_.*")), axis=0)
-            subject_std = np.std(subject_dataframe.filter(regex=("ibi_.*|count_.*")), axis=0)
-            subject_dataframe[subject_dataframe.filter(regex=("ibi_.*|count_.*")).columns] = (subject_dataframe.filter(regex=("ibi_.*|count_.*")) - subject_mean)/subject_std
-            subject_dataframe = subject_dataframe.fillna(0)
+            # subject_mean = np.mean(subject_dataframe.filter(regex=("ibi_.*|count_.*")), axis=0)
+            # subject_std = np.std(subject_dataframe.filter(regex=("ibi_.*|count_.*")), axis=0)
+            # subject_dataframe[subject_dataframe.filter(regex=("ibi_.*|count_.*")).columns] = (subject_dataframe.filter(regex=("ibi_.*|count_.*")) - subject_mean)/subject_std
+            # subject_dataframe = subject_dataframe.fillna(0)
             
             if subject_index == 0:
                 nightly_dataframe = subject_dataframe
