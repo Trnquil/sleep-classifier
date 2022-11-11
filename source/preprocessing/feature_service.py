@@ -18,7 +18,7 @@ class FeatureService(object):
         timestamps = np.expand_dims(collection.timestamps, axis=1)
         normalized_data = np.concatenate((timestamps, normalized_values), axis=1)
         
-        return Collection(subject_id= subject_id, data = normalized_data)
+        return Collection(subject_id= subject_id, data = normalized_data, data_frequency=0)
     
     @staticmethod 
     def interpolate(collection):
@@ -31,14 +31,14 @@ class FeatureService(object):
         interpolated_values = np.interp(interpolated_timestamps, timestamps, values)
 
         interpolated_data = np.stack((interpolated_timestamps, interpolated_values), axis=1)
-        return Collection(collection.subject_id, interpolated_data)
+        return Collection(collection.subject_id, interpolated_data, 0)
     
     @staticmethod
     def convolve(collection):
         convolved_values = utils.convolve_with_dog(collection.values.flatten(), FeatureService.WINDOW_SIZE)
 
         convolved_data = np.stack((collection.timestamps, convolved_values), axis=1)
-        return Collection(collection.subject_id, convolved_data)
+        return Collection(collection.subject_id, convolved_data, 0)
     
     @staticmethod
     def get_window(timestamps, epoch):

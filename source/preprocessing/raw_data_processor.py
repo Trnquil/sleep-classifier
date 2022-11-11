@@ -206,7 +206,7 @@ class RawDataProcessor:
         motion_collection = Collection(subject_id, motion_feature, 0)
         
         ibi_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_ibi)
-        ibi_collection = Collection(subject_id, ibi_feature)
+        ibi_collection = Collection(subject_id, ibi_feature, 0)
 
         #Manually setting the start time to 0
         start_time = 0

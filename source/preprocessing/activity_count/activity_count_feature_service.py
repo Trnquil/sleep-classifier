@@ -28,7 +28,7 @@ class ActivityCountFeatureService(object):
     @dispatch(str, object)
     def build_count_feature(subject_id, valid_epochs):
         activity_count_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_count)
-        activity_count_collection = Collection(subject_id=subject_id, data=activity_count_feature)
+        activity_count_collection = Collection(subject_id=subject_id, data=activity_count_feature, data_frequency=0)
         return ActivityCountFeatureService.build_from_collection(activity_count_collection, valid_epochs)
 
     @staticmethod

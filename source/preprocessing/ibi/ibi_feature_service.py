@@ -28,7 +28,7 @@ class IbiFeatureService(object):
     @dispatch(str, object)
     def build_hr_features(subject_id, valid_epochs):
         ibi_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_ibi)
-        ibi_collection = Collection(subject_id=subject_id, data=ibi_feature)
+        ibi_collection = Collection(subject_id=subject_id, data=ibi_feature, data_frequency=0)
         return IbiFeatureService.build_from_collection(ibi_collection, valid_epochs)
 
 
