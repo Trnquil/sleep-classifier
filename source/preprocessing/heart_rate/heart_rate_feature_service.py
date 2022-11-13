@@ -18,20 +18,20 @@ class HeartRateFeatureService(object):
     @staticmethod
     @dispatch(str, str, object)
     def build(subject_id, session_id, valid_epochs):
-        heart_rate_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_heart_rate)
+        heart_rate_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_hr)
         return HeartRateFeatureService.build_from_collection(heart_rate_collection, valid_epochs)
     
     @staticmethod
     @dispatch(str, object)
     def build(subject_id, valid_epochs):
-        heart_rate_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_heart_rate)
-        heart_rate_collection = Collection(subject_id=subject_id, data=heart_rate_feature)
+        heart_rate_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_hr)
+        heart_rate_collection = Collection(subject_id=subject_id, data=heart_rate_feature, data_frequency=0)
         return HeartRateFeatureService.build_from_collection(heart_rate_collection, valid_epochs)
 
 
     @staticmethod
     def build_from_collection(heart_rate_collection, valid_epochs):
-        heart_rate_features = []
+        heart_rate_features = np.zeros((0,2))
 
         heart_rate_collection = FeatureService.interpolate(heart_rate_collection)
         heart_rate_collection = FeatureService.convolve(heart_rate_collection)
@@ -45,11 +45,13 @@ class HeartRateFeatureService(object):
 
             feature = HeartRateFeatureService.get_feature(heart_rate_values_in_range)
 
-            heart_rate_features.append(feature)
-
-        return np.array(heart_rate_features)
+            heart_rate_features = np.concatenate([heart_rate_features, np.array([epoch.timestamp, feature]).reshape(1,2)], axis=0)
+        
+        hr_features_df = pd.DataFrame(heart_rate_features)
+        hr_features_df.columns = ["epoch_timestamp", "hr_std"]
+        return hr_features_df
 
     @staticmethod
     def get_feature(heart_rate_values):
-        return [np.std(heart_rate_values)]
+        return np.std(heart_rate_values)
 

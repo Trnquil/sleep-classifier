@@ -13,6 +13,7 @@ from source.preprocessing.built_service import BuiltService
 from source.data_services.data_writer import DataWriter
 from source.constants import Constants
 from source.preprocessing.activity_count.activity_count_nightly_feature_service import ActivityCountNightlyFeatureService
+from source.preprocessing.heart_rate.heart_rate_nightly_feature_service import HeartRateNightlyFeatureService
 
 import pandas as pd
 import numpy as np
@@ -45,9 +46,10 @@ class NightlyFeatureBuilder(object):
                 session_index += 1
             
             #Normalizing features across the subject and filling 0 for features with std 0
-            subject_mean = np.mean(subject_dataframe.filter(regex=("ibi_.*|count_.*")), axis=0)
-            subject_std = np.std(subject_dataframe.filter(regex=("ibi_.*|count_.*")), axis=0)
-            subject_dataframe[subject_dataframe.filter(regex=("ibi_.*|count_.*")).columns] = (subject_dataframe.filter(regex=("ibi_.*|count_.*")) - subject_mean)/subject_std
+            regex="ibi_.*|count_.*|hr_.*"
+            subject_mean = np.mean(subject_dataframe.filter(regex=regex), axis=0)
+            subject_std = np.std(subject_dataframe.filter(regex=regex), axis=0)
+            subject_dataframe[subject_dataframe.filter(regex=regex).columns] = (subject_dataframe.filter(regex=regex) - subject_mean)/subject_std
             subject_dataframe = subject_dataframe.fillna(0)
             
             if subject_index == 0:
@@ -56,9 +58,10 @@ class NightlyFeatureBuilder(object):
                 nightly_dataframe = pd.concat([nightly_dataframe, subject_dataframe], axis=0)
             
             subject_index += 1
-            
-        DataWriter.write_nightly(nightly_dataframe[['subject_id', 'session_id', 'c_0', 'c_1', 'c_2', 'c_3', 'c_4', 'c_5', 'ibi_mean_hr', 'ibi_std_hr', 'sleep_quality']])
         
+        # FOR TESTING PURPOSES:
+        # DataWriter.write_nightly(nightly_dataframe[['subject_id', 'session_id', 'c_0', 'c_1', 'c_2', 'c_3', 'c_4', 'c_5', 'ibi_mean_hr', 'ibi_std_hr', 'sleep_quality']])
+        DataWriter.write_nightly(nightly_dataframe)
         
         
     @staticmethod
@@ -77,7 +80,9 @@ class NightlyFeatureBuilder(object):
         
         count_features_dict = ActivityCountNightlyFeatureService.build_feature_dict(subject_id, session_id)
         
-        merged_dict = subject_session_dict | clustering_features_dict | ibi_features_dict | count_features_dict | sleepquality_dict
+        hr_features_dict = HeartRateNightlyFeatureService.build_feature_dict(subject_id, session_id)
+        
+        merged_dict = subject_session_dict | clustering_features_dict | hr_features_dict | sleepquality_dict
         
         return merged_dict
 

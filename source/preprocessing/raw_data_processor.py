@@ -68,7 +68,7 @@ class RawDataProcessor:
                 count_collection = count_sleepsession_tuples[i][1]
                 hr_collection = hr_sleepsession_tuples[i][1]
                 bvp_collection = bvp_sleepsession_tuples[i][1]
-                ibi_collection2 = ibi_sleepsession_tuples[i][1]
+                ibi_collection_usi = ibi_sleepsession_tuples[i][1]
                 
                 sleep_session_id = motion_sleepsession_tuples[i][0].session_id
                 
@@ -79,7 +79,7 @@ class RawDataProcessor:
                     ibi_collection = RawDataProcessor.get_ibi_from_bvp(bvp_collection)
                     
                     hr_from_bvp = 60/ibi_collection.values
-                    hr_from_ibi = 60/ibi_collection2.values
+                    hr_from_ibi = 60/ibi_collection_usi.values
                     hr_from_usi = hr_collection.values
                     
                     print("hr mean from bvp: " + str(np.mean(hr_from_bvp)) + ", hr mean from usi: " + str(np.mean(hr_from_usi)) + ", hr mean from ibi: " + str(np.mean(hr_from_ibi)))
@@ -88,6 +88,7 @@ class RawDataProcessor:
                     DataWriter.write_cropped(motion_collection, sleep_session_id, FeatureType.cropped_motion)
                     DataWriter.write_cropped(ibi_collection, sleep_session_id, FeatureType.cropped_ibi)
                     DataWriter.write_cropped(count_collection, sleep_session_id, FeatureType.cropped_count)
+                    DataWriter.write_cropped(hr_collection, sleep_session_id, FeatureType.cropped_hr)
                     
         
                     
@@ -131,6 +132,7 @@ class RawDataProcessor:
                     DataWriter.write_cropped(motion_collection, sleep_session_id, FeatureType.cropped_motion)
                     DataWriter.write_cropped(ibi_collection, sleep_session_id, FeatureType.cropped_ibi)
                     DataWriter.write_cropped(count_collection, sleep_session_id, FeatureType.cropped_count)
+                    DataWriter.write_cropped(hr_collection, sleep_session_id, FeatureType.cropped_hr)
             
 
             
@@ -138,7 +140,7 @@ class RawDataProcessor:
     
     def get_ibi_from_bvp(bvp_collection):
         # Working on BVP values to produce IBI sequence
-        bvp_values = bvp_collection.values.squeeze()[:350]
+        bvp_values = bvp_collection.values.squeeze()
         filtered = RawDataProcessor.bvp_filter(bvp_values)
         working_data, measures = hp.process(filtered, bvp_collection.data_frequency)
         ibi_values = working_data['RR_list']/1000

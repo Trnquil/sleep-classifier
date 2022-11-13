@@ -72,10 +72,11 @@ class IbiFeatureService(object):
             #removing any leftover nans
             ibi_features = ibi_features[~np.isnan(ibi_features).any(axis=1), :]
             ibi_dataframe = pd.DataFrame(ibi_features, columns=np.array(list(feature_dict.items()))[:,0])
+            ibi_dataframe = ibi_dataframe[['epoch_timestamp','mean_hr', 'std_hr']]
 
         else:
             ibi_dataframe = pd.DataFrame([])
-        return ibi_dataframe[['epoch_timestamp','mean_hr', 'std_hr']]
+        return ibi_dataframe
 
     @staticmethod
     def get_features(ibi_values):

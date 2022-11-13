@@ -11,6 +11,7 @@ class FeatureType(Enum):
     cropped_count = "cropped count"
     cropped_motion = "cropped motion"
     cropped_ibi = "cropped inter beat intervals"
+    cropped_hr = "cropped heart rate"
     
     epoched = "epoched"
     

@@ -10,6 +10,7 @@ from source.analysis.setup.feature_type import FeatureType
 from source.data_services.data_writer import DataWriter
 from source.preprocessing.built_service import BuiltService
 from source.preprocessing.path_service import PathService
+from source.preprocessing.heart_rate.heart_rate_feature_service import HeartRateFeatureService
 
 import numpy as np
 import pandas as pd
@@ -29,6 +30,10 @@ class FeatureBuilder(object):
         ibi_features_subject = IbiFeatureService.build_hr_features(subject_id, valid_epochs)
         ibi_mean = np.mean(ibi_features_subject.iloc[:,1:], axis=0)
         ibi_std = np.std(ibi_features_subject.iloc[:,1:], axis=0)
+        
+        hr_features_subject = HeartRateFeatureService.build(subject_id, valid_epochs)
+        hr_mean = np.mean(hr_features_subject.iloc[:,1:], axis=0)
+        hr_std = np.std(hr_features_subject.iloc[:,1:], axis=0)
         
         # If there is nothing inside ibi_features_subject, we return
         if not np.any(ibi_features_subject):
@@ -58,8 +63,12 @@ class FeatureBuilder(object):
             if not np.any(ibi_features):
                 continue
             
+            hr_feature = HeartRateFeatureService.build(subject_id, session_id, valid_epochs)
+            hr_feature.iloc[:,1:] = (hr_feature.iloc[:,1:] - hr_mean)/hr_std     
+            
+            
             # merging all features together
-            features_df = pd.merge(count_feature, ibi_features, how="inner", on=["epoch_timestamp"]).fillna(0)
+            features_df = pd.merge(count_feature, hr_feature, how="inner", on=["epoch_timestamp"]).fillna(0)
     
             
             # Writing features to disk

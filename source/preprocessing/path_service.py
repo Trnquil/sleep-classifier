@@ -16,6 +16,7 @@ class PathService(object):
         FeatureType.cropped_count.name: "cropped_counts.out",
         FeatureType.cropped_ibi.name: "cropped_ibi.out",
         FeatureType.cropped_motion.name: "cropped_motion.out",
+        FeatureType.cropped_hr.name: "cropped_hr.out",
         
         FeatureType.epoched_cluster.name: "clusters.out",
         FeatureType.epoched.name: "epoched_features.csv",
