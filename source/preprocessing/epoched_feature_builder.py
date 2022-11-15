@@ -11,18 +11,20 @@ from source.data_services.data_writer import DataWriter
 from source.preprocessing.built_service import BuiltService
 from source.preprocessing.path_service import PathService
 from source.preprocessing.heart_rate.heart_rate_feature_service import HeartRateFeatureService
+from source.data_services.data_service import DataService
+from source.preprocessing.collection import Collection
 
 import numpy as np
 import pandas as pd
+from multipledispatch import dispatch
 
 
 
-class FeatureBuilder(object):
+class EpochedFeatureBuilder(object):
 
     @staticmethod
     def build(subject_id):
-        
-        valid_epochs = RawDataProcessor.get_valid_epochs(subject_id)
+        valid_epochs = EpochedFeatureBuilder.get_valid_epochs(subject_id)
         
         count_feature_subject = ActivityCountFeatureService.build_count_feature(subject_id, valid_epochs)
         count_std = np.std(count_feature_subject.iloc[:,1:])
@@ -48,7 +50,7 @@ class FeatureBuilder(object):
             if Constants.VERBOSE:
                 print("Building epoched features " + str(subject_id) + "-" + str(session_id) + "...")
                 
-            valid_epochs = RawDataProcessor.get_valid_epochs(subject_id, session_id)
+            valid_epochs = EpochedFeatureBuilder.get_valid_epochs(subject_id, session_id)
             
             count_feature = ActivityCountFeatureService.build_count_feature(subject_id, session_id, valid_epochs)
             
@@ -75,6 +77,32 @@ class FeatureBuilder(object):
             if(np.any(features_df)):
                 # Create needed folders if they don't already exist
                 PathService.create_epoched_file_path(subject_id, session_id)
-                DataWriter.write_epoched(subject_id, session_id, ibi_features, FeatureType.epoched)
+                DataWriter.write_epoched(subject_id, session_id, features_df, FeatureType.epoched)
+                
+    @staticmethod
+    @dispatch(str)         
+    def get_valid_epochs(subject_id):
+        motion_feature = DataService.load_feature_raw(subject_id,  FeatureType.cropped_motion)
+        motion_collection = Collection(subject_id=subject_id, data=motion_feature, data_frequency=0)
+        
+        ibi_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_ibi)
+        ibi_collection = Collection(subject_id=subject_id, data=ibi_feature, data_frequency=0)
+
+        collections = [motion_collection, ibi_collection]
+        valid_epochs = RawDataProcessor.get_valid_epochs(collections)
+        return valid_epochs
+    
+    @staticmethod
+    @dispatch(str, str)
+    def get_valid_epochs(subject_id, session_id):
+        motion_feature = DataService.load_feature_raw(subject_id, session_id, FeatureType.cropped_motion)
+        motion_collection = Collection(subject_id=subject_id, data=motion_feature, data_frequency=0)
+        
+        ibi_feature = DataService.load_feature_raw(subject_id, session_id, FeatureType.cropped_ibi)
+        ibi_collection = Collection(subject_id=subject_id, data=ibi_feature, data_frequency=0)
+
+        collections = [motion_collection, ibi_collection]
+        valid_epochs = RawDataProcessor.get_valid_epochs(collections)
+        return valid_epochs
 
         

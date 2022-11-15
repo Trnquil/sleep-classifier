@@ -1,6 +1,7 @@
 import csv
 
 import numpy as np
+import pandas as pd
 
 from source import utils
 from source.preprocessing.collection import Collection
@@ -8,7 +9,7 @@ from source.preprocessing.collection import Collection
 
 class MesaActigraphyService(object):
     @staticmethod
-    def load_raw(file_id):
+    def load(file_id):
         line_align = -1  # Find alignment line between PSG and actigraphy
         project_root = str(utils.get_project_root())
 
@@ -23,7 +24,7 @@ class MesaActigraphyService(object):
         elapsed_time_counter = 0
 
         if line_align == -1:  # If there was no alignment found
-            return ActivityCountCollection(subject_id=file_id, data=np.array([[-1], [-1]]))
+            return Collection(subject_id=file_id, data=np.array([[-1], [-1]]), data_frequency = 0)
 
         with open(project_root + '/data/mesa/actigraphy/mesa-sleep-' + file_id + '.csv') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
@@ -38,5 +39,7 @@ class MesaActigraphyService(object):
 
         data = np.array(activity)
         data = utils.remove_nans(data)
-
-        return Collection(subject_id=file_id, data=data)
+        
+        count_dataframe = pd.DataFrame(data)
+        count_dataframe.columns = ["epoch_timestamp", "count"]
+        return count_dataframe

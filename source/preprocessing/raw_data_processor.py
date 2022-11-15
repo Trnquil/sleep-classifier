@@ -190,58 +190,32 @@ class RawDataProcessor:
             end_times.append(interval.end_time)
 
         return Interval(start_time=max(start_times), end_time=min(end_times))
-
-    @staticmethod
-    @dispatch(str, str)
-    def get_valid_epochs(subject_id, session_id):
-
-        motion_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_motion)
-        ibi_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_ibi)
-
-        #Manually setting the start time to 0
-        start_time = 0
-        motion_floored_timestamps, motion_epoch_dictionary = RawDataProcessor.get_valid_epoch_dictionary(motion_collection.timestamps,
-                                                                              start_time)
-        ibi_floored_timestamps, ibi_epoch_dictionary = RawDataProcessor.get_valid_epoch_dictionary(ibi_collection.timestamps,
-                                                                          start_time)
-
-        valid_epochs = []
-        for timestamp in motion_floored_timestamps:
-            index = 0
-            if timestamp in motion_epoch_dictionary and timestamp in ibi_epoch_dictionary:
-                epoch = Epoch(timestamp, index)
-                index += 1
-                valid_epochs.append(epoch)
-        return valid_epochs
     
     @staticmethod
-    @dispatch(str)
-    def get_valid_epochs(subject_id):
-
-        motion_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_motion)
-        motion_collection = Collection(subject_id, motion_feature, 0)
+    @dispatch(list)
+    def get_valid_epochs(collections):
         
-        ibi_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_ibi)
-        ibi_collection = Collection(subject_id, ibi_feature, 0)
-
-        #Manually setting the start time to 0
-        start_time = 0
-        motion_floored_timestamps, motion_epoch_dictionary = RawDataProcessor.get_valid_epoch_dictionary(motion_collection.timestamps,
-                                                                              start_time)
-        ibi_floored_timestamps, ibi_epoch_dictionary = RawDataProcessor.get_valid_epoch_dictionary(ibi_collection.timestamps,
-                                                                          start_time)
+        timestamps_array = []
+        dictionary_array = []
+        for collection in collections:
+            timestamps, dictionary = RawDataProcessor.get_valid_epoch_dictionary(collection.timestamps)
+            timestamps_array.append(timestamps)
+            dictionary_array.append(dictionary)
 
         valid_epochs = []
-        for timestamp in motion_floored_timestamps:
+        for timestamp in timestamps_array[0]:
             index = 0
-            if timestamp in motion_epoch_dictionary and timestamp in ibi_epoch_dictionary:
+            in_dictionary = [timestamp in dictionary for dictionary in dictionary_array]
+            # If timestamp is in all dictionaries, we add the epoch to the valid epochs list
+            if (all(item is True for item in in_dictionary)):
                 epoch = Epoch(timestamp, index)
                 index += 1
                 valid_epochs.append(epoch)
         return valid_epochs
-
+        
     @staticmethod
-    def get_valid_epoch_dictionary(timestamps, start_time):
+    def get_valid_epoch_dictionary(timestamps):
+        start_time = 0
         epoch_dictionary = {}
         floored_timestamps = []
 

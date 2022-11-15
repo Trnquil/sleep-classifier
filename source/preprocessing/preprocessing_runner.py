@@ -8,7 +8,7 @@ import time
 from source.preprocessing.built_service import BuiltService
 from source.constants import Constants
 from source.preprocessing.activity_count.activity_count_service import ActivityCountService
-from source.preprocessing.feature_builder import FeatureBuilder
+from source.preprocessing.epoched_feature_builder import EpochedFeatureBuilder
 from source.preprocessing.nightly.nightly_feature_builder import NightlyFeatureBuilder
 from source.preprocessing.raw_data_processor import RawDataProcessor
 from source.preprocessing.time.circadian_service import CircadianService
@@ -20,8 +20,8 @@ def run_preprocessing():
     start_time = time.time()
     
     #build_cropped()
-    build_epoched()
-    build_clusters()
+    #build_epoched()
+    #build_clusters()
     build_nightly()            
 
     end_time = time.time()
@@ -40,9 +40,9 @@ def build_cropped():
 
 def build_epoched():
     # Only building features for subjects and sleepsession for which folders exist
-    subject_ids = BuiltService.get_built_subject_ids(Constants.CROPPED_FILE_PATH)
+    subject_ids = BuiltService.get_built_subject_ids(Constants.CROPPED_FILE_PATH)[-2:]
     for subject_id in subject_ids:
-        FeatureBuilder.build(subject_id)
+        EpochedFeatureBuilder.build(subject_id)
             
 
 def build_clusters():
