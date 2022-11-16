@@ -1,5 +1,7 @@
 from source.data_services.data_service import DataService
 from source.analysis.setup.feature_type import FeatureType
+from source.data_services.dataset import DataSet
+
 
 
 import numpy as np
@@ -10,7 +12,7 @@ class HeartRateNightlyFeatureService(object):
     @staticmethod
     def build_feature_dict(subject_id, session_id):
         
-        heart_rate_feature_raw = DataService.load_feature_raw(subject_id, session_id, FeatureType.cropped_hr)
+        heart_rate_feature_raw = DataService.load_feature_raw(subject_id, session_id, FeatureType.cropped_hr, DataSet.usi)
         
         features_dict = HeartRateNightlyFeatureService.build_var_features(heart_rate_feature_raw[:,1])
         merged_dict = features_dict

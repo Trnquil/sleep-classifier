@@ -3,6 +3,7 @@ sys.path.insert(1, '../..')
 
 from source.data_services.data_service import DataService
 from source.analysis.setup.feature_type import FeatureType
+from source.data_services.dataset import DataSet
 
 
 import numpy as np
@@ -13,7 +14,7 @@ class ActivityCountNightlyFeatureService(object):
     @staticmethod
     def build_feature_dict(subject_id, session_id):
         
-        count_feature_data = DataService.load_feature_raw(subject_id, session_id, FeatureType.cropped_count)
+        count_feature_data = DataService.load_feature_raw(subject_id, session_id, FeatureType.cropped_count, DataSet.usi)
         
         features_dict = ActivityCountNightlyFeatureService.build_count_features(count_feature_data[:,1])
         merged_dict = features_dict

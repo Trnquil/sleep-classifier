@@ -6,6 +6,8 @@ import pandas as pd
 from source.analysis.setup.feature_type import FeatureType
 from source.data_services.data_service import DataService
 from sklearn.cluster import KMeans
+from source.data_services.dataset import DataSet
+
 
 
 
@@ -23,7 +25,7 @@ class ClusteringFeatureService(object):
     @staticmethod
     def get_fitted_model():
         
-        features = DataService.load_feature_raw(FeatureType.epoched)[:,1:].squeeze()
+        features = DataService.load_feature_raw(FeatureType.epoched, DataSet.mesa)[:,1:].squeeze()
         classifier=KMeans(n_clusters=6, random_state=0)
 
         # We are now fitting our features to the cluster

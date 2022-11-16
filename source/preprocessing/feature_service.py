@@ -8,9 +8,9 @@ class FeatureService(object):
     WINDOW_SIZE = 10 * 30 - 15
     
     @staticmethod
-    def normalize(collection, feature_type):
+    def normalize(collection, feature_type, dataset):
         subject_id = collection.subject_id
-        feature = DataService.load_feature_raw(subject_id, feature_type)[:,1]
+        feature = DataService.load_feature_raw(subject_id, feature_type, dataset)[:,1]
         mean = np.mean(feature, axis=0)
         std = np.std(feature, axis=0)
         

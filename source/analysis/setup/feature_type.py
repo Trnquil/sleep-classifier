@@ -8,6 +8,8 @@ class FeatureType(Enum):
     raw_ibi = "raw inter beat interval"
     raw_bvp = "raw BVP signal"
     
+    cropped = "cropped"
+    
     cropped_count = "cropped count"
     cropped_motion = "cropped motion"
     cropped_ibi = "cropped inter beat intervals"

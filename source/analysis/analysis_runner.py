@@ -17,23 +17,29 @@ from source.analysis.tables.table_builder import TableBuilder
 from source.constants import Constants
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
 
 
 def figures_leave_one_out():
-    attributed_classifier = AttributedClassifier(name='Nearest Neighbors',
-                                                 classifier=KNeighborsClassifier())
+    attributed_classifiers = [AttributedClassifier(name='Nearest Neighbors',
+                                                 classifier=KNeighborsClassifier()),
+                              AttributedClassifier(name='Random Forest',
+                                                 classifier=RandomForestClassifier(max_depth=10, random_state=0)),
+                              AttributedClassifier(name='SVM',
+                                                 classifier=SVC(probability=True))]
 
     feature_sets = [[FeatureType.nightly_cluster, FeatureType.nightly_ibi, FeatureType.nightly_count]]
-
-    if Constants.VERBOSE:
-        print('Running ' + attributed_classifier.name + '...')
-    classifier_summary = SleepWakeClassifierSummaryBuilder.build_leave_one_out(attributed_classifier, feature_sets)
-
-    PerformancePlotBuilder.make_histogram_with_thresholds(classifier_summary)
-    PerformancePlotBuilder.make_single_threshold_histograms(classifier_summary)
-    CurvePlotBuilder.make_roc_sw(classifier_summary)
-    CurvePlotBuilder.make_pr_sw(classifier_summary)
-    TableBuilder.print_table_sw(classifier_summary)
+    
+    for attributed_classifier in attributed_classifiers:
+        if Constants.VERBOSE:
+            print('Running ' + attributed_classifier.name + '...')
+        classifier_summary = SleepWakeClassifierSummaryBuilder.build_leave_one_out(attributed_classifier, feature_sets)
+    
+        PerformancePlotBuilder.make_histogram_with_thresholds(classifier_summary)
+        PerformancePlotBuilder.make_single_threshold_histograms(classifier_summary)
+        CurvePlotBuilder.make_roc_sw(classifier_summary)
+        CurvePlotBuilder.make_pr_sw(classifier_summary)
+        TableBuilder.print_table_sw(classifier_summary)
     
     
 def figures_leave_one_out_sleep_wake_performance():

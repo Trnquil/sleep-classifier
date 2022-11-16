@@ -13,17 +13,17 @@ import numpy as np
 class DataService(object):
     
     @staticmethod
-    @dispatch(str, str, object)
-    def load_feature_raw(subject_id, session_id, feature_type):
+    @dispatch(str, str, object, object)
+    def load_feature_raw(subject_id, session_id, feature_type, dataset):
         
         if feature_type.name in FeatureType.get_cropped_names(): 
             feature = DataLoader.load_cropped(subject_id, session_id, feature_type).data
             
         elif feature_type.name in FeatureType.get_epoched_names(): 
-            feature = DataLoader.load_epoched(subject_id, session_id, feature_type)
+            feature = DataLoader.load_epoched(subject_id, session_id, feature_type, dataset)
             
-        elif feature_type.name in FeatureType.epoched.name: 
-            feature = DataLoader.load_epoched(subject_id, session_id, feature_type).values
+        elif feature_type.name == FeatureType.epoched.name: 
+            feature = DataLoader.load_epoched(subject_id, session_id, feature_type, dataset).values
             
         elif feature_type.name in FeatureType.get_nightly_names(): 
             feature = DataLoader.load_nightly(subject_id, session_id, feature_type).to_numpy()
@@ -36,21 +36,19 @@ class DataService(object):
         return feature
     
     @staticmethod
-    @dispatch(str, object)
-    def load_feature_raw(subject_id, feature_type):
-        if feature_type.name in FeatureType.get_cropped_names():   
-            session_ids = BuiltService.get_built_sleepsession_ids(subject_id, Constants.CROPPED_FILE_PATH)
-        else:
-            session_ids = BuiltService.get_built_sleepsession_ids(subject_id, Constants.EPOCHED_FILE_PATH)
+    @dispatch(str, object, object)
+    def load_feature_raw(subject_id, feature_type, dataset): 
+        session_ids = BuiltService.get_built_sleepsession_ids(subject_id, feature_type, dataset)
+
             
-        feature_shape = DataService.__get_feature_shape(subject_id, feature_type)
+        feature_shape = DataService.__get_feature_shape(subject_id, feature_type, dataset)
         
         stacked_feature = np.zeros(feature_shape)
         
         current_height = 0
         for session_id in session_ids:
             
-            feature = DataService.load_feature_raw(subject_id, session_id, feature_type)
+            feature = DataService.load_feature_raw(subject_id, session_id, feature_type, dataset)
             feature_height = feature.shape[0]
             
             stacked_feature[current_height:(current_height + feature_height)][:] = feature
@@ -60,22 +58,19 @@ class DataService(object):
         return stacked_feature
     
     @staticmethod
-    @dispatch(object)
-    def load_feature_raw(feature_type):
+    @dispatch(object, object)
+    def load_feature_raw(feature_type, dataset):
         
-        if feature_type.name in FeatureType.get_cropped_names():     
-            subject_ids = BuiltService.get_built_subject_ids(Constants.CROPPED_FILE_PATH)
-        else:
-            subject_ids = BuiltService.get_built_subject_ids(Constants.EPOCHED_FILE_PATH)
-            
-        feature_shape = DataService.__get_feature_shape(feature_type)
+        subject_ids = BuiltService.get_built_subject_ids(feature_type, dataset)
+
+        feature_shape = DataService.__get_feature_shape(feature_type, dataset)
         
         stacked_feature = np.zeros(feature_shape)
         
         current_height = 0
         for subject_id in subject_ids:
             
-            feature = DataService.load_feature_raw(subject_id, feature_type)
+            feature = DataService.load_feature_raw(subject_id, feature_type, dataset)
             feature_height = feature.shape[0]
             
             stacked_feature[current_height:(current_height + feature_height)][:] = feature
@@ -85,16 +80,14 @@ class DataService(object):
         return stacked_feature
     
     @staticmethod
-    @dispatch(str, object)
-    def __get_feature_shape(subject_id, feature_type):
-        if feature_type.name in FeatureType.get_cropped_names():     
-            session_ids = BuiltService.get_built_sleepsession_ids(subject_id, Constants.CROPPED_FILE_PATH)
-        else:
-            session_ids = BuiltService.get_built_sleepsession_ids(subject_id, Constants.EPOCHED_FILE_PATH)
-        
+    @dispatch(str, object, object)
+    def __get_feature_shape(subject_id, feature_type, dataset):
+  
+        session_ids = BuiltService.get_built_sleepsession_ids(subject_id, feature_type, dataset)
+
         for i in range(len(session_ids)):
             
-            feature_shape = DataService.load_feature_raw(subject_id, session_ids[i], feature_type).shape
+            feature_shape = DataService.load_feature_raw(subject_id, session_ids[i], feature_type, dataset).shape
                 
             feature_height = feature_shape[0]
             feature_width = feature_shape[1]
@@ -108,16 +101,15 @@ class DataService(object):
         return (stacked_height, feature_width)
     
     @staticmethod
-    @dispatch(object)
-    def __get_feature_shape(feature_type):
-        if feature_type.name in FeatureType.get_cropped_names():   
-            subject_ids = BuiltService.get_built_subject_ids(Constants.CROPPED_FILE_PATH)
-        else:
-            subject_ids = BuiltService.get_built_subject_ids(Constants.EPOCHED_FILE_PATH)
+    @dispatch(object, object)
+    def __get_feature_shape(feature_type, dataset):
+
+        subject_ids = BuiltService.get_built_subject_ids(feature_type, dataset)
+
         
         for i in range(len(subject_ids)):
             
-            feature_shape = DataService.__get_feature_shape(subject_ids[i], feature_type)
+            feature_shape = DataService.__get_feature_shape(subject_ids[i], feature_type, dataset)
             feature_height = feature_shape[0]
             feature_width = feature_shape[1]
             

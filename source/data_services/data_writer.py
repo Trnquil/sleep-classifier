@@ -12,8 +12,8 @@ class DataWriter(object):
         np.savetxt(output_path, collection.data, fmt='%f')
     
     @staticmethod
-    def write_epoched(subject_id, session_id, epoched_feature, feature_type):
-        feature_path = PathService.get_epoched_file_path(subject_id, session_id, feature_type)
+    def write_epoched(epoched_feature, subject_id, session_id, feature_type, dataset):
+        feature_path = PathService.get_epoched_file_path(subject_id, session_id, feature_type, dataset)
         if(feature_type.name == FeatureType.epoched.name):
             epoched_feature.to_csv(feature_path, index=False)
         else:

@@ -14,14 +14,16 @@ from source.preprocessing.raw_data_processor import RawDataProcessor
 from source.preprocessing.time.circadian_service import CircadianService
 from source.preprocessing.clustering.clustering_feature_service import ClusteringFeatureService
 from source.preprocessing.clustering.cluster_feature_builder import ClusterFeatureBuilder
+from source.analysis.setup.feature_type import FeatureType
+from source.data_services.dataset import DataSet
 
 
 def run_preprocessing():
     start_time = time.time()
     
     #build_cropped()
-    #build_epoched()
-    #build_clusters()
+    build_epoched()
+    build_clusters()
     build_nightly()            
 
     end_time = time.time()
@@ -40,7 +42,7 @@ def build_cropped():
 
 def build_epoched():
     # Only building features for subjects and sleepsession for which folders exist
-    subject_ids = BuiltService.get_built_subject_ids(Constants.CROPPED_FILE_PATH)[-2:]
+    subject_ids = BuiltService.get_built_subject_ids(FeatureType.cropped, DataSet.usi)
     for subject_id in subject_ids:
         EpochedFeatureBuilder.build(subject_id)
             
@@ -48,7 +50,7 @@ def build_epoched():
 def build_clusters():
     clustering_model = ClusteringFeatureService.get_fitted_model()
     # Only building features for subjects and sleepsession for which folders exist
-    subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(Constants.EPOCHED_FILE_PATH)
+    subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(FeatureType.epoched, DataSet.usi)
     for subject in subject_sleepsession_dictionary.keys():
         for session in subject_sleepsession_dictionary[subject]:
             ClusterFeatureBuilder.build(subject, session, clustering_model)

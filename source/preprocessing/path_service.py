@@ -4,7 +4,7 @@ import os
 from source.constants import Constants
 import source.utils as utils
 from source.analysis.setup.feature_type import FeatureType
-
+from source.data_services.dataset import DataSet
 
 class PathService(object):
     filenames = {
@@ -61,22 +61,35 @@ class PathService(object):
         session_dirs = [str(subject_dir.joinpath(session_dirs[i])) + "/" + PathService.filenames[feature_type.name] 
          for i in range(len(session_dirs))]
      
-        return session_dirs[:15]
+        return [session_dirs[3]]
     
     @staticmethod
-    def get_epoched_file_path(subject_id, session_id, feature_type):
-        directory_path_string = Constants.EPOCHED_FILE_PATH.joinpath(subject_id + "/" + str(session_id))
-        return str(Constants.EPOCHED_FILE_PATH.joinpath(directory_path_string)) + "/" + PathService.filenames[feature_type.name]
+    def get_epoched_file_path(subject_id, session_id, feature_type, dataset):
+        if(dataset.name == DataSet.usi.name):
+            directory_path = Constants.EPOCHED_FILE_PATH.joinpath("usi")
+        elif(dataset.name == DataSet.mesa.name):
+            directory_path = Constants.EPOCHED_FILE_PATH.joinpath("mesa")
+            
+        full_path = directory_path.joinpath(subject_id + "/" + str(session_id))
+        return str(full_path) + "/" + PathService.filenames[feature_type.name]
     
     @staticmethod
-    def create_epoched_file_path(subject_id, session_id):
-        directory_path_string = Constants.EPOCHED_FILE_PATH.joinpath(subject_id + "/" + str(session_id))
+    def create_epoched_folder_path(subject_id, session_id, dataset):
+        if(dataset.name == DataSet.usi.name):
+            directory_path = Constants.EPOCHED_FILE_PATH.joinpath("usi")
+        elif(dataset.name == DataSet.mesa.name):
+            directory_path = Constants.EPOCHED_FILE_PATH.joinpath("mesa")
         
-        if not (os.path.exists(Constants.EPOCHED_FILE_PATH.joinpath(subject_id))):
-            os.mkdir(Constants.EPOCHED_FILE_PATH.joinpath(subject_id))
+        if not (os.path.exists(directory_path)):
+            os.mkdir(directory_path)
         
-        if not (os.path.exists(directory_path_string)):
-            os.mkdir(directory_path_string)
+        subject_path = directory_path.joinpath(subject_id)
+        if not (os.path.exists(subject_path)):
+            os.mkdir(subject_path)
+        
+        session_path = subject_path.joinpath(session_id)
+        if not (os.path.exists(session_path)):
+            os.mkdir(session_path)
     
     @staticmethod
     def get_model_path():

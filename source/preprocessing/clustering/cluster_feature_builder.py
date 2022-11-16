@@ -2,6 +2,8 @@ from source.analysis.setup.feature_type import FeatureType
 from source.data_services.data_service import DataService
 from source.constants import Constants
 from source.data_services.data_writer import DataWriter
+from source.data_services.dataset import DataSet
+
 
 from matplotlib import cm
 import numpy as np
@@ -19,7 +21,7 @@ class ClusterFeatureBuilder(object):
             print("Predicting clusters...")
         
         # TODO: I need to implement this in a cleaner way as to avoid making mistakes
-        data = DataService.load_feature_raw(subject_id, session_id, FeatureType.epoched)
+        data = DataService.load_feature_raw(subject_id, session_id, FeatureType.epoched, DataSet.usi)
         features = data[:,1:].squeeze()
         timestamps = data[:,0].squeeze()
         

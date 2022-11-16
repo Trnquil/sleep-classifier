@@ -14,6 +14,7 @@ from source.data_services.data_writer import DataWriter
 from source.constants import Constants
 from source.preprocessing.activity_count.activity_count_nightly_feature_service import ActivityCountNightlyFeatureService
 from source.preprocessing.heart_rate.heart_rate_nightly_feature_service import HeartRateNightlyFeatureService
+from source.data_services.dataset import DataSet
 
 import pandas as pd
 import numpy as np
@@ -30,10 +31,10 @@ class NightlyFeatureBuilder(object):
             print("Building nightly features...")
             
         subject_index = 0
-        for subject_id in BuiltService.get_built_subject_ids(Constants.EPOCHED_FILE_PATH):
+        for subject_id in BuiltService.get_built_subject_ids(FeatureType.epoched, DataSet.usi):
             
             session_index = 0
-            for session_id in BuiltService.get_built_sleepsession_ids(subject_id, Constants.EPOCHED_FILE_PATH):
+            for session_id in BuiltService.get_built_sleepsession_ids(subject_id, FeatureType.epoched, DataSet.usi):
                 feature_dict = NightlyFeatureBuilder.build_feature_dict(subject_id, session_id)
                 
                 feature_row = pd.DataFrame(feature_dict)
@@ -70,8 +71,8 @@ class NightlyFeatureBuilder(object):
         subject_session_dict = {'subject_id': subject_id, 'session_id': session_id}
         clustering_features_dict = ClusteringNightlyFeatureService.build_feature_dict(subject_id, session_id)
         
-        sleepquality_avg = np.mean(DataService.load_feature_raw(subject_id, FeatureType.sleep_quality))
-        sleepquality = DataService.load_feature_raw(subject_id, session_id, FeatureType.sleep_quality)
+        sleepquality_avg = np.mean(DataService.load_feature_raw(subject_id, FeatureType.sleep_quality, DataSet.usi))
+        sleepquality = DataService.load_feature_raw(subject_id, session_id, FeatureType.sleep_quality, DataSet.usi)
         sleepquality = 0 if sleepquality < sleepquality_avg else 1
         sleepquality_dict = {'sleep_quality': sleepquality}
         

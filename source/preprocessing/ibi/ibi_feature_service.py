@@ -10,6 +10,7 @@ from source.analysis.setup.feature_type import FeatureType
 from source.preprocessing.feature_service import FeatureService
 from source.data_services.data_loader import DataLoader
 from source.preprocessing.collection import Collection
+from source.data_services.dataset import DataSet
 
 from multipledispatch import dispatch
 from hrvanalysis import *
@@ -27,7 +28,7 @@ class IbiFeatureService(object):
     @staticmethod
     @dispatch(str, object)
     def build_hr_features(subject_id, valid_epochs):
-        ibi_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_ibi)
+        ibi_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_ibi, DataSet.usi)
         ibi_collection = Collection(subject_id=subject_id, data=ibi_feature, data_frequency=0)
         return IbiFeatureService.build_from_collection(ibi_collection, valid_epochs)
 

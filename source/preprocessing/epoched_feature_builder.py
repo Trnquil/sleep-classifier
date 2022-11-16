@@ -13,6 +13,7 @@ from source.preprocessing.path_service import PathService
 from source.preprocessing.heart_rate.heart_rate_feature_service import HeartRateFeatureService
 from source.data_services.data_service import DataService
 from source.preprocessing.collection import Collection
+from source.data_services.dataset import DataSet
 
 import numpy as np
 import pandas as pd
@@ -41,10 +42,8 @@ class EpochedFeatureBuilder(object):
         if not np.any(ibi_features_subject):
             return
         
-        # Merging all features together
-        features_df = pd.merge(count_feature_subject, ibi_features_subject, how="inner", on=["epoch_timestamp"])
         
-        sleepsessions = BuiltService.get_built_sleepsession_ids(subject_id, Constants.CROPPED_FILE_PATH)
+        sleepsessions = BuiltService.get_built_sleepsession_ids(subject_id, FeatureType.cropped, DataSet.usi)
         for session_id in sleepsessions:
     
             if Constants.VERBOSE:
@@ -76,16 +75,16 @@ class EpochedFeatureBuilder(object):
             # Writing features to disk
             if(np.any(features_df)):
                 # Create needed folders if they don't already exist
-                PathService.create_epoched_file_path(subject_id, session_id)
-                DataWriter.write_epoched(subject_id, session_id, features_df, FeatureType.epoched)
+                PathService.create_epoched_folder_path(subject_id, session_id, DataSet.usi)
+                DataWriter.write_epoched(features_df, subject_id, session_id, FeatureType.epoched, DataSet.usi)
                 
     @staticmethod
     @dispatch(str)         
     def get_valid_epochs(subject_id):
-        motion_feature = DataService.load_feature_raw(subject_id,  FeatureType.cropped_motion)
+        motion_feature = DataService.load_feature_raw(subject_id,  FeatureType.cropped_motion, DataSet.usi)
         motion_collection = Collection(subject_id=subject_id, data=motion_feature, data_frequency=0)
         
-        ibi_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_ibi)
+        ibi_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_ibi, DataSet.usi)
         ibi_collection = Collection(subject_id=subject_id, data=ibi_feature, data_frequency=0)
 
         collections = [motion_collection, ibi_collection]
@@ -95,10 +94,10 @@ class EpochedFeatureBuilder(object):
     @staticmethod
     @dispatch(str, str)
     def get_valid_epochs(subject_id, session_id):
-        motion_feature = DataService.load_feature_raw(subject_id, session_id, FeatureType.cropped_motion)
+        motion_feature = DataService.load_feature_raw(subject_id, session_id, FeatureType.cropped_motion, DataSet.usi)
         motion_collection = Collection(subject_id=subject_id, data=motion_feature, data_frequency=0)
         
-        ibi_feature = DataService.load_feature_raw(subject_id, session_id, FeatureType.cropped_ibi)
+        ibi_feature = DataService.load_feature_raw(subject_id, session_id, FeatureType.cropped_ibi, DataSet.usi)
         ibi_collection = Collection(subject_id=subject_id, data=ibi_feature, data_frequency=0)
 
         collections = [motion_collection, ibi_collection]

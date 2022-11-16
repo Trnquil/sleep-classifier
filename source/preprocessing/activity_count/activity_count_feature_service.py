@@ -12,6 +12,7 @@ from source.data_services.data_service import DataService
 from source.preprocessing.feature_service import FeatureService
 from source.data_services.data_loader import DataLoader
 from source.preprocessing.collection import Collection
+from source.data_services.dataset import DataSet
 
 from multipledispatch import dispatch
 
@@ -27,7 +28,7 @@ class ActivityCountFeatureService(object):
     @staticmethod
     @dispatch(str, object)
     def build_count_feature(subject_id, valid_epochs):
-        activity_count_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_count)
+        activity_count_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_count, DataSet.usi)
         activity_count_collection = Collection(subject_id=subject_id, data=activity_count_feature, data_frequency=0)
         return ActivityCountFeatureService.build_from_collection(activity_count_collection, valid_epochs)
 

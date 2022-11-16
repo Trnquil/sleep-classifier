@@ -13,6 +13,7 @@ from source.preprocessing.time.time_based_feature_service import TimeBasedFeatur
 from source.analysis.setup.sleep_session_service import SleepSessionService
 from source.data_services.data_service import DataService
 from source.preprocessing.built_service import BuiltService
+from source.data_services.dataset import DataSet
 
 
 class SubjectBuilder(object):
@@ -21,7 +22,7 @@ class SubjectBuilder(object):
     @staticmethod
     def get_subject_dictionary():
         subject_dictionary = {}
-        all_subject_ids = BuiltService.get_built_subject_ids(Constants.EPOCHED_FILE_PATH)
+        all_subject_ids = BuiltService.get_built_subject_ids(FeatureType.epoched, DataSet.usi)
         for subject_id in all_subject_ids:
             subject_dictionary[subject_id] = SubjectBuilder.build(subject_id)
 
@@ -33,7 +34,7 @@ class SubjectBuilder(object):
         feature_dictionary = {}
         
         for feature_type in FeatureType.get_nightly_featuretypes():
-            feature = DataService.load_feature_raw(subject_id, feature_type)
+            feature = DataService.load_feature_raw(subject_id, feature_type, DataSet.usi)
             feature_dictionary[feature_type.name] = feature
             
 
