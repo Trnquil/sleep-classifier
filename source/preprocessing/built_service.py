@@ -14,7 +14,8 @@ class BuiltService(object):
         subject_to_session_dictionary = {}
         
         # Getting the correct path for every featuretype and dataset
-        if feature_type.name == FeatureType.epoched.name or feature_type.name in FeatureType.get_epoched_names():
+        if (feature_type.name == FeatureType.epoched.name or feature_type.name in FeatureType.get_epoched_names() 
+        or feature_type.name == FeatureType.nightly.name or feature_type.name == FeatureType.sleep_quality.name):
             path = Constants.EPOCHED_FILE_PATH
             
             if dataset.name == DataSet.usi.name:
@@ -23,6 +24,7 @@ class BuiltService(object):
                 path = path.joinpath('mesa')
         elif feature_type.name == FeatureType.cropped.name or feature_type.name in FeatureType.get_cropped_names():
             path = Constants.CROPPED_FILE_PATH
+
         
         if(dataset.name == DataSet.usi.name):
         

@@ -21,7 +21,7 @@ from source.data_services.dataset import DataSet
 def run_preprocessing():
     start_time = time.time()
     
-    #build_cropped()
+    build_cropped()
     build_epoched()
     build_clusters()
     build_nightly()            

@@ -45,7 +45,7 @@ class ClusterFeatureBuilder(object):
             
 
         # Writing all features to their files
-        DataWriter.write_epoched(subject_id, session_id, clusters, FeatureType.epoched_cluster)
+        DataWriter.write_epoched(clusters, subject_id, session_id, FeatureType.epoched_cluster, DataSet.usi)
                                      
 
         
