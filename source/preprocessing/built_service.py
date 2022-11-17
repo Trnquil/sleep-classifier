@@ -36,7 +36,7 @@ class BuiltService(object):
                     if '.' not in subject_id:
                         session_dirs = os.listdir(path.joinpath(subject_id))
                         for session_id in session_dirs:
-                            if '.' not in session_dirs:
+                            if '.' not in session_id:
                                 if subject_id not in subject_to_session_dictionary.keys():
                                     subject_to_session_dictionary[subject_id] = []
                                     

@@ -1,17 +1,28 @@
-from source.mesa.mesa_subject_builder import MesaSubjectBuilder
+# from source.mesa.mesa_subject_builder import MesaSubjectBuilder
 from source.mesa.metadata_service import MetadataService
 
 
 class MesaDataService(object):
 
-    @staticmethod
-    def get_all_subjects():
+    # @staticmethod
+    # def get_all_subjects():
+    #     all_files = MetadataService.get_all_files()
+    #     all_subjects = []
+    #     for file in all_files:
+    #         file_id = file[-8:-4]
+    #         subject = MesaSubjectBuilder.build(file_id)
+    #         if subject is not None:
+    #             all_subjects.append(subject)
+
+    #     return all_subjects
+    
+    def get_all_subject_ids():
+        subject_ids = []
         all_files = MetadataService.get_all_files()
         all_subjects = []
         for file in all_files:
             file_id = file[-8:-4]
-            subject = MesaSubjectBuilder.build(file_id)
-            if subject is not None:
-                all_subjects.append(subject)
-
-        return all_subjects
+            subject_ids.append(file_id)
+        subject_ids.sort()
+        return subject_ids
+        

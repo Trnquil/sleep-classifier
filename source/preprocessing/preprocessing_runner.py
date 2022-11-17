@@ -16,6 +16,8 @@ from source.preprocessing.clustering.clustering_feature_service import Clusterin
 from source.preprocessing.clustering.cluster_feature_builder import ClusterFeatureBuilder
 from source.analysis.setup.feature_type import FeatureType
 from source.data_services.dataset import DataSet
+from source.mesa.mesa_data_service import MesaDataService
+from source.mesa.mesa_feature_builder import MesaFeatureBuilder
 
 
 def run_preprocessing():
@@ -23,6 +25,7 @@ def run_preprocessing():
     
     build_cropped()
     build_epoched()
+    build_mesa_epoched()
     build_clusters()
     build_nightly()            
 
@@ -45,6 +48,11 @@ def build_epoched():
     subject_ids = BuiltService.get_built_subject_ids(FeatureType.cropped, DataSet.usi)
     for subject_id in subject_ids:
         EpochedFeatureBuilder.build(subject_id)
+
+def build_mesa_epoched():
+    subject_ids = MesaDataService.get_all_subject_ids()
+    for subject_id in subject_ids:
+        MesaFeatureBuilder.build(subject_id)
             
 
 def build_clusters():
