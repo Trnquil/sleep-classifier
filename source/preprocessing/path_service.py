@@ -24,6 +24,7 @@ class PathService(object):
         FeatureType.nightly.name: "nightly_features.csv"
         }
     
+    
     @staticmethod
     def get_cropped_file_path(subject_id, session_id, feature_type):
         directory_path_string = str(subject_id) + "/" + str(session_id)
@@ -66,9 +67,9 @@ class PathService(object):
     @staticmethod
     def get_epoched_file_path(subject_id, session_id, feature_type, dataset):
         if(dataset.name == DataSet.usi.name):
-            directory_path = Constants.EPOCHED_FILE_PATH.joinpath("usi")
+            directory_path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
         elif(dataset.name == DataSet.mesa.name):
-            directory_path = Constants.EPOCHED_FILE_PATH.joinpath("mesa")
+            directory_path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.MESA_FOLDER_NAME)
             
         full_path = directory_path.joinpath(subject_id + "/" + str(session_id))
         return str(full_path) + "/" + PathService.filenames[feature_type.name]
@@ -76,9 +77,9 @@ class PathService(object):
     @staticmethod
     def create_epoched_folder_path(subject_id, session_id, dataset):
         if(dataset.name == DataSet.usi.name):
-            directory_path = Constants.EPOCHED_FILE_PATH.joinpath("usi")
+            directory_path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
         elif(dataset.name == DataSet.mesa.name):
-            directory_path = Constants.EPOCHED_FILE_PATH.joinpath("mesa")
+            directory_path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.MESA_FOLDER_NAME)
         
         if not (os.path.exists(directory_path)):
             os.mkdir(directory_path)

@@ -6,6 +6,7 @@ from source.preprocessing.built_service import BuiltService
 from source.analysis.setup.sleep_session_service import SleepSessionService
 from source.data_services.data_loader import DataLoader
 from source.constants import Constants
+from source.data_services.dataset import DataSet
 
 from multipledispatch import dispatch
 import numpy as np
@@ -16,7 +17,7 @@ class DataService(object):
     @dispatch(str, str, object, object)
     def load_feature_raw(subject_id, session_id, feature_type, dataset):
         
-        if feature_type.name in FeatureType.get_cropped_names(): 
+        if feature_type.name in FeatureType.get_cropped_names() and dataset.name == DataSet.usi.name: 
             feature = DataLoader.load_cropped(subject_id, session_id, feature_type).data
             
         elif feature_type.name in FeatureType.get_epoched_names(): 
@@ -25,10 +26,10 @@ class DataService(object):
         elif feature_type.name == FeatureType.epoched.name: 
             feature = DataLoader.load_epoched(subject_id, session_id, feature_type, dataset).values
             
-        elif feature_type.name in FeatureType.get_nightly_names(): 
+        elif feature_type.name in FeatureType.get_nightly_names() and dataset.name == DataSet.usi.name: 
             feature = DataLoader.load_nightly(subject_id, session_id, feature_type).to_numpy()
             
-        elif FeatureType.sleep_quality.name == feature_type.name:
+        elif FeatureType.sleep_quality.name == feature_type.name and dataset.name == DataSet.usi.name:
             feature = np.array([SleepSessionService.load_sleepquality(subject_id, session_id)]).reshape(1,1)
             
         else:

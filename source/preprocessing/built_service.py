@@ -5,6 +5,7 @@ from source.constants import Constants
 from source.analysis.setup.sleep_session_service import SleepSessionService
 from source.analysis.setup.feature_type import FeatureType
 from source.data_services.dataset import DataSet
+from source.preprocessing.path_service import PathService
 
 class BuiltService(object):
     
@@ -13,17 +14,7 @@ class BuiltService(object):
     def get_built_subject_and_sleepsession_ids(feature_type, dataset):
         subject_to_session_dictionary = {}
         
-        # Getting the correct path for every featuretype and dataset
-        if (feature_type.name == FeatureType.epoched.name or feature_type.name in FeatureType.get_epoched_names() 
-        or feature_type.name == FeatureType.nightly.name or feature_type.name == FeatureType.sleep_quality.name):
-            path = Constants.EPOCHED_FILE_PATH
-            
-            if dataset.name == DataSet.usi.name:
-                path = path.joinpath('usi')
-            elif dataset.name == DataSet.mesa.name:
-                path = path.joinpath('mesa')
-        elif feature_type.name == FeatureType.cropped.name or feature_type.name in FeatureType.get_cropped_names():
-            path = Constants.CROPPED_FILE_PATH
+        path = BuiltService.get_path(feature_type, dataset)
 
         
         if(dataset.name == DataSet.usi.name):
@@ -71,3 +62,14 @@ class BuiltService(object):
             for session_id in BuiltService.get_built_sleepsession_ids(subject_id, feature_type, dataset):
                 count += 1
         return count
+    
+    @staticmethod 
+    def get_path(feature_type, dataset):
+        # Getting the correct path for every featuretype and dataset
+        # For nightly, we assume that the same subjects and sessions will have been built than for epoched
+        if (feature_type.name == FeatureType.epoched.name or feature_type.name in FeatureType.get_epoched_names() 
+        or feature_type.name == FeatureType.nightly.name or feature_type.name == FeatureType.sleep_quality.name):
+            path = PathService.get_epoched_folder_path
+        elif feature_type.name == FeatureType.cropped.name or feature_type.name in FeatureType.get_cropped_names():
+            path = Constants.CROPPED_FILE_PATH
+        return path

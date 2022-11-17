@@ -16,6 +16,8 @@ class Constants(object):
     MAKE_PLOTS_PREPROCESSING = True
     CROPPED_FILE_PATH = utils.get_project_root().joinpath('outputs/cropped features/')
     EPOCHED_FILE_PATH = utils.get_project_root().joinpath('outputs/epoched features/')
+    MESA_FOLDER_NAME = 'mesa'
+    USI_FOLDER_NAME = 'usi'
     NIGHTLY_FILE_PATH = utils.get_project_root().joinpath('outputs/nightly features/')
     FIGURE_FILE_PATH = utils.get_project_root().joinpath('outputs/figures/')
     ANALYSIS_FILE_PATH = FIGURE_FILE_PATH.joinpath('analysis')
