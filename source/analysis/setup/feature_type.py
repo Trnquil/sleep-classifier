@@ -18,6 +18,8 @@ class FeatureType(Enum):
     epoched = "epoched"
     
     epoched_cluster = "epoched cluster"
+    epoched_hr = "epoched heart rate"
+    epoched_count = "epoched count"
     
     nightly = "nightly"
     

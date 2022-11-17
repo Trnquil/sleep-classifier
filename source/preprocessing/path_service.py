@@ -20,6 +20,8 @@ class PathService(object):
         
         FeatureType.epoched_cluster.name: "clusters.out",
         FeatureType.epoched.name: "epoched_features.csv",
+        FeatureType.epoched_hr.name: "epoched_features.csv",
+        FeatureType.epoched_count.name: "epoched_features.csv",
         
         FeatureType.nightly.name: "nightly_features.csv"
         }

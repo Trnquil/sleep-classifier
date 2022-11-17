@@ -20,10 +20,7 @@ class DataService(object):
         if feature_type.name in FeatureType.get_cropped_names() and dataset.name == DataSet.usi.name: 
             feature = DataLoader.load_cropped(subject_id, session_id, feature_type).data
             
-        elif feature_type.name in FeatureType.get_epoched_names(): 
-            feature = DataLoader.load_epoched(subject_id, session_id, feature_type, dataset)
-            
-        elif feature_type.name == FeatureType.epoched.name: 
+        elif feature_type.name in FeatureType.get_epoched_names() or feature_type.name == FeatureType.epoched.name: 
             feature = DataLoader.load_epoched(subject_id, session_id, feature_type, dataset).values
             
         elif feature_type.name in FeatureType.get_nightly_names() and dataset.name == DataSet.usi.name: 

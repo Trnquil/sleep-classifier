@@ -81,7 +81,7 @@ class NightlyFeatureBuilder(object):
         
         count_features_dict = ActivityCountNightlyFeatureService.build_feature_dict(subject_id, session_id)
         
-        hr_features_dict = HeartRateNightlyFeatureService.build_feature_dict(subject_id, session_id)
+        hr_features_dict = HeartRateNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id)
         
         merged_dict = subject_session_dict | clustering_features_dict | hr_features_dict | sleepquality_dict
         
