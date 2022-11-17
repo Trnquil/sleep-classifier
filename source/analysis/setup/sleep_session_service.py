@@ -51,7 +51,7 @@ class SleepSessionService(object):
         sleepsessions = []
         for index, selfreports_row in selfreports_array.iterrows():
             
-            session_id = "SLEEP_SESSION_" + str(selfreports_row[0]).zfill(2)
+            session_id = "SS_" + str(selfreports_row[0]).zfill(2)
             start_timestamp = SleepSessionService.convert_to_centered_time(selfreports_row[1])
             end_timestamp = SleepSessionService.convert_to_centered_time(selfreports_row[2])
             sleepquality = int(selfreports_row[3])

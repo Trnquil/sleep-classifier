@@ -47,7 +47,7 @@ class EpochedFeatureBuilder(object):
         for session_id in sleepsessions:
     
             if Constants.VERBOSE:
-                print("Building epoched features " + str(subject_id) + "-" + str(session_id) + "...")
+                print("Building USI epoched features " + str(subject_id) + "-" + str(session_id) + "...")
                 
             valid_epochs = EpochedFeatureBuilder.get_valid_epochs(subject_id, session_id)
             
@@ -69,7 +69,7 @@ class EpochedFeatureBuilder(object):
             
             
             # merging all features together
-            features_df = pd.merge(count_feature, hr_feature, how="inner", on=["epoch_timestamp"]).fillna(0)
+            features_df = EpochedFeatureBuilder.feature_merger(count_feature=count_feature, hr_feature=hr_feature)
     
             
             # Writing features to disk
@@ -81,7 +81,7 @@ class EpochedFeatureBuilder(object):
     @staticmethod
     @dispatch(str)         
     def get_valid_epochs(subject_id):
-        motion_feature = DataService.load_feature_raw(subject_id,  FeatureType.cropped_motion, DataSet.usi)
+        motion_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_motion, DataSet.usi)
         motion_collection = Collection(subject_id=subject_id, data=motion_feature, data_frequency=0)
         
         ibi_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_ibi, DataSet.usi)
@@ -103,5 +103,11 @@ class EpochedFeatureBuilder(object):
         collections = [motion_collection, ibi_collection]
         valid_epochs = RawDataProcessor.get_valid_epochs(collections)
         return valid_epochs
+    
+    @staticmethod
+    def feature_merger(count_feature, hr_feature):
+        # merging all features together
+        features_df = pd.merge(count_feature, hr_feature, how="inner", on=["epoch_timestamp"]).fillna(0)
+        return features_df
 
         

@@ -9,7 +9,7 @@ from source.preprocessing.collection import Collection
 
 class MesaActigraphyService(object):
     @staticmethod
-    def load(file_id):
+    def load_raw(file_id):
         line_align = -1  # Find alignment line between PSG and actigraphy
         project_root = str(utils.get_project_root())
 
@@ -40,6 +40,7 @@ class MesaActigraphyService(object):
         data = np.array(activity)
         data = utils.remove_nans(data)
         
-        count_dataframe = pd.DataFrame(data)
-        count_dataframe.columns = ["epoch_timestamp", "count"]
-        return count_dataframe
+        # Eventually want to return a dataframe, not a collection
+        # count_dataframe = pd.DataFrame(data)
+        # count_dataframe.columns = ["epoch_timestamp", "count"]
+        return Collection(file_id, data, 0)

@@ -7,7 +7,7 @@ from source.preprocessing.collection import Collection
 
 class MesaHeartRateService(object):
     @staticmethod
-    def load(file_id):
+    def load_raw(file_id):
         project_root = str(utils.get_project_root())
 
         edf_file = pyedflib.EdfReader(project_root + '/data/mesa/polysomnography/edfs/mesa-sleep-' + file_id + '.edf')
@@ -25,8 +25,5 @@ class MesaHeartRateService(object):
 
         data = np.transpose(np.vstack((time_hr, heart_rate)))
         data = utils.remove_nans(data)
-        
-        mask = [hr > 0 and hr != 100 for hr in data[:,1]]
-        data = data[mask]
         
         return Collection(subject_id=file_id, data=data, data_frequency=sf)

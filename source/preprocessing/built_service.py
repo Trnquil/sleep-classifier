@@ -69,7 +69,10 @@ class BuiltService(object):
         # For nightly, we assume that the same subjects and sessions will have been built than for epoched
         if (feature_type.name == FeatureType.epoched.name or feature_type.name in FeatureType.get_epoched_names() 
         or feature_type.name == FeatureType.nightly.name or feature_type.name == FeatureType.sleep_quality.name):
-            path = PathService.get_epoched_folder_path
+            if(dataset.name == DataSet.usi.name):
+                path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
+            elif(dataset.name == DataSet.mesa.name):
+                path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.MESA_FOLDER_NAME)
         elif feature_type.name == FeatureType.cropped.name or feature_type.name in FeatureType.get_cropped_names():
             path = Constants.CROPPED_FILE_PATH
         return path
