@@ -25,7 +25,7 @@ class ClusteringFeatureService(object):
     @staticmethod
     def get_fitted_model():
         
-        features = DataService.load_feature_raw(FeatureType.epoched, DataSet.mesa)[:,1:].squeeze()
+        features = DataService.load_feature_raw(FeatureType.epoched, DataSet.usi)[:,1:].squeeze()
         classifier=KMeans(n_clusters=6, random_state=0)
 
         # We are now fitting our features to the cluster

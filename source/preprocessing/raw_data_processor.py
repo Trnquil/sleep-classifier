@@ -78,13 +78,6 @@ class RawDataProcessor:
                     
                     ibi_collection = RawDataProcessor.get_ibi_from_bvp(bvp_collection)
                     
-                    hr_from_bvp = 60/ibi_collection.values
-                    hr_from_ibi = 60/ibi_collection_usi.values
-                    hr_from_usi = hr_collection.values
-                    
-                    print("hr mean from bvp: " + str(np.mean(hr_from_bvp)) + ", hr mean from usi: " + str(np.mean(hr_from_usi)) + ", hr mean from ibi: " + str(np.mean(hr_from_ibi)))
-                    print("hr std from bvp: " + str(np.std(hr_from_bvp)) + ", hr std from usi: " + str(np.std(hr_from_usi)) + ", hr std from ibi: " + str(np.std(hr_from_ibi)))
-                    
                     DataWriter.write_cropped(motion_collection, sleep_session_id, FeatureType.cropped_motion)
                     DataWriter.write_cropped(ibi_collection, sleep_session_id, FeatureType.cropped_ibi)
                     DataWriter.write_cropped(count_collection, sleep_session_id, FeatureType.cropped_count)

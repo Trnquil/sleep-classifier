@@ -19,6 +19,7 @@ class PathService(object):
         FeatureType.cropped_hr.name: "cropped_hr.out",
         
         FeatureType.epoched_cluster.name: "clusters.out",
+        FeatureType.epoched_sleep_label.name: "sleep_labels.out",
         FeatureType.epoched.name: "epoched_features.csv",
         FeatureType.epoched_hr.name: "epoched_features.csv",
         FeatureType.epoched_count.name: "epoched_features.csv",
@@ -64,7 +65,7 @@ class PathService(object):
         session_dirs = [str(subject_dir.joinpath(session_dirs[i])) + "/" + PathService.filenames[feature_type.name] 
          for i in range(len(session_dirs))]
      
-        return [session_dirs[3]]
+        return session_dirs[:10]
     
     @staticmethod
     def get_epoched_file_path(subject_id, session_id, feature_type, dataset):

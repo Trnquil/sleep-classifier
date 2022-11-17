@@ -127,14 +127,20 @@ class DataLoader(object):
     @staticmethod
     def load_epoched(subject_id, session_id, feature_type, dataset):
         feature_path = PathService.get_epoched_file_path(subject_id, session_id, feature_type, dataset)
-        feature_dataframe = pd.read_csv(str(feature_path))
+
         
         if(feature_type.name == FeatureType.epoched.name):
-            pass
+            feature_dataframe = pd.read_csv(str(feature_path))
         elif(feature_type.name == FeatureType.epoched_hr.name):
+            feature_dataframe = pd.read_csv(str(feature_path))
             feature_dataframe = feature_dataframe.filter(regex=("hr_.*"))
         elif(feature_type.name == FeatureType.epoched_count.name):
+            feature_dataframe = pd.read_csv(str(feature_path))
             feature_dataframe = feature_dataframe.filter(regex=("count_.*"))
+        elif(feature_type.name == FeatureType.epoched_cluster.name):
+            feature_dataframe = pd.read_csv(str(feature_path), names=["cluster"])
+        elif(feature_type.name == FeatureType.epoched_sleep_label.name):
+            feature_dataframe = pd.read_csv(str(feature_path), names=["sleep label"])
         else:
             raise Exception("FeatureType unknown to DataLoader")
             

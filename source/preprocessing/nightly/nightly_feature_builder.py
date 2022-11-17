@@ -47,11 +47,11 @@ class NightlyFeatureBuilder(object):
                 session_index += 1
             
             #Normalizing features across the subject and filling 0 for features with std 0
-            regex="ibi_.*|count_.*|hr_.*"
-            subject_mean = np.mean(subject_dataframe.filter(regex=regex), axis=0)
-            subject_std = np.std(subject_dataframe.filter(regex=regex), axis=0)*2
-            subject_dataframe[subject_dataframe.filter(regex=regex).columns] = (subject_dataframe.filter(regex=regex) - subject_mean)/subject_std
-            subject_dataframe = subject_dataframe.fillna(0)
+            # regex="ibi_.*|count_.*|hr_.*"
+            # subject_mean = np.mean(subject_dataframe.filter(regex=regex), axis=0)
+            # subject_std = np.std(subject_dataframe.filter(regex=regex), axis=0)*2
+            # subject_dataframe[subject_dataframe.filter(regex=regex).columns] = (subject_dataframe.filter(regex=regex) - subject_mean)/subject_std
+            # subject_dataframe = subject_dataframe.fillna(0)
             
             if subject_index == 0:
                 nightly_dataframe = subject_dataframe
@@ -63,6 +63,7 @@ class NightlyFeatureBuilder(object):
         # FOR TESTING PURPOSES:
         # DataWriter.write_nightly(nightly_dataframe[['subject_id', 'session_id', 'c_0', 'c_1', 'c_2', 'c_3', 'c_4', 'c_5', 'ibi_mean_hr', 'ibi_std_hr', 'sleep_quality']])
         DataWriter.write_nightly(nightly_dataframe)
+
         
         
     @staticmethod

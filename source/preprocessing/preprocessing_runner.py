@@ -27,7 +27,7 @@ def run_preprocessing():
     build_epoched()
     build_mesa_epoched()
     build_clusters()
-    build_nightly()            
+    build_nightly()
 
     end_time = time.time()
     print("Execution took " + str((end_time - start_time) / 60) + " minutes")

@@ -30,24 +30,24 @@ class EpochedFeatureBuilder(object):
         count_feature_subject = ActivityCountFeatureService.build_count_feature(subject_id, valid_epochs)
         count_std = np.std(count_feature_subject.iloc[:,1:])
         
-        ibi_features_subject = IbiFeatureService.build_hr_features(subject_id, valid_epochs)
-        ibi_mean = np.mean(ibi_features_subject.iloc[:,1:], axis=0)
-        ibi_std = np.std(ibi_features_subject.iloc[:,1:], axis=0)
+        # ibi_features_subject = IbiFeatureService.build_hr_features(subject_id, valid_epochs)
+        # ibi_mean = np.mean(ibi_features_subject.iloc[:,1:], axis=0)
+        # ibi_std = np.std(ibi_features_subject.iloc[:,1:], axis=0)
         
         hr_features_subject = HeartRateFeatureService.build(subject_id, valid_epochs)
         hr_mean = np.mean(hr_features_subject.iloc[:,1:], axis=0)
         hr_std = np.std(hr_features_subject.iloc[:,1:], axis=0)
         
         # If there is nothing inside ibi_features_subject, we return
-        if not np.any(ibi_features_subject):
-            return
+        # if not np.any(ibi_features_subject):
+        #     return
         
         
         sleepsessions = BuiltService.get_built_sleepsession_ids(subject_id, FeatureType.cropped, DataSet.usi)
         for session_id in sleepsessions:
     
             if Constants.VERBOSE:
-                print("Building USI epoched features " + str(subject_id) + "-" + str(session_id) + "...")
+                print("Building USI epoched features for subject " + str(subject_id) + ", session " + str(session_id) + "...")
                 
             valid_epochs = EpochedFeatureBuilder.get_valid_epochs(subject_id, session_id)
             
@@ -57,15 +57,16 @@ class EpochedFeatureBuilder(object):
             count_feature.iloc[:,1:] = count_feature.iloc[:,1:]/count_std
             
             # Normalizing ibi features, the first row is a timestamp
-            ibi_features = IbiFeatureService.build_hr_features(subject_id, session_id, valid_epochs)
-            ibi_features.iloc[:,1:] = (ibi_features.iloc[:,1:] - ibi_mean)/ibi_std      
+            # ibi_features = IbiFeatureService.build_hr_features(subject_id, session_id, valid_epochs)
+            # ibi_features.iloc[:,1:] = (ibi_features.iloc[:,1:] - ibi_mean)/ibi_std      
             
             # If there is nothing inside ibi_features, we continue with the next loop
-            if not np.any(ibi_features):
-                continue
+            # if not np.any(ibi_features):
+            #     continue
             
             hr_feature = HeartRateFeatureService.build(subject_id, session_id, valid_epochs)
-            hr_feature.iloc[:,1:] = (hr_feature.iloc[:,1:] - hr_mean)/hr_std     
+            hr_feature.iloc[:,1:] = (hr_feature.iloc[:,1:] - hr_mean)/hr_std  
+        
             
             
             # merging all features together

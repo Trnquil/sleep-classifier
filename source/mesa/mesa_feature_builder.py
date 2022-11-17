@@ -73,5 +73,6 @@ class MesaFeatureBuilder(object):
                 # Create needed folders if they don't already exist
                 PathService.create_epoched_folder_path(subject_id, 'SS_01', DataSet.mesa)
                 DataWriter.write_epoched(features_df, subject_id, 'SS_01', FeatureType.epoched, DataSet.mesa)
+                DataWriter.write_epoched(labeled_sleep, subject_id, 'SS_01', FeatureType.epoched_sleep_label, DataSet.mesa)
 
             
