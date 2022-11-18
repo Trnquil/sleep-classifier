@@ -27,6 +27,7 @@ class ClusteringFeatureService(object):
         
         features = DataService.load_feature_raw(FeatureType.epoched, DataSet.usi)[:,1:].squeeze()
         classifier=KMeans(n_clusters=6, random_state=0)
+        
 
         # We are now fitting our features to the cluster
         classifier.fit(features)

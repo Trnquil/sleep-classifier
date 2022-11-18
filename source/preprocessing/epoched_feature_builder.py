@@ -50,6 +50,7 @@ class EpochedFeatureBuilder(object):
                 print("Building USI epoched features for subject " + str(subject_id) + ", session " + str(session_id) + "...")
                 
             valid_epochs = EpochedFeatureBuilder.get_valid_epochs(subject_id, session_id)
+            if len(valid_epochs) == 0: continue
             
             count_feature = ActivityCountFeatureService.build_count_feature(subject_id, session_id, valid_epochs)
             

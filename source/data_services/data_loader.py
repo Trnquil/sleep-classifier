@@ -3,6 +3,8 @@ from source.preprocessing.path_service import PathService
 from source.constants import Constants
 from source import utils
 from source.preprocessing.collection import Collection
+from source.preprocessing.built_service import BuiltService
+from source.data_services.dataset import DataSet
 
 
 import numpy as np
@@ -145,6 +147,14 @@ class DataLoader(object):
             raise Exception("FeatureType unknown to DataLoader")
             
         return feature_dataframe
+    
+    @staticmethod
+    def load_epoched_columns(feature_type, dataset):
+        subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(FeatureType.epoched, dataset)
+        subject_id = list(subject_sleepsession_dictionary.keys())[0]
+        session_id = subject_sleepsession_dictionary[subject_id][0]
+        feature_dataframe = DataLoader.load_epoched(subject_id, session_id, feature_type, dataset)
+        return feature_dataframe.columns
     
     @staticmethod
     @dispatch()

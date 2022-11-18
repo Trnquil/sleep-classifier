@@ -20,14 +20,15 @@ from source.mesa.mesa_data_service import MesaDataService
 from source.mesa.mesa_feature_builder import MesaFeatureBuilder
 
 
+
 def run_preprocessing():
     start_time = time.time()
     
-    build_cropped()
-    build_epoched()
-    build_mesa_epoched()
-    build_clusters()
-    build_nightly()
+    # build_cropped()
+    # build_epoched()
+    # build_mesa_epoched()
+    # build_clusters()
+    # build_nightly()
 
     end_time = time.time()
     print("Execution took " + str((end_time - start_time) / 60) + " minutes")
@@ -45,7 +46,7 @@ def build_cropped():
 
 def build_epoched():
     # Only building features for subjects and sleepsession for which folders exist
-    subject_ids = BuiltService.get_built_subject_ids(FeatureType.cropped, DataSet.usi)
+    subject_ids = BuiltService.get_built_subject_ids(FeatureType.cropped, DataSet.usi)[10:]
     for subject_id in subject_ids:
         EpochedFeatureBuilder.build(subject_id)
 
@@ -59,6 +60,11 @@ def build_clusters():
     clustering_model = ClusteringFeatureService.get_fitted_model()
     # Only building features for subjects and sleepsession for which folders exist
     subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(FeatureType.epoched, DataSet.usi)
+    for subject in subject_sleepsession_dictionary.keys():
+        for session in subject_sleepsession_dictionary[subject]:
+            ClusterFeatureBuilder.build(subject, session, clustering_model)
+            
+    subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(FeatureType.epoched, DataSet.mesa)
     for subject in subject_sleepsession_dictionary.keys():
         for session in subject_sleepsession_dictionary[subject]:
             ClusterFeatureBuilder.build(subject, session, clustering_model)

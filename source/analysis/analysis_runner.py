@@ -18,8 +18,32 @@ from source.constants import Constants
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
+from source.analysis.clustering.clustering_analyzer import ClusterAnalyzer
+from source.data_services.data_service import DataService
+from source.data_services.data_loader import DataLoader
+from source.data_services.dataset import DataSet
 
+import pandas as pd
 
+def cluster_analysis():
+    features = DataService.load_feature_raw(FeatureType.epoched, DataSet.mesa)
+    features_columns = DataLoader.load_epoched_columns(FeatureType.epoched, DataSet.mesa)
+    features_df = pd.DataFrame(features)
+    features_df.columns = features_columns
+    
+    clusters = DataService.load_feature_raw(FeatureType.epoched_cluster, DataSet.mesa)
+    clusters_columns = DataLoader.load_epoched_columns(FeatureType.epoched_cluster, DataSet.mesa)
+    clusters_df = pd.DataFrame(clusters)
+    clusters_df.columns = clusters_columns
+    
+    labels = DataService.load_feature_raw(FeatureType.epoched_sleep_label, DataSet.mesa)
+    labels_columns = DataLoader.load_epoched_columns(FeatureType.epoched_sleep_label, DataSet.mesa)
+    labels_df = pd.DataFrame(labels)
+    labels_df.columns = labels_columns
+    
+    ClusterAnalyzer(features_df, clusters_df, labels_df)
+    
+    
 def figures_leave_one_out():
     attributed_classifiers = [AttributedClassifier(name='Nearest Neighbors',
                                                  classifier=KNeighborsClassifier()),
