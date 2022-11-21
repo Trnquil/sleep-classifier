@@ -19,20 +19,27 @@ class HeartRateFeatureService(object):
 
     @staticmethod
     @dispatch(str, str, object)
-    def build(subject_id, session_id, valid_epochs):
-        heart_rate_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_hr)
+    def build(subject_id, session_id, valid_epochs, from_normalized):
+        if from_normalized:
+            heart_rate_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.normalized_hr)
+        else:
+            heart_rate_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_hr)
         return HeartRateFeatureService.build_from_collection(heart_rate_collection, valid_epochs)
     
     @staticmethod
     @dispatch(str, object)
-    def build(subject_id, valid_epochs):
-        heart_rate_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_hr, DataSet.usi)
+    def build(subject_id, valid_epochs, from_normalized):
+        if from_normalized:
+            heart_rate_feature = DataService.load_feature_raw(subject_id, FeatureType.normalized_hr, DataSet.usi)
+        else:
+            heart_rate_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_hr, DataSet.usi)
         heart_rate_collection = Collection(subject_id=subject_id, data=heart_rate_feature, data_frequency=0)
         return HeartRateFeatureService.build_from_collection(heart_rate_collection, valid_epochs)
 
 
+
     @staticmethod
-    def build_from_collection(heart_rate_collection, valid_epochs):
+    def build_from_collection(heart_rate_collection, valid_epochs, from_normalized):
         heart_rate_features = np.zeros((0,2))
 
         heart_rate_collection = FeatureService.interpolate(heart_rate_collection)
@@ -45,15 +52,18 @@ class HeartRateFeatureService(object):
             indices_in_range = FeatureService.get_window(interpolated_timestamps, epoch)
             heart_rate_values_in_range = interpolated_hr[indices_in_range]
 
-            feature = HeartRateFeatureService.get_feature(heart_rate_values_in_range)
+            hr_mean, hr_std = HeartRateFeatureService.get_feature(heart_rate_values_in_range)
 
-            heart_rate_features = np.concatenate([heart_rate_features, np.array([epoch.timestamp, feature]).reshape(1,2)], axis=0)
+            heart_rate_features = np.concatenate([heart_rate_features, np.array([epoch.timestamp, hr_mean, hr_std]).reshape(1,3)], axis=0)
         
         hr_features_df = pd.DataFrame(heart_rate_features)
-        hr_features_df.columns = ["epoch_timestamp", "hr_std"]
+        if from_normalized:
+            hr_features_df.columns = ["epoch_timestamp", "normalized_hr_mean", "normalized_hr_std"]
+        else:
+            hr_features_df.columns = ["epoch_timestamp", "hr_mean", "hr_std"]
         return hr_features_df
 
     @staticmethod
     def get_feature(heart_rate_values):
-        return np.std(heart_rate_values)
+        return np.mean(heart_rate_values), np.std(heart_rate_values)
 

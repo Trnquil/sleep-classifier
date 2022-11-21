@@ -22,7 +22,7 @@ class ClusterAnalyzer(object):
         
         ClusterAnalyzer.make_confusion_matrix(labels, clusters)
         ClusterAnalyzer.make_mean_plot(features, clusters)
-        ClusterAnalyzer.make_umap(features)
+        ClusterAnalyzer.make_umap(features, clusters)
 
     @staticmethod
     def make_confusion_matrix(labels, clusters):
@@ -50,7 +50,7 @@ class ClusterAnalyzer(object):
         plt.show()
     
     @staticmethod
-    def make_umap(features):
+    def make_umap(features, clusters):
         reducer = umap.UMAP()
         embedding = reducer.fit_transform(features.iloc[:,1:])
         plt.scatter(embedding[:, 0], embedding[:, 1], c=clusters.values, cmap='Spectral', s=8)
@@ -58,14 +58,4 @@ class ClusterAnalyzer(object):
         plt.savefig(str(Constants.FIGURE_FILE_PATH) + "/cluster analysis/umap")
         plt.show()
     
-    
-subject_id = '0002'
-session_id = 'SS_01'
-clustering_model = ClusteringFeatureService.get_fitted_model()
-
-features = DataLoader.load_epoched(subject_id, session_id, FeatureType.epoched, DataSet.mesa)
-clusters = pd.DataFrame(clustering_model.predict(features.to_numpy()[:,1:].squeeze()))
-clusters.columns = ["cluster"]
-labels = DataLoader.load_epoched(subject_id, session_id, FeatureType.epoched_sleep_label, DataSet.mesa)
-ClusterAnalyzer.analyze(features, clusters, labels) 
         

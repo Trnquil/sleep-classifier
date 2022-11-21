@@ -61,8 +61,7 @@ class NightlyFeatureBuilder(object):
             subject_index += 1
         
         # FOR TESTING PURPOSES:
-        # DataWriter.write_nightly(nightly_dataframe[['subject_id', 'session_id', 'c_0', 'c_1', 'c_2', 'c_3', 'c_4', 'c_5', 'ibi_mean_hr', 'ibi_std_hr', 'sleep_quality']])
-        DataWriter.write_nightly(nightly_dataframe)
+        DataWriter.write_nightly(nightly_dataframe[['subject_id', 'session_id', 'c_0', 'c_1', 'c_2', 'c_3', 'c_4', 'c_5', 'normalized_mean_hr', 'normalized_std_hr', 'sleep_quality']])
 
         
         

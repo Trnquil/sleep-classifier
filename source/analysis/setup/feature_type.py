@@ -12,8 +12,10 @@ class FeatureType(Enum):
     
     cropped_count = "cropped count"
     cropped_motion = "cropped motion"
+    cropped_ibi_from_ppg = "cropped inter beat intervals from ppg signal"
     cropped_ibi = "cropped inter beat intervals"
     cropped_hr = "cropped heart rate"
+    normalized_hr = "normalized hr"
     
     epoched = "epoched"
     

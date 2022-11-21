@@ -38,7 +38,7 @@ class ClusterFeatureBuilder(object):
             if(features.shape[0] > 20):
                 reducer = umap.UMAP()
                 embedding = reducer.fit_transform(features)
-                plt.scatter(embedding[:, 0], embedding[:, 1], c=clusters.values, cmap='Spectral', s=8)
+                plt.scatter(embedding[:, 0], embedding[:, 1], c=clusters, cmap='Spectral', s=8)
                 plt.savefig(str(Constants.FIGURE_FILE_PATH) + "/umap/" + subject_id + "_" + session_id)
                 plt.clf()
             

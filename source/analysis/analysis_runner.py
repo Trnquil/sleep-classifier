@@ -22,10 +22,13 @@ from source.analysis.clustering.clustering_analyzer import ClusterAnalyzer
 from source.data_services.data_service import DataService
 from source.data_services.data_loader import DataLoader
 from source.data_services.dataset import DataSet
+from source.analysis.figures.performance_analyzer import PerformanceAnalyzer
 
 import pandas as pd
 
 def cluster_analysis():
+    
+    print("Running Cluster Analysis...")
     features = DataService.load_feature_raw(FeatureType.epoched, DataSet.mesa)
     features_columns = DataLoader.load_epoched_columns(FeatureType.epoched, DataSet.mesa)
     features_df = pd.DataFrame(features)
@@ -41,7 +44,7 @@ def cluster_analysis():
     labels_df = pd.DataFrame(labels)
     labels_df.columns = labels_columns
     
-    ClusterAnalyzer(features_df, clusters_df, labels_df)
+    ClusterAnalyzer.analyze(features_df, clusters_df, labels_df)
     
     
 def figures_leave_one_out():
@@ -58,7 +61,8 @@ def figures_leave_one_out():
         if Constants.VERBOSE:
             print('Running ' + attributed_classifier.name + '...')
         classifier_summary = SleepWakeClassifierSummaryBuilder.build_leave_one_out(attributed_classifier, feature_sets)
-    
+
+        PerformanceAnalyzer.make_overall_performance_summary(classifier_summary)
         PerformancePlotBuilder.make_histogram_with_thresholds(classifier_summary)
         PerformancePlotBuilder.make_single_threshold_histograms(classifier_summary)
         CurvePlotBuilder.make_roc_sw(classifier_summary)
@@ -236,6 +240,7 @@ def figures_compare_time_based_features():
 if __name__ == "__main__":
     start_time = time.time()
     figures_leave_one_out()
+    cluster_analysis()
     #figure_leave_one_out_roc_and_pr()
     #
     # figures_mc_sleep_wake()
