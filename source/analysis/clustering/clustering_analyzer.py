@@ -31,8 +31,8 @@ class ClusterAnalyzer(object):
         cm_display = metrics.ConfusionMatrixDisplay(confusion_matrix = confusion_matrix)
         cm_display.plot()
         plt.savefig(str(Constants.FIGURE_FILE_PATH) + "/cluster analysis/confusion_matrix")
-        plt.show()
-    
+        plt.clf()
+
     @staticmethod
     def make_mean_plot(features, clusters):
         full_df = pd.concat([features, clusters], axis=1)
@@ -47,7 +47,7 @@ class ClusterAnalyzer(object):
         feature_count = features.shape[1]
         cluster_means_df.plot(kind='bar', subplots=True, figsize = (5,3*feature_count))
         plt.savefig(str(Constants.FIGURE_FILE_PATH) + "/cluster analysis/means")
-        plt.show()
+        plt.clf()
     
     @staticmethod
     def make_umap(features, clusters):
@@ -56,6 +56,6 @@ class ClusterAnalyzer(object):
         plt.scatter(embedding[:, 0], embedding[:, 1], c=clusters.values, cmap='Spectral', s=8)
         plt.plot()
         plt.savefig(str(Constants.FIGURE_FILE_PATH) + "/cluster analysis/umap")
-        plt.show()
+        plt.clf()
     
         
