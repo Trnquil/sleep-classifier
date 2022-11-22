@@ -68,21 +68,24 @@ class RawDataProcessor:
             
             sleep_session_id = motion_sleepsession_tuples[i][0].session_id
             
-            if Constants.VERBOSE:
-                print("Writing cropped data from subject " + str(subject_id) +  ", session " + str(sleep_session_id) + "...")
-            
             if(np.any(motion_collection.data) and np.any(bvp_collection.data) and np.any(count_collection.data)):
                 
-                PathService.create_cropped_file_path(subject_id, sleep_session_id)
                 
                 ibi_collection_from_pgg = BvpService.get_ibi_from_bvp(bvp_collection)
                 
-                DataWriter.write_cropped(motion_collection, sleep_session_id, FeatureType.cropped_motion)
-                DataWriter.write_cropped(ibi_collection, sleep_session_id, FeatureType.cropped_ibi)
-                DataWriter.write_cropped(ibi_collection_from_pgg, sleep_session_id, FeatureType.cropped_ibi_from_ppg)
-                DataWriter.write_cropped(count_collection, sleep_session_id, FeatureType.cropped_count)
-                DataWriter.write_cropped(hr_collection, sleep_session_id, FeatureType.cropped_hr)
-                DataWriter.write_cropped(normalized_hr_collection, sleep_session_id, FeatureType.normalized_hr)
+                if(np.any(ibi_collection_from_pgg.data)):
+                    
+                    if Constants.VERBOSE:
+                        print("Writing cropped data from subject " + str(subject_id) +  ", session " + str(sleep_session_id) + "...")
+                    
+                    PathService.create_cropped_file_path(subject_id, sleep_session_id)
+                    
+                    DataWriter.write_cropped(motion_collection, sleep_session_id, FeatureType.cropped_motion)
+                    DataWriter.write_cropped(ibi_collection, sleep_session_id, FeatureType.cropped_ibi)
+                    DataWriter.write_cropped(ibi_collection_from_pgg, sleep_session_id, FeatureType.cropped_ibi_from_ppg)
+                    DataWriter.write_cropped(count_collection, sleep_session_id, FeatureType.cropped_count)
+                    DataWriter.write_cropped(hr_collection, sleep_session_id, FeatureType.cropped_hr)
+                    DataWriter.write_cropped(normalized_hr_collection, sleep_session_id, FeatureType.normalized_hr)
     
     
     @staticmethod 

@@ -21,8 +21,10 @@ class BvpService(object):
         data = np.stack((timestamps_ibi, ibi_values), axis=1)
         
         # Making sure that the timestamp drift between derived ibi and original BVP timestamps is not too large
-        drift = bvp_collection.timestamps[-1] - timestamps_ibi[-1]
-        assert drift < 10, "Ibi drift over 10 seconds, drift: " + str(drift)
+        drift = bvp_collection.timestamps[-1] - timestamps_ibi[-1] 
+        if drift > 10:
+            print("Warning: Ibi Drift over 10 seconds, sleep session won't be included. Drift: " + str(drift))
+            return Collection(bvp_collection.subject_id, np.zeros((0,2)), 0)
         
         #only keeping IBI values between 0.4 and 2
         mask = [BvpService.IBI_LOWER_BOUND < x < BvpService.IBI_UPPER_BOUND for x in ibi_values]

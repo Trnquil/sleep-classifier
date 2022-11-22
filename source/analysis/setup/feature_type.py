@@ -21,7 +21,10 @@ class FeatureType(Enum):
     
     epoched_cluster = "epoched cluster"
     epoched_hr = "epoched heart rate"
+    epoched_normalized_hr = "epoched normalized hr"
     epoched_count = "epoched count"
+    epoched_ibi = "epoched ibi features"
+    epoched_ibi_from_ppg = "epoched ibi features from ppg signal"
     epoched_sleep_label = "epoched sleep label"
     
     nightly = "nightly"

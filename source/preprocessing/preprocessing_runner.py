@@ -4,7 +4,6 @@ import sys
 sys.path.insert(1, '../..')
 
 import time
-
 from source.preprocessing.built_service import BuiltService
 from source.constants import Constants
 from source.preprocessing.activity_count.activity_count_service import ActivityCountService
@@ -19,8 +18,6 @@ from source.data_services.dataset import DataSet
 from source.mesa.mesa_data_service import MesaDataService
 from source.mesa.mesa_feature_builder import MesaFeatureBuilder
 
-
-
 def run_preprocessing():
     start_time = time.time()
     
@@ -34,7 +31,7 @@ def run_preprocessing():
     print("Execution took " + str((end_time - start_time) / 60) + " minutes")
 
 def build_cropped():
-    subject_set = Constants.SUBJECT_IDS[1:]
+    subject_set = Constants.SUBJECT_IDS
     for subject in subject_set:
         if Constants.VERBOSE:
             print("Cropping data from subject " + str(subject) + "...")
