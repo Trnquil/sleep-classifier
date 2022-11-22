@@ -15,11 +15,17 @@ import pandas as pd
 import numpy as np
 import umap
 
+
 class ClusterAnalyzer(object):
     
     @staticmethod
     def analyze(features, clusters, labels):
+        clusters = clusters[clusters['epoch_timestamp'].isin(features['epoch_timestamp'])]
+        labels = labels[labels['epoch_timestamp'].isin(features['epoch_timestamp'])]
         
+        clusters = clusters.iloc[:,1]
+        labels = labels.iloc[:,1]
+
         ClusterAnalyzer.make_confusion_matrix(labels, clusters)
         ClusterAnalyzer.make_mean_plot(features, clusters)
         ClusterAnalyzer.make_umap(features, clusters)

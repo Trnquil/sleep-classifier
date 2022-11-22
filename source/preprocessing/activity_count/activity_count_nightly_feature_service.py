@@ -1,7 +1,7 @@
 import sys
 sys.path.insert(1, '../..')
 
-from source.data_services.data_service import DataService
+from source.data_services.data_loader import DataLoader
 from source.analysis.setup.feature_type import FeatureType
 from source.data_services.dataset import DataSet
 
@@ -12,11 +12,13 @@ import pandas as pd
 class ActivityCountNightlyFeatureService(object):
     
     @staticmethod
-    def build_feature_dict(subject_id, session_id):
+    def build_feature_dict(subject_id, session_id, common_timestamps):
         
-        count_feature_data = DataService.load_feature_raw(subject_id, session_id, FeatureType.cropped_count, DataSet.usi)
+        count_feature = DataLoader.load_epoched(subject_id, session_id, FeatureType.epoched_count, DataSet.usi)
+        count_feature = pd.merge(common_timestamps, count_feature, how="inner", on=["epoch_timestamp"])
+        count_feature = count_feature.to_numpy()
         
-        features_dict = ActivityCountNightlyFeatureService.build_count_features(count_feature_data[:,1])
+        features_dict = ActivityCountNightlyFeatureService.build_count_features(count_feature[:,1])
         merged_dict = features_dict
                 
         

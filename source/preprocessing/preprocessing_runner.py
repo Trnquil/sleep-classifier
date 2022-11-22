@@ -21,11 +21,11 @@ from source.mesa.mesa_feature_builder import MesaFeatureBuilder
 def run_preprocessing():
     start_time = time.time()
     
-    build_cropped()
-    # build_epoched()
-    # build_mesa_epoched()
-    # build_clusters()
-    # build_nightly()
+    #build_cropped()
+    #build_epoched()
+    #build_mesa_epoched()
+    build_clusters()
+    build_nightly()
 
     end_time = time.time()
     print("Execution took " + str((end_time - start_time) / 60) + " minutes")

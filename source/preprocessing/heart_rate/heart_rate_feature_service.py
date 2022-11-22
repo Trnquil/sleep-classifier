@@ -11,14 +11,36 @@ from source.preprocessing.feature_service import FeatureService
 from source.data_services.data_loader import DataLoader
 from source.preprocessing.collection import Collection
 from source.data_services.dataset import DataSet
+from source.preprocessing.raw_data_processor import RawDataProcessor
 
 
 from multipledispatch import dispatch
 
 class HeartRateFeatureService(object):
-
+    
     @staticmethod
-    @dispatch(str, str, object)
+    @dispatch(str, str, bool)
+    def build(subject_id, session_id, from_normalized):
+        if from_normalized:
+            heart_rate_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.normalized_hr)
+        else:
+            heart_rate_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_hr)
+        valid_epochs = RawDataProcessor.get_valid_epochs([heart_rate_collection])
+        return HeartRateFeatureService.build_from_collection(heart_rate_collection, valid_epochs)
+    
+    @staticmethod
+    @dispatch(str, bool)
+    def build(subject_id, from_normalized):
+        if from_normalized:
+            heart_rate_feature = DataService.load_feature_raw(subject_id, FeatureType.normalized_hr, DataSet.usi)
+        else:
+            heart_rate_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_hr, DataSet.usi)
+        heart_rate_collection = Collection(subject_id=subject_id, data=heart_rate_feature, data_frequency=0)
+        valid_epochs = RawDataProcessor.get_valid_epochs([heart_rate_collection])
+        return HeartRateFeatureService.build_from_collection(heart_rate_collection, valid_epochs)
+    
+    @staticmethod
+    @dispatch(str, str, object, bool)
     def build(subject_id, session_id, valid_epochs, from_normalized):
         if from_normalized:
             heart_rate_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.normalized_hr)
@@ -27,7 +49,7 @@ class HeartRateFeatureService(object):
         return HeartRateFeatureService.build_from_collection(heart_rate_collection, valid_epochs)
     
     @staticmethod
-    @dispatch(str, object)
+    @dispatch(str, object, bool)
     def build(subject_id, valid_epochs, from_normalized):
         if from_normalized:
             heart_rate_feature = DataService.load_feature_raw(subject_id, FeatureType.normalized_hr, DataSet.usi)
@@ -39,8 +61,8 @@ class HeartRateFeatureService(object):
 
 
     @staticmethod
-    def build_from_collection(heart_rate_collection, valid_epochs, from_normalized):
-        heart_rate_features = np.zeros((0,2))
+    def build_from_collection(heart_rate_collection, valid_epochs):
+        heart_rate_features = np.zeros((0,3))
 
         heart_rate_collection = FeatureService.interpolate(heart_rate_collection)
         heart_rate_collection = FeatureService.convolve(heart_rate_collection)
@@ -57,10 +79,7 @@ class HeartRateFeatureService(object):
             heart_rate_features = np.concatenate([heart_rate_features, np.array([epoch.timestamp, hr_mean, hr_std]).reshape(1,3)], axis=0)
         
         hr_features_df = pd.DataFrame(heart_rate_features)
-        if from_normalized:
-            hr_features_df.columns = ["epoch_timestamp", "normalized_hr_mean", "normalized_hr_std"]
-        else:
-            hr_features_df.columns = ["epoch_timestamp", "hr_mean", "hr_std"]
+        hr_features_df.columns = ["epoch_timestamp", "hr_mean", "hr_std"]
         return hr_features_df
 
     @staticmethod

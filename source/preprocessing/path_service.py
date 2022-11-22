@@ -20,11 +20,13 @@ class PathService(object):
         FeatureType.cropped_hr.name: "cropped_hr.out",
         FeatureType.normalized_hr.name: "normalized_hr.out",
         
-        FeatureType.epoched_cluster.name: "clusters.out",
-        FeatureType.epoched_sleep_label.name: "sleep_labels.out",
-        FeatureType.epoched.name: "epoched_features.csv",
-        FeatureType.epoched_hr.name: "epoched_features.csv",
-        FeatureType.epoched_count.name: "epoched_features.csv",
+        FeatureType.epoched_hr.name: "epoched_hr.csv",
+        FeatureType.epoched_normalized_hr.name: "epoched_normalized_hr.csv",
+        FeatureType.epoched_count.name: "epoched_count.csv",
+        FeatureType.epoched_ibi.name: "epoched_ibi.csv",
+        FeatureType.epoched_ibi_from_ppg.name: "epoched_ibi_from_ppg.csv",
+        FeatureType.epoched_cluster.name: "clusters.csv",
+        FeatureType.epoched_sleep_label.name: "sleep_labels.csv",
         
         FeatureType.nightly.name: "nightly_features.csv"
         }

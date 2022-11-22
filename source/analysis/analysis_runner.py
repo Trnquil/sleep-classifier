@@ -23,26 +23,17 @@ from source.data_services.data_service import DataService
 from source.data_services.data_loader import DataLoader
 from source.data_services.dataset import DataSet
 from source.analysis.figures.performance_analyzer import PerformanceAnalyzer
+from source.preprocessing.clustering.clustering_feature_service import ClusteringFeatureService
+
 
 import pandas as pd
 
 def cluster_analysis():
     
     print("Running Cluster Analysis...")
-    features = DataService.load_feature_raw(FeatureType.epoched, DataSet.mesa)
-    features_columns = DataLoader.load_epoched_columns(FeatureType.epoched, DataSet.mesa)
-    features_df = pd.DataFrame(features)
-    features_df.columns = features_columns
-    
-    clusters = DataService.load_feature_raw(FeatureType.epoched_cluster, DataSet.mesa)
-    clusters_columns = DataLoader.load_epoched_columns(FeatureType.epoched_cluster, DataSet.mesa)
-    clusters_df = pd.DataFrame(clusters)
-    clusters_df.columns = clusters_columns
-    
-    labels = DataService.load_feature_raw(FeatureType.epoched_sleep_label, DataSet.mesa)
-    labels_columns = DataLoader.load_epoched_columns(FeatureType.epoched_sleep_label, DataSet.mesa)
-    labels_df = pd.DataFrame(labels)
-    labels_df.columns = labels_columns
+    features_df = ClusteringFeatureService.get_features(DataSet.mesa)
+    clusters_df = DataService.load_epoched_dataframe(FeatureType.epoched_cluster, DataSet.mesa)
+    labels_df = DataService.load_epoched_dataframe(FeatureType.epoched_cluster, DataSet.mesa)
     
     ClusterAnalyzer.analyze(features_df, clusters_df, labels_df)
     
@@ -239,7 +230,7 @@ def figures_compare_time_based_features():
 
 if __name__ == "__main__":
     start_time = time.time()
-    figures_leave_one_out()
+    #figures_leave_one_out()
     cluster_analysis()
     #figure_leave_one_out_roc_and_pr()
     #

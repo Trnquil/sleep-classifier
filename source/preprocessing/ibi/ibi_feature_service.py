@@ -11,6 +11,7 @@ from source.preprocessing.feature_service import FeatureService
 from source.data_services.data_loader import DataLoader
 from source.preprocessing.collection import Collection
 from source.data_services.dataset import DataSet
+from source.preprocessing.raw_data_processor import RawDataProcessor
 
 from multipledispatch import dispatch
 from hrvanalysis import *
@@ -18,7 +19,21 @@ from hrvanalysis import *
 class IbiFeatureService(object):
     # This controlls what ratio of ibi data there must be inside of a 10-minute window to be accepted 
     DataRatio = 0.95
-
+    
+    @staticmethod
+    @dispatch(str, str)
+    def build_hr_features(subject_id, session_id):
+        ibi_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_ibi)
+        valid_epochs = RawDataProcessor.get_valid_epochs([ibi_collection])
+        return IbiFeatureService.build_from_collection(ibi_collection, valid_epochs)
+    
+    @staticmethod
+    @dispatch(str)
+    def build_hr_features(subject_id):
+        ibi_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_ibi, DataSet.usi)
+        ibi_collection = Collection(subject_id=subject_id, data=ibi_feature, data_frequency=0)
+        valid_epochs = RawDataProcessor.get_valid_epochs([ibi_collection])
+        return IbiFeatureService.build_from_collection(ibi_collection, valid_epochs)
     @staticmethod
     @dispatch(str, str, object)
     def build_hr_features(subject_id, session_id, valid_epochs):

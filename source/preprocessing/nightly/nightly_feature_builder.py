@@ -15,6 +15,7 @@ from source.constants import Constants
 from source.preprocessing.activity_count.activity_count_nightly_feature_service import ActivityCountNightlyFeatureService
 from source.preprocessing.heart_rate.heart_rate_nightly_feature_service import HeartRateNightlyFeatureService
 from source.data_services.dataset import DataSet
+from source.data_services.data_loader import DataLoader
 
 import pandas as pd
 import numpy as np
@@ -61,27 +62,29 @@ class NightlyFeatureBuilder(object):
             subject_index += 1
         
         # FOR TESTING PURPOSES:
-        DataWriter.write_nightly(nightly_dataframe[['subject_id', 'session_id', 'c_0', 'c_1', 'c_2', 'c_3', 'c_4', 'c_5', 'normalized_mean_hr', 'normalized_std_hr', 'sleep_quality']])
+        DataWriter.write_nightly(nightly_dataframe[['subject_id', 'session_id', 'c_0', 'c_1', 'c_2', 'c_3', 'c_4', 'c_5', 'hr_mean', 'hr_std', 'sleep_quality']])
 
         
         
     @staticmethod
     def build_feature_dict(subject_id, session_id):
         
+        feature_types = [FeatureType.epoched_cluster, FeatureType.epoched_hr]
+        common_timestamps = DataLoader.load_common_epoched_timestamps(subject_id, session_id, feature_types, DataSet.usi)
         subject_session_dict = {'subject_id': subject_id, 'session_id': session_id}
-        clustering_features_dict = ClusteringNightlyFeatureService.build_feature_dict(subject_id, session_id)
+        clustering_features_dict = ClusteringNightlyFeatureService.build_feature_dict(subject_id, session_id, common_timestamps)
         
         sleepquality_avg = np.mean(DataService.load_feature_raw(subject_id, FeatureType.sleep_quality, DataSet.usi))
         sleepquality = DataService.load_feature_raw(subject_id, session_id, FeatureType.sleep_quality, DataSet.usi)
         sleepquality = 0 if sleepquality < sleepquality_avg else 1
         sleepquality_dict = {'sleep_quality': sleepquality}
         
-        ibi_features_dict = IbiNightlyFeatureService.build_feature_dict(subject_id, session_id)
-        ibi_features_dict = {'ibi_' + str(key): val for key, val in ibi_features_dict.items()}
+        # ibi_features_dict = IbiNightlyFeatureService.build_feature_dict(subject_id, session_id)
+        # ibi_features_dict = {'ibi_' + str(key): val for key, val in ibi_features_dict.items()}
         
-        count_features_dict = ActivityCountNightlyFeatureService.build_feature_dict(subject_id, session_id)
+        count_features_dict = ActivityCountNightlyFeatureService.build_feature_dict(subject_id, session_id, common_timestamps)
         
-        hr_features_dict = HeartRateNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id)
+        hr_features_dict = HeartRateNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, common_timestamps)
         
         merged_dict = subject_session_dict | clustering_features_dict | hr_features_dict | sleepquality_dict
         

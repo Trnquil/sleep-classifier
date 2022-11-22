@@ -32,10 +32,11 @@ class MesaPSGService(object):
         for staged_window in stage_data[:]:  # Ignore last PSG overflow entry: it's long & doesn't have valid HR
             elapsed_time_counter = 0
             stage_value = staged_window[0]
+            stage_epoch_time = staged_window[1]
             duration = staged_window[2]
 
             while elapsed_time_counter < duration:
-                stages.append(stage_value)
+                stages.append([stage_epoch_time + elapsed_time_counter, stage_value])
                 elapsed_time_counter = elapsed_time_counter + 1
 
         return np.array(stages)

@@ -128,24 +128,10 @@ class DataLoader(object):
     
     @staticmethod
     def load_epoched(subject_id, session_id, feature_type, dataset):
-        feature_path = PathService.get_epoched_file_path(subject_id, session_id, feature_type, dataset)
-
         
-        if(feature_type.name == FeatureType.epoched.name):
-            feature_dataframe = pd.read_csv(str(feature_path))
-        elif(feature_type.name == FeatureType.epoched_hr.name):
-            feature_dataframe = pd.read_csv(str(feature_path))
-            feature_dataframe = feature_dataframe.filter(regex=("hr_.*"))
-        elif(feature_type.name == FeatureType.epoched_count.name):
-            feature_dataframe = pd.read_csv(str(feature_path))
-            feature_dataframe = feature_dataframe.filter(regex=("count_.*"))
-        elif(feature_type.name == FeatureType.epoched_cluster.name):
-            feature_dataframe = pd.read_csv(str(feature_path), names=["cluster"])
-        elif(feature_type.name == FeatureType.epoched_sleep_label.name):
-            feature_dataframe = pd.read_csv(str(feature_path), names=["sleep label"])
-        else:
-            raise Exception("FeatureType unknown to DataLoader")
-            
+        feature_path = PathService.get_epoched_file_path(subject_id, session_id, feature_type, dataset)
+        feature_dataframe = pd.read_csv(str(feature_path))
+
         return feature_dataframe
     
     @staticmethod
@@ -186,3 +172,15 @@ class DataLoader(object):
             raise Exception("FeatureType unknown to DataLoader")
         
         return nightly_feature_dataframe
+    
+    @staticmethod
+    def load_common_epoched_timestamps(subject_id, session_id, feature_types, dataset):
+        i = 0
+        for feature_type in feature_types:
+            timestamp_df = DataLoader.load_epoched(subject_id, session_id, feature_type, dataset)['epoch_timestamp']
+            if i == 0:
+                common_timestamps = timestamp_df
+            else:
+                common_timestamps[common_timestamps.isin(timestamp_df)]
+            i += 1
+        return common_timestamps

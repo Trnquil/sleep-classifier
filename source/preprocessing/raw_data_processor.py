@@ -34,16 +34,6 @@ class RawDataProcessor:
         count_collection = ActivityCountService.build_activity_counts_without_matlab(subject_id, motion_collection.data) # Builds activity counts with python, not MATLAB
         bvp_collection = DataLoader.load_raw(subject_id, FeatureType.raw_bvp)
         ibi_collection = DataLoader.load_raw(subject_id, FeatureType.raw_ibi)
-        
-        '''Getting intersecting intervals of time for all collections'''
-        valid_interval = RawDataProcessor.get_intersecting_interval([motion_collection, bvp_collection])
-        
-        '''cropping all the data to the valid interval'''
-        motion_collection = CollectionService.crop(motion_collection, valid_interval)
-        count_collection = CollectionService.crop(count_collection, valid_interval)
-        hr_collection = CollectionService.crop(hr_collection, valid_interval)
-        bvp_collection = CollectionService.crop(bvp_collection, valid_interval)
-        ibi_collection = CollectionService.crop(ibi_collection, valid_interval)
         normalized_hr_collection = RawDataProcessor.normalize(hr_collection)
 
         

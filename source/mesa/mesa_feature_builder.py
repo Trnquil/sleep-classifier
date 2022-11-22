@@ -49,9 +49,9 @@ class MesaFeatureBuilder(object):
                 else:
                     pass
 
-            labeled_sleep = np.expand_dims(
-                MesaPSGService.crop(psg_labels=raw_labeled_sleep, valid_epochs=valid_epochs),
-                axis=1)
+            labeled_sleep = MesaPSGService.crop(psg_labels=raw_labeled_sleep, valid_epochs=valid_epochs)
+            labeled_sleep = pd.DataFrame(labeled_sleep)
+            labeled_sleep.columns = ['epoch_timestamp', 'labeled sleep']
 
             count_feature = ActivityCountFeatureService.build_from_collection(activity_count_collection,
                                                                               valid_epochs)
@@ -65,14 +65,13 @@ class MesaFeatureBuilder(object):
             # Normalizing count feature, the first row is a timestamp
             count_feature.iloc[:,1:] = count_feature.iloc[:,1:]/count_std
             
-            # Merging all features together
-            features_df = EpochedFeatureBuilder.feature_merger(count_feature=count_feature, hr_feature=hr_features)
-            
+
             # Writing features to disk
-            if(np.any(features_df)):
-                # Create needed folders if they don't already exist
-                PathService.create_epoched_folder_path(subject_id, 'SS_01', DataSet.mesa)
-                DataWriter.write_epoched(features_df, subject_id, 'SS_01', FeatureType.epoched, DataSet.mesa)
-                DataWriter.write_epoched(labeled_sleep, subject_id, 'SS_01', FeatureType.epoched_sleep_label, DataSet.mesa)
+
+            # Create needed folders if they don't already exist
+            PathService.create_epoched_folder_path(subject_id, 'SS_01', DataSet.mesa)
+            DataWriter.write_epoched(hr_features, subject_id, 'SS_01', FeatureType.epoched_hr, DataSet.mesa)
+            DataWriter.write_epoched(count_feature, subject_id, 'SS_01', FeatureType.epoched_count, DataSet.mesa)
+            DataWriter.write_epoched(labeled_sleep, subject_id, 'SS_01', FeatureType.epoched_sleep_label, DataSet.mesa)
 
             

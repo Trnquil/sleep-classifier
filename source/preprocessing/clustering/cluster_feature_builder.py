@@ -3,12 +3,13 @@ from source.data_services.data_service import DataService
 from source.constants import Constants
 from source.data_services.data_writer import DataWriter
 from source.data_services.dataset import DataSet
-
+from source.preprocessing.clustering.clustering_feature_service import ClusteringFeatureService
 
 from matplotlib import cm
 import numpy as np
 from matplotlib import pyplot as plt
 import umap
+import pandas as pd
 
 
 
@@ -21,7 +22,7 @@ class ClusterFeatureBuilder(object):
             print("Predicting clusters...")
         
         # TODO: I need to implement this in a cleaner way as to avoid making mistakes
-        data = DataService.load_feature_raw(subject_id, session_id, FeatureType.epoched, dataset)
+        data = ClusteringFeatureService.get_features(DataSet.usi).to_numpy()
         features = data[:,1:].squeeze()
         timestamps = data[:,0].squeeze()
         
@@ -45,7 +46,10 @@ class ClusterFeatureBuilder(object):
             
 
         # Writing all features to their files
-        DataWriter.write_epoched(clusters, subject_id, session_id, FeatureType.epoched_cluster, dataset)
+        timestamped_clusters = np.stack([timestamps, clusters], axis=1)
+        clusters_df = pd.DataFrame(timestamped_clusters)
+        clusters_df.columns = ["epoch_timestamp", "cluster"]
+        DataWriter.write_epoched(clusters_df, subject_id, session_id, FeatureType.epoched_cluster, dataset)
                                      
 
         

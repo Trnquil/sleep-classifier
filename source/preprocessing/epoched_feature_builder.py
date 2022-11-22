@@ -25,20 +25,19 @@ class EpochedFeatureBuilder(object):
 
     @staticmethod
     def build(subject_id):
-        valid_epochs = EpochedFeatureBuilder.get_valid_epochs(subject_id)
         
-        count_feature_subject = ActivityCountFeatureService.build_count_feature(subject_id, valid_epochs)
+        count_feature_subject = ActivityCountFeatureService.build_count_feature(subject_id)
         count_std = np.std(count_feature_subject.iloc[:,1:])
         
-        ibi_features_subject = IbiFeatureService.build_hr_features(subject_id, valid_epochs)
+        ibi_features_subject = IbiFeatureService.build_hr_features(subject_id)
         ibi_mean = np.mean(ibi_features_subject.iloc[:,1:], axis=0)
         ibi_std = np.std(ibi_features_subject.iloc[:,1:], axis=0)
         
-        hr_features_subject = HeartRateFeatureService.build(subject_id, valid_epochs, False)
+        hr_features_subject = HeartRateFeatureService.build(subject_id, False)
         hr_mean = np.mean(hr_features_subject.iloc[:,1:], axis=0)
         hr_std = np.std(hr_features_subject.iloc[:,1:], axis=0)
         
-        normalized_hr_features_subject = HeartRateFeatureService.build(subject_id, valid_epochs, True)
+        normalized_hr_features_subject = HeartRateFeatureService.build(subject_id, True)
         normalized_hr_mean = np.mean(hr_features_subject.iloc[:,1:], axis=0)
         normalized_hr_std = np.std(hr_features_subject.iloc[:,1:], axis=0)
         
@@ -52,73 +51,32 @@ class EpochedFeatureBuilder(object):
     
             if Constants.VERBOSE:
                 print("Building USI epoched features for subject " + str(subject_id) + ", session " + str(session_id) + "...")
-                
-            valid_epochs = EpochedFeatureBuilder.get_valid_epochs(subject_id, session_id)
-            if len(valid_epochs) == 0: continue
             
-            count_feature = ActivityCountFeatureService.build_count_feature(subject_id, session_id, valid_epochs)
+            count_feature = ActivityCountFeatureService.build_count_feature(subject_id, session_id)
             
             # Normalizing count feature, the first row is a timestamp
             count_feature.iloc[:,1:] = count_feature.iloc[:,1:]/count_std
             
             # Normalizing ibi features, the first row is a timestamp
-            ibi_features = IbiFeatureService.build_hr_features(subject_id, session_id, valid_epochs)
+            ibi_features = IbiFeatureService.build_hr_features(subject_id, session_id)
             ibi_features.iloc[:,1:] = (ibi_features.iloc[:,1:] - ibi_mean)/ibi_std      
             
             # If there is nothing inside ibi_features, we continue with the next loop
             if not np.any(ibi_features):
                 continue
             
-            hr_feature = HeartRateFeatureService.build(subject_id, session_id, valid_epochs, False)
+            hr_feature = HeartRateFeatureService.build(subject_id, session_id, False)
             hr_feature.iloc[:,1:] = (hr_feature.iloc[:,1:] - hr_mean)/hr_std  
             
-            normalized_hr_feature = HeartRateFeatureService.build(subject_id, session_id, valid_epochs, True)
-            normalized_hr_feature.iloc[:,1:] = (normalized_hr_feature.iloc[:,1:] - normalized_hr_mean)/normalized_hr_std  
+            normalized_hr_feature = HeartRateFeatureService.build(subject_id, session_id, True)
+            normalized_hr_feature.iloc[:,1:] = (normalized_hr_feature.iloc[:,1:] - normalized_hr_mean)/normalized_hr_std    
+
+            # Create needed folders if they don't already exist
+            PathService.create_epoched_folder_path(subject_id, session_id, DataSet.usi)
             
-            
-            # merging all features together
-            features_df = EpochedFeatureBuilder.feature_merger(count_feature=count_feature, 
-                                                               ibi_features=ibi_features,
-                                                               hr_feature=hr_feature,
-                                                               normalized_hr_feature=normalized_hr_feature)
-    
-            
-            # Writing features to disk
-            if(np.any(features_df)):
-                # Create needed folders if they don't already exist
-                PathService.create_epoched_folder_path(subject_id, session_id, DataSet.usi)
-                DataWriter.write_epoched(features_df, subject_id, session_id, FeatureType.epoched, DataSet.usi)
+            DataWriter.write_epoched(count_feature, subject_id, session_id, FeatureType.epoched_count, DataSet.usi)
+            DataWriter.write_epoched(ibi_features, subject_id, session_id, FeatureType.epoched_ibi, DataSet.usi)
+            DataWriter.write_epoched(hr_feature, subject_id, session_id, FeatureType.epoched_hr, DataSet.usi)
+            DataWriter.write_epoched(normalized_hr_feature, subject_id, session_id, FeatureType.epoched_normalized_hr, DataSet.usi)
                 
-    @staticmethod
-    @dispatch(str)         
-    def get_valid_epochs(subject_id):
-        motion_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_motion, DataSet.usi)
-        motion_collection = Collection(subject_id=subject_id, data=motion_feature, data_frequency=0)
-        
-        ibi_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_ibi, DataSet.usi)
-        ibi_collection = Collection(subject_id=subject_id, data=ibi_feature, data_frequency=0)
-
-        collections = [motion_collection, ibi_collection]
-        valid_epochs = RawDataProcessor.get_valid_epochs(collections)
-        return valid_epochs
-    
-    @staticmethod
-    @dispatch(str, str)
-    def get_valid_epochs(subject_id, session_id):
-        motion_feature = DataService.load_feature_raw(subject_id, session_id, FeatureType.cropped_motion, DataSet.usi)
-        motion_collection = Collection(subject_id=subject_id, data=motion_feature, data_frequency=0)
-        
-        ibi_feature = DataService.load_feature_raw(subject_id, session_id, FeatureType.cropped_ibi, DataSet.usi)
-        ibi_collection = Collection(subject_id=subject_id, data=ibi_feature, data_frequency=0)
-
-        collections = [motion_collection, ibi_collection]
-        valid_epochs = RawDataProcessor.get_valid_epochs(collections)
-        return valid_epochs
-    
-    @staticmethod
-    def feature_merger(count_feature, ibi_features, hr_feature, normalized_hr_feature):
-        # merging all features together
-        features_df = pd.merge(count_feature, ibi_features, hr_feature, normalized_hr_feature, how="inner", on=["epoch_timestamp"]).fillna(0)
-        return features_df
-
         
