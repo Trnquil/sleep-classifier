@@ -15,6 +15,7 @@ from source.data_services.data_writer import DataWriter
 from source.preprocessing.collection_service import CollectionService
 from source.preprocessing.path_service import PathService
 from source.preprocessing.bvp_service import BvpService
+from source.constants import Constants
 
 
 from multipledispatch import dispatch
@@ -66,6 +67,9 @@ class RawDataProcessor:
             normalized_hr_collection = normalized_hr_sleepsession_tuples[i][1]
             
             sleep_session_id = motion_sleepsession_tuples[i][0].session_id
+            
+            if Constants.VERBOSE:
+                print("Writing cropped data from subject " + str(subject_id) +  ", session " + str(sleep_session_id) + "...")
             
             if(np.any(motion_collection.data) and np.any(bvp_collection.data) and np.any(count_collection.data)):
                 

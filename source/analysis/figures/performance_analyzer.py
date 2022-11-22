@@ -1,10 +1,8 @@
 from sklearn import metrics
 from source.constants import Constants
 from source.analysis.setup.feature_set_service import FeatureSetService
-from PIL import Image, ImageDraw, ImageFont
 import matplotlib.pyplot as plt
 
-import pandas as pd
 import numpy as np
 
 class PerformanceAnalyzer(object):

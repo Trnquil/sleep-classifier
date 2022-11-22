@@ -34,9 +34,10 @@ def run_preprocessing():
     print("Execution took " + str((end_time - start_time) / 60) + " minutes")
 
 def build_cropped():
-    subject_set = Constants.SUBJECT_IDS
+    subject_set = Constants.SUBJECT_IDS[1:]
     for subject in subject_set:
-        print("Cropping data from subject " + str(subject) + "...")
+        if Constants.VERBOSE:
+            print("Cropping data from subject " + str(subject) + "...")
         RawDataProcessor.crop_all(str(subject))
 
     if Constants.INCLUDE_CIRCADIAN:
