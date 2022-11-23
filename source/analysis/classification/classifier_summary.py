@@ -16,7 +16,7 @@ class ClassifierSummary(object):
             unified_true_labels = []
             unified_class_probabilites = []
             i = 0
-            for raw_performance in raw_performances:
+            for raw_performance in [raw_performances]:
                 true_labels = np.expand_dims(raw_performance.true_labels, axis=1)
                 class_probabilites = raw_performance.class_probabilities
                 if i == 0:

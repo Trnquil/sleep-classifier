@@ -15,7 +15,11 @@ class ClassifierService(object):
 
     @staticmethod
     def run_sw(data_splits, classifier, subject_dictionary, feature_set):
-        return ClassifierService.run_in_parallel(ClassifierService.run_single_data_split_sw,
+        DEBUGGING = False
+        if(DEBUGGING):
+            return ClassifierService.run_single_data_split_sw(data_splits[0], classifier, subject_dictionary, feature_set)
+        else:                               
+            return ClassifierService.run_in_parallel(ClassifierService.run_single_data_split_sw,
                                                   data_splits, classifier,
                                                   subject_dictionary, feature_set)
 

@@ -62,7 +62,7 @@ class EpochedFeatureBuilder(object):
             ibi_features.iloc[:,1:] = (ibi_features.iloc[:,1:] - ibi_mean)/ibi_std      
             
             # If there is nothing inside ibi_features, we continue with the next loop
-            if not np.any(ibi_features):
+            if ibi_features.to_numpy().shape()[0] < 2:
                 continue
             
             hr_feature = HeartRateFeatureService.build(subject_id, session_id, False)

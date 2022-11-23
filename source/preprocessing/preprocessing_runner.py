@@ -21,8 +21,8 @@ from source.mesa.mesa_feature_builder import MesaFeatureBuilder
 def run_preprocessing():
     start_time = time.time()
     
-    #build_cropped()
-    #build_epoched()
+    build_cropped()
+    build_epoched()
     build_mesa_epoched()
     build_clusters()
     build_nightly()

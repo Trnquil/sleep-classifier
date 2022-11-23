@@ -33,6 +33,7 @@ class FeatureType(Enum):
     nightly_ibi = "nightly ibi features"
     nightly_count = "nightly count feature"
     nightly_sleep_quality = "nightly sleep quality label"
+    nightly_hr = "nightly heart rate feature"
     
     sleep_quality = "sleep quality"
     

@@ -54,7 +54,7 @@ def figures_leave_one_out():
                               AttributedClassifier(name='SVM',
                                                  classifier=SVC(probability=True))]
 
-    feature_sets = [[FeatureType.nightly_cluster, FeatureType.nightly_ibi, FeatureType.nightly_count]]
+    feature_sets = [[FeatureType.nightly_cluster, FeatureType.nightly_hr]]
     
     for attributed_classifier in attributed_classifiers:
         if Constants.VERBOSE:
