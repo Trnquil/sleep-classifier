@@ -8,6 +8,7 @@ from source.data_services.data_service import DataService
 from sklearn.cluster import KMeans
 from source.data_services.dataset import DataSet
 from source.data_services.data_loader import DataLoader
+from source.data_services.data_frame_loader import DataFrameLoader
 
 
 
@@ -24,9 +25,10 @@ class ClusteringFeatureService(object):
         return class_predictions
     
     @staticmethod
-    def get_fitted_model():
+    def get_fitted_model(dataset):
         
-        features = ClusteringFeatureService.get_features(DataSet.usi).iloc[:,1:].to_numpy().squeeze()
+        features_df = DataFrameLoader.load_feature_dataframe(ClusteringFeatureService.cluster_feature_types, dataset)
+        features = features_df.drop(columns=['epoch_timestamp']).to_numpy().squeeze()
         classifier=KMeans(n_clusters=6, random_state=0)
 
         # We are now fitting our features to the cluster
@@ -34,20 +36,7 @@ class ClusteringFeatureService(object):
         
         return classifier
     
-    @staticmethod
-    def get_features(dataset):
-        i = 0
-        for feature_type in ClusteringFeatureService.cluster_feature_types:
-            feature_df = DataService.load_epoched_dataframe(feature_type, dataset)
-            
-            if i == 0:
-                final_features = feature_df
-            else:
-                final_features = pd.merge(final_features, feature_df, how="left", on=["epoch_timestamp"])
-            
-            i += 1
-        return final_features
-            
+
             
 
         

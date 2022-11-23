@@ -51,7 +51,7 @@ class MesaFeatureBuilder(object):
 
             labeled_sleep = MesaPSGService.crop(psg_labels=raw_labeled_sleep, valid_epochs=valid_epochs)
             labeled_sleep = pd.DataFrame(labeled_sleep)
-            labeled_sleep.columns = ['epoch_timestamp', 'labeled sleep']
+            labeled_sleep.columns = ['epoch_timestamp', 'sleep_label']
 
             count_feature = ActivityCountFeatureService.build_from_collection(activity_count_collection,
                                                                               valid_epochs)

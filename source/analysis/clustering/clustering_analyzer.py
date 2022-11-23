@@ -20,11 +20,6 @@ class ClusterAnalyzer(object):
     
     @staticmethod
     def analyze(features, clusters, labels):
-        clusters = clusters[clusters['epoch_timestamp'].isin(features['epoch_timestamp'])]
-        labels = labels[labels['epoch_timestamp'].isin(features['epoch_timestamp'])]
-        
-        clusters = clusters.iloc[:,1]
-        labels = labels.iloc[:,1]
 
         ClusterAnalyzer.make_confusion_matrix(labels, clusters)
         ClusterAnalyzer.make_mean_plot(features, clusters)
@@ -58,7 +53,7 @@ class ClusterAnalyzer(object):
     @staticmethod
     def make_umap(features, clusters):
         reducer = umap.UMAP()
-        embedding = reducer.fit_transform(features.iloc[:,1:])
+        embedding = reducer.fit_transform(features)
         plt.scatter(embedding[:, 0], embedding[:, 1], c=clusters.values, cmap='Spectral', s=8)
         plt.plot()
         plt.savefig(str(Constants.FIGURE_FILE_PATH) + "/cluster analysis/umap")

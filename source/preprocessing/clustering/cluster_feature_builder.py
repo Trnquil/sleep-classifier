@@ -4,6 +4,7 @@ from source.constants import Constants
 from source.data_services.data_writer import DataWriter
 from source.data_services.dataset import DataSet
 from source.preprocessing.clustering.clustering_feature_service import ClusteringFeatureService
+from source.data_services.data_frame_loader import DataFrameLoader
 
 from matplotlib import cm
 import numpy as np
@@ -22,7 +23,8 @@ class ClusterFeatureBuilder(object):
             print("Predicting clusters...")
         
         # TODO: I need to implement this in a cleaner way as to avoid making mistakes
-        data = ClusteringFeatureService.get_features(DataSet.usi).to_numpy()
+        features_df = DataFrameLoader.load_feature_dataframe(subject_id, session_id, ClusteringFeatureService.cluster_feature_types, dataset)
+        data = features_df.to_numpy().squeeze()
         features = data[:,1:].squeeze()
         timestamps = data[:,0].squeeze()
         

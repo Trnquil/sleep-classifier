@@ -23,7 +23,7 @@ def run_preprocessing():
     
     #build_cropped()
     #build_epoched()
-    #build_mesa_epoched()
+    build_mesa_epoched()
     build_clusters()
     build_nightly()
 
@@ -55,7 +55,7 @@ def build_mesa_epoched():
             
 
 def build_clusters():
-    clustering_model = ClusteringFeatureService.get_fitted_model()
+    clustering_model = ClusteringFeatureService.get_fitted_model(DataSet.mesa)
     # Only building features for subjects and sleepsession for which folders exist
     subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(FeatureType.epoched, DataSet.usi)
     for subject in subject_sleepsession_dictionary.keys():

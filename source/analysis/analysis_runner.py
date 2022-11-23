@@ -24,6 +24,7 @@ from source.data_services.data_loader import DataLoader
 from source.data_services.dataset import DataSet
 from source.analysis.figures.performance_analyzer import PerformanceAnalyzer
 from source.preprocessing.clustering.clustering_feature_service import ClusteringFeatureService
+from source.data_services.data_frame_loader import DataFrameLoader
 
 
 import pandas as pd
@@ -31,9 +32,16 @@ import pandas as pd
 def cluster_analysis():
     
     print("Running Cluster Analysis...")
-    features_df = ClusteringFeatureService.get_features(DataSet.mesa)
-    clusters_df = DataService.load_epoched_dataframe(FeatureType.epoched_cluster, DataSet.mesa)
-    labels_df = DataService.load_epoched_dataframe(FeatureType.epoched_cluster, DataSet.mesa)
+    
+    feature_types = ClusteringFeatureService.cluster_feature_types
+    feature_types.append(FeatureType.epoched_cluster)
+    feature_types.append(FeatureType.epoched_sleep_label)
+    
+    full_df = DataFrameLoader.load_feature_dataframe(feature_types, DataSet.mesa)
+    
+    features_df = full_df.drop(columns=["epoch_timestamp","cluster", "sleep_label"])
+    clusters_df = full_df["cluster"]
+    labels_df = full_df["sleep_label"]
     
     ClusterAnalyzer.analyze(features_df, clusters_df, labels_df)
     
@@ -230,7 +238,7 @@ def figures_compare_time_based_features():
 
 if __name__ == "__main__":
     start_time = time.time()
-    #figures_leave_one_out()
+    figures_leave_one_out()
     cluster_analysis()
     #figure_leave_one_out_roc_and_pr()
     #

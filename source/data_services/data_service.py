@@ -13,7 +13,6 @@ import numpy as np
 import pandas as pd
 
 class DataService(object):
-    
     @staticmethod
     @dispatch(str, str, object, object)
     def load_feature_raw(subject_id, session_id, feature_type, dataset):
@@ -77,14 +76,6 @@ class DataService(object):
             current_height += feature_height
         
         return stacked_feature
-    
-    @staticmethod
-    def load_epoched_dataframe(feature_type, dataset):
-        feature = DataService.load_feature_raw(feature_type, dataset)
-        feature_columns = DataLoader.load_epoched_columns(feature_type, dataset)
-        feature_df = pd.DataFrame(feature)
-        feature_df.columns = feature_columns
-        return feature_df
     
     @staticmethod
     @dispatch(str, object, object)
