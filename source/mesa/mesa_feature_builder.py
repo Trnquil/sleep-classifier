@@ -17,6 +17,7 @@ from source.preprocessing.epoched_feature_builder import EpochedFeatureBuilder
 
 import numpy as np
 import pandas as pd
+import sys
 
 class MesaFeatureBuilder(object):
     
@@ -24,54 +25,57 @@ class MesaFeatureBuilder(object):
     def build(subject_id):
         if Constants.VERBOSE:
             print('Building MESA subject ' + subject_id + '...')
-
-        raw_labeled_sleep = MesaPSGService.load_raw(subject_id)
-        heart_rate_collection = MesaHeartRateService.load_raw(subject_id)
-        activity_count_collection = MesaActigraphyService.load_raw(subject_id)
-
-        if activity_count_collection.data[0][0] != -1:
-
-            interval = Interval(start_time=0, end_time=np.shape(raw_labeled_sleep)[0])
-
-            activity_count_collection = CollectionService.crop(activity_count_collection, interval)
-            heart_rate_collection = CollectionService.crop(heart_rate_collection, interval)
             
-            valid_epochs = []
-
-            for timestamp in range(interval.start_time, interval.end_time, Epoch.DURATION):
-                epoch = Epoch(timestamp=timestamp, index=len(valid_epochs))
-                activity_count_indices = FeatureService.get_window(activity_count_collection.timestamps,
-                                                                                epoch)
-                heart_rate_indices = FeatureService.get_window(heart_rate_collection.timestamps, epoch)
-
-                if len(activity_count_indices) > 0 and 0 not in heart_rate_collection.values[heart_rate_indices]:
-                    valid_epochs.append(epoch)
-                else:
-                    pass
-
-            labeled_sleep = MesaPSGService.crop(psg_labels=raw_labeled_sleep, valid_epochs=valid_epochs)
-            labeled_sleep = pd.DataFrame(labeled_sleep)
-            labeled_sleep.columns = ['epoch_timestamp', 'sleep_label']
-
-            count_feature = ActivityCountFeatureService.build_from_collection(activity_count_collection,
-                                                                              valid_epochs)
-            count_std = np.std(count_feature.iloc[:,1:], axis=0)
-            
-            hr_features = HeartRateFeatureService.build_from_collection(heart_rate_collection, valid_epochs)
-            hr_mean = np.mean(hr_features.iloc[:,1:], axis=0)
-            hr_std = np.std(hr_features.iloc[:,1:], axis=0)
-            
-            hr_features.iloc[:,1:] = (hr_features.iloc[:,1:] - hr_mean)/hr_std  
-            # Normalizing count feature, the first row is a timestamp
-            count_feature.iloc[:,1:] = count_feature.iloc[:,1:]/count_std
-            
-
-            # Writing features to disk
-
-            # Create needed folders if they don't already exist
-            PathService.create_epoched_folder_path(subject_id, 'SS_01', DataSet.mesa)
-            DataWriter.write_epoched(hr_features, subject_id, 'SS_01', FeatureType.epoched_hr, DataSet.mesa)
-            DataWriter.write_epoched(count_feature, subject_id, 'SS_01', FeatureType.epoched_count, DataSet.mesa)
-            DataWriter.write_epoched(labeled_sleep, subject_id, 'SS_01', FeatureType.epoched_sleep_label, DataSet.mesa)
+        try:
+            raw_labeled_sleep = MesaPSGService.load_raw(subject_id)
+            heart_rate_collection = MesaHeartRateService.load_raw(subject_id)
+            activity_count_collection = MesaActigraphyService.load_raw(subject_id)
+    
+            if activity_count_collection.data[0][0] != -1:
+    
+                interval = Interval(start_time=0, end_time=np.shape(raw_labeled_sleep)[0])
+    
+                activity_count_collection = CollectionService.crop(activity_count_collection, interval)
+                heart_rate_collection = CollectionService.crop(heart_rate_collection, interval)
+                
+                valid_epochs = []
+    
+                for timestamp in range(interval.start_time, interval.end_time, Epoch.DURATION):
+                    epoch = Epoch(timestamp=timestamp, index=len(valid_epochs))
+                    activity_count_indices = FeatureService.get_window(activity_count_collection.timestamps,
+                                                                                    epoch)
+                    heart_rate_indices = FeatureService.get_window(heart_rate_collection.timestamps, epoch)
+    
+                    if len(activity_count_indices) > 0 and 0 not in heart_rate_collection.values[heart_rate_indices]:
+                        valid_epochs.append(epoch)
+                    else:
+                        pass
+    
+                labeled_sleep = MesaPSGService.crop(psg_labels=raw_labeled_sleep, valid_epochs=valid_epochs)
+                labeled_sleep = pd.DataFrame(labeled_sleep)
+                labeled_sleep.columns = ['epoch_timestamp', 'sleep_label']
+    
+                count_feature = ActivityCountFeatureService.build_from_collection(activity_count_collection,
+                                                                                  valid_epochs)
+                count_std = np.std(count_feature.iloc[:,1:], axis=0)
+                
+                hr_features = HeartRateFeatureService.build_from_collection(heart_rate_collection, valid_epochs)
+                hr_mean = np.mean(hr_features.iloc[:,1:], axis=0)
+                hr_std = np.std(hr_features.iloc[:,1:], axis=0)
+                
+                hr_features.iloc[:,1:] = (hr_features.iloc[:,1:] - hr_mean)/hr_std  
+                # Normalizing count feature, the first row is a timestamp
+                count_feature.iloc[:,1:] = count_feature.iloc[:,1:]/count_std
+                
+    
+                # Writing features to disk
+    
+                # Create needed folders if they don't already exist
+                PathService.create_epoched_folder_path(subject_id, 'SS_01', DataSet.mesa)
+                DataWriter.write_epoched(hr_features, subject_id, 'SS_01', FeatureType.epoched_hr, DataSet.mesa)
+                DataWriter.write_epoched(count_feature, subject_id, 'SS_01', FeatureType.epoched_count, DataSet.mesa)
+                DataWriter.write_epoched(labeled_sleep, subject_id, 'SS_01', FeatureType.epoched_sleep_label, DataSet.mesa)
+        except:
+            print("Error: ", sys.exc_info()[0], " while building MESA feature for subject " + str(subject_id))
 
             

@@ -49,34 +49,36 @@ class RawDataProcessor:
 
         '''writing all the data to disk'''
         for i in range(len(motion_sleepsession_tuples)):
-            motion_collection = motion_sleepsession_tuples[i][1]
-            count_collection = count_sleepsession_tuples[i][1]
-            hr_collection = hr_sleepsession_tuples[i][1]
-            bvp_collection = bvp_sleepsession_tuples[i][1]
-            ibi_collection = ibi_sleepsession_tuples[i][1]
-            normalized_hr_collection = normalized_hr_sleepsession_tuples[i][1]
-            
-            sleep_session_id = motion_sleepsession_tuples[i][0].session_id
-            
-            if(np.any(motion_collection.data) and np.any(bvp_collection.data) and np.any(count_collection.data)):
+            try:
+                motion_collection = motion_sleepsession_tuples[i][1]
+                count_collection = count_sleepsession_tuples[i][1]
+                hr_collection = hr_sleepsession_tuples[i][1]
+                bvp_collection = bvp_sleepsession_tuples[i][1]
+                ibi_collection = ibi_sleepsession_tuples[i][1]
+                normalized_hr_collection = normalized_hr_sleepsession_tuples[i][1]
                 
+                session_id = motion_sleepsession_tuples[i][0].session_id
                 
-                ibi_collection_from_pgg = BvpService.get_ibi_from_bvp(bvp_collection)
-                
-                if(np.any(ibi_collection_from_pgg.data)):
+                if(np.any(motion_collection.data) and np.any(bvp_collection.data) and np.any(count_collection.data)):
                     
-                    if Constants.VERBOSE:
-                        print("Writing cropped data from subject " + str(subject_id) +  ", session " + str(sleep_session_id) + "...")
                     
-                    PathService.create_cropped_file_path(subject_id, sleep_session_id)
+                    ibi_collection_from_pgg = BvpService.get_ibi_from_bvp(bvp_collection)
                     
-                    DataWriter.write_cropped(motion_collection, sleep_session_id, FeatureType.cropped_motion)
-                    DataWriter.write_cropped(ibi_collection, sleep_session_id, FeatureType.cropped_ibi)
-                    DataWriter.write_cropped(ibi_collection_from_pgg, sleep_session_id, FeatureType.cropped_ibi_from_ppg)
-                    DataWriter.write_cropped(count_collection, sleep_session_id, FeatureType.cropped_count)
-                    DataWriter.write_cropped(hr_collection, sleep_session_id, FeatureType.cropped_hr)
-                    DataWriter.write_cropped(normalized_hr_collection, sleep_session_id, FeatureType.normalized_hr)
-    
+                    if(np.any(ibi_collection_from_pgg.data)):
+                        
+                        if Constants.VERBOSE:
+                            print("Writing cropped data from subject " + str(subject_id) +  ", session " + str(session_id) + "...")
+                        
+                        PathService.create_cropped_file_path(subject_id, session_id)
+                        
+                        DataWriter.write_cropped(motion_collection, session_id, FeatureType.cropped_motion)
+                        DataWriter.write_cropped(ibi_collection, session_id, FeatureType.cropped_ibi)
+                        DataWriter.write_cropped(ibi_collection_from_pgg, session_id, FeatureType.cropped_ibi_from_ppg)
+                        DataWriter.write_cropped(count_collection, session_id, FeatureType.cropped_count)
+                        DataWriter.write_cropped(hr_collection, session_id, FeatureType.cropped_hr)
+                        DataWriter.write_cropped(normalized_hr_collection, session_id, FeatureType.normalized_hr)
+            except:
+                print("Error: ", sys.exc_info()[0], " while building cropped features for " + str(subject_id), ", session " + str(session_id))
     
     @staticmethod 
     def normalize(collection):
