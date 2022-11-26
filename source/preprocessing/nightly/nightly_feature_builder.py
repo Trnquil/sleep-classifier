@@ -76,6 +76,8 @@ class NightlyFeatureBuilder(object):
             
             sleepquality_avg = np.mean(DataService.load_feature_raw(subject_id, FeatureType.sleep_quality, DataSet.usi))
             sleepquality = DataService.load_feature_raw(subject_id, session_id, FeatureType.sleep_quality, DataSet.usi)
+            if sleepquality == sleepquality_avg:
+                raise Exception("sleep quality exactly equal to average")
             sleepquality = 0 if sleepquality < sleepquality_avg else 1
             sleepquality_dict = {'sleep_quality': sleepquality}
             
@@ -90,7 +92,7 @@ class NightlyFeatureBuilder(object):
             
             return merged_dict
         except:
-            print("Error: ", sys.exc_info()[0], " while building clusters for " + str(subject_id), ", session " + str(session_id))
+            print("Error: ", sys.exc_info()[0], " while building nightly features for " + str(subject_id), ", session " + str(session_id))
         
 
 

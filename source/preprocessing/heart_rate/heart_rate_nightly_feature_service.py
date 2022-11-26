@@ -38,6 +38,8 @@ class HeartRateNightlyFeatureService(object):
     def build_feature_dict_from_epoched(subject_id, session_id, common_timestamps):
         
         heart_rate_feature = DataLoader.load_epoched(subject_id, session_id, FeatureType.epoched_hr ,DataSet.usi)
-        heart_rate_feature = pd.merge(heart_rate_feature, common_timestamps, how="inner", on=["epoch_timestamp"])
+        heart_rate_feature = pd.merge(common_timestamps,heart_rate_feature, how="inner", on=["epoch_timestamp"])
+        heart_rate_feature = heart_rate_feature.drop(columns=['epoch_timestamp'])
         heart_rate_feature_avg = pd.DataFrame(np.mean(heart_rate_feature, axis=0))
+        heart_rate_feature_avg.to_dict()[0]
         return heart_rate_feature_avg.to_dict()[0]
