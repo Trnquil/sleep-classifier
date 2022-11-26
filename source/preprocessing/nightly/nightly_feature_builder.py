@@ -87,9 +87,11 @@ class NightlyFeatureBuilder(object):
             hr_features_dict = HeartRateNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, common_timestamps)
             
             merged_dict = subject_session_dict | clustering_features_dict | hr_features_dict | sleepquality_dict
+            
+            return merged_dict
         except:
             print("Error: ", sys.exc_info()[0], " while building clusters for " + str(subject_id), ", session " + str(session_id))
         
-        return merged_dict
+
 
         
