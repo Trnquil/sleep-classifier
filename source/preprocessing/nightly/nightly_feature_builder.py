@@ -76,8 +76,6 @@ class NightlyFeatureBuilder(object):
             
             sleepquality_avg = np.mean(DataService.load_feature_raw(subject_id, FeatureType.sleep_quality, DataSet.usi))
             sleepquality = DataService.load_feature_raw(subject_id, session_id, FeatureType.sleep_quality, DataSet.usi)
-            if sleepquality[0][0] == sleepquality_avg:
-                raise Exception("sleep quality exactly equal to average")
             sleepquality = 0 if sleepquality < sleepquality_avg else 1
             sleepquality_dict = {'sleep_quality': sleepquality}
             
@@ -88,7 +86,7 @@ class NightlyFeatureBuilder(object):
             
             hr_features_dict = HeartRateNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, common_timestamps)
             
-            merged_dict = subject_session_dict | clustering_features_dict | hr_features_dict | sleepquality_dict
+            merged_dict = subject_session_dict | clustering_features_dict | hr_features_dict | count_features_dict | sleepquality_dict
             
             return merged_dict
         except:

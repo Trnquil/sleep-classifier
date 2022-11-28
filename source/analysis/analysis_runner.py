@@ -39,7 +39,7 @@ def cluster_analysis():
     
     full_df = DataFrameLoader.load_feature_dataframe(feature_types, DataSet.mesa)
     
-    features_df = full_df.drop(columns=["epoch_timestamp","cluster", "sleep_label"])
+    features_df = full_df.drop(columns=["epoch_timestamp", "cluster", "sleep_label"])
     clusters_df = full_df["cluster"]
     labels_df = full_df["sleep_label"]
     
@@ -54,7 +54,7 @@ def figures_leave_one_out():
                               AttributedClassifier(name='SVM',
                                                  classifier=SVC(probability=True))]
 
-    feature_sets = [[FeatureType.nightly_cluster, FeatureType.nightly_hr]]
+    feature_sets = [[FeatureType.nightly_cluster, FeatureType.nightly_hr, FeatureType.nightly_count]]
     
     for attributed_classifier in attributed_classifiers:
         if Constants.VERBOSE:
