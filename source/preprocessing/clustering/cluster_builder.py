@@ -3,7 +3,7 @@ from source.data_services.data_service import DataService
 from source.constants import Constants
 from source.data_services.data_writer import DataWriter
 from source.data_services.dataset import DataSet
-from source.preprocessing.clustering.clustering_feature_service import ClusteringFeatureService
+from source.preprocessing.clustering.cluster_feature_service import ClusterFeatureService
 from source.data_services.data_frame_loader import DataFrameLoader
 
 from matplotlib import cm
