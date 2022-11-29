@@ -18,7 +18,7 @@ class PathService(object):
         FeatureType.cropped_ibi_from_ppg.name: "cropped_ibi_from_ppg.out",
         FeatureType.cropped_motion.name: "cropped_motion.out",
         FeatureType.cropped_hr.name: "cropped_hr.out",
-        FeatureType.normalized_hr.name: "normalized_hr.out",
+        FeatureType.cropped_normalized_hr.name: "cropped_normalized_hr.out",
         
         FeatureType.epoched_hr.name: "epoched_hr.csv",
         FeatureType.epoched_normalized_hr.name: "epoched_normalized_hr.csv",
@@ -28,7 +28,11 @@ class PathService(object):
         FeatureType.epoched_cluster.name: "clusters.csv",
         FeatureType.epoched_sleep_label.name: "sleep_labels.csv",
         
-        FeatureType.nightly.name: "nightly_features.csv"
+        FeatureType.cluster.name: "clusters.csv",
+        FeatureType.cluster_features.name: "cluster_features.csv",
+        
+        FeatureType.nightly.name: "nightly_features.csv",
+        FeatureType.normalized_nightly.name: "nightly_features_normalized.csv"
         }
     
     
@@ -54,8 +58,20 @@ class PathService(object):
 
     
     @staticmethod
-    def get_nightly_file_path():
-        return str(Constants.NIGHTLY_FILE_PATH) + "/" + PathService.filenames[FeatureType.nightly.name]
+    def get_nightly_feature_file_path():
+        if Constants.NIGHTLY_NORMALIZED:
+            path = str(Constants.NIGHTLY_FILE_PATH) + "/" + PathService.filenames[FeatureType.normalized_nightly.name]
+        else:
+            path = str(Constants.NIGHTLY_FILE_PATH) + "/" + PathService.filenames[FeatureType.nightly.name]
+        return path
+    
+    @staticmethod
+    def get_nightly_file_path(feature_type):
+        if feature_type.name == FeatureType.normalized_nightly.name:
+            path = str(Constants.NIGHTLY_FILE_PATH) + "/" + PathService.filenames[FeatureType.normalized_nightly.name]
+        elif feature_type.name == FeatureType.nightly.name:
+            path = str(Constants.NIGHTLY_FILE_PATH) + "/" + PathService.filenames[FeatureType.nightly.name]
+        return path
     
     @staticmethod
     def get_raw_file_paths(subject_id, feature_type):
@@ -82,11 +98,39 @@ class PathService(object):
         return str(full_path) + "/" + PathService.filenames[feature_type.name]
     
     @staticmethod
+    def get_clusters_file_path(subject_id, session_id, feature_type, dataset):
+        if(dataset.name == DataSet.usi.name):
+            directory_path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
+        elif(dataset.name == DataSet.mesa.name):
+            directory_path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.MESA_FOLDER_NAME)
+            
+        full_path = directory_path.joinpath(subject_id + "/" + str(session_id))
+        return str(full_path) + "/" + PathService.filenames[feature_type.name]
+    
+    @staticmethod
     def create_epoched_folder_path(subject_id, session_id, dataset):
         if(dataset.name == DataSet.usi.name):
             directory_path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
         elif(dataset.name == DataSet.mesa.name):
             directory_path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.MESA_FOLDER_NAME)
+        
+        if not (os.path.exists(directory_path)):
+            os.mkdir(directory_path)
+        
+        subject_path = directory_path.joinpath(subject_id)
+        if not (os.path.exists(subject_path)):
+            os.mkdir(subject_path)
+        
+        session_path = subject_path.joinpath(session_id)
+        if not (os.path.exists(session_path)):
+            os.mkdir(session_path)
+            
+    @staticmethod
+    def create_clusters_folder_path(subject_id, session_id, dataset):
+        if(dataset.name == DataSet.usi.name):
+            directory_path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
+        elif(dataset.name == DataSet.mesa.name):
+            directory_path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.MESA_FOLDER_NAME)
         
         if not (os.path.exists(directory_path)):
             os.mkdir(directory_path)

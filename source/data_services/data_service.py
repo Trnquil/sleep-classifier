@@ -23,6 +23,9 @@ class DataService(object):
         elif feature_type.name in FeatureType.get_epoched_names() or feature_type.name == FeatureType.epoched.name: 
             feature = DataLoader.load_epoched(subject_id, session_id, feature_type, dataset).values
             
+        elif feature_type.name == FeatureType.cluster.name or feature_type.name == FeatureType.cluster_features.name: 
+            feature = DataLoader.load_cluster(subject_id, session_id, feature_type, dataset).values
+            
         elif feature_type.name in FeatureType.get_nightly_names() and dataset.name == DataSet.usi.name: 
             feature = DataLoader.load_nightly(subject_id, session_id, feature_type).to_numpy()
             

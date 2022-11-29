@@ -15,7 +15,7 @@ class ClassifierService(object):
 
     @staticmethod
     def run_sw(data_splits, classifier, subject_dictionary, feature_set):
-        DEBUGGING = True
+        DEBUGGING = False
         if(DEBUGGING):
             return ClassifierService.run_single_data_split_sw(data_splits[0], classifier, subject_dictionary, feature_set)
         else:                               

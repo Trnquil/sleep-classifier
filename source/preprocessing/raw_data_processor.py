@@ -57,26 +57,21 @@ class RawDataProcessor:
                 ibi_collection = ibi_sleepsession_tuples[i][1]
                 normalized_hr_collection = normalized_hr_sleepsession_tuples[i][1]
                 
+                ibi_collection_from_pgg = BvpService.get_ibi_from_bvp(bvp_collection)
+                
                 session_id = motion_sleepsession_tuples[i][0].session_id
                 
-                if(np.any(motion_collection.data) and np.any(bvp_collection.data) and np.any(count_collection.data)):
-                    
-                    
-                    ibi_collection_from_pgg = BvpService.get_ibi_from_bvp(bvp_collection)
-                    
-                    if(np.any(ibi_collection_from_pgg.data)):
-                        
-                        if Constants.VERBOSE:
-                            print("Writing cropped data from subject " + str(subject_id) +  ", session " + str(session_id) + "...")
-                        
-                        PathService.create_cropped_file_path(subject_id, session_id)
-                        
-                        DataWriter.write_cropped(motion_collection, session_id, FeatureType.cropped_motion)
-                        DataWriter.write_cropped(ibi_collection, session_id, FeatureType.cropped_ibi)
-                        DataWriter.write_cropped(ibi_collection_from_pgg, session_id, FeatureType.cropped_ibi_from_ppg)
-                        DataWriter.write_cropped(count_collection, session_id, FeatureType.cropped_count)
-                        DataWriter.write_cropped(hr_collection, session_id, FeatureType.cropped_hr)
-                        DataWriter.write_cropped(normalized_hr_collection, session_id, FeatureType.normalized_hr)
+                if Constants.VERBOSE:
+                    print("Writing cropped data from subject " + str(subject_id) +  ", session " + str(session_id) + "...")
+                
+                PathService.create_cropped_file_path(subject_id, session_id)
+                
+                DataWriter.write_cropped(motion_collection, session_id, FeatureType.cropped_motion)
+                DataWriter.write_cropped(ibi_collection, session_id, FeatureType.cropped_ibi)
+                DataWriter.write_cropped(ibi_collection_from_pgg, session_id, FeatureType.cropped_ibi_from_ppg)
+                DataWriter.write_cropped(count_collection, session_id, FeatureType.cropped_count)
+                DataWriter.write_cropped(hr_collection, session_id, FeatureType.cropped_hr)
+                DataWriter.write_cropped(normalized_hr_collection, session_id, FeatureType.normalized_hr)
             except:
                 print("Error: ", sys.exc_info()[0], " while building cropped features for " + str(subject_id), ", session " + str(session_id))
     

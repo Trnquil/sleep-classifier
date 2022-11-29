@@ -19,33 +19,6 @@ from hrvanalysis import *
 class IbiFeatureService(object):
     # This controlls what ratio of ibi data there must be inside of a 10-minute window to be accepted 
     DataRatio = 0.95
-    
-    @staticmethod
-    @dispatch(str, str)
-    def build_hr_features(subject_id, session_id):
-        ibi_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_ibi)
-        valid_epochs = RawDataProcessor.get_valid_epochs([ibi_collection])
-        return IbiFeatureService.build_from_collection(ibi_collection, valid_epochs)
-    
-    @staticmethod
-    @dispatch(str)
-    def build_hr_features(subject_id):
-        ibi_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_ibi, DataSet.usi)
-        ibi_collection = Collection(subject_id=subject_id, data=ibi_feature, data_frequency=0)
-        valid_epochs = RawDataProcessor.get_valid_epochs([ibi_collection])
-        return IbiFeatureService.build_from_collection(ibi_collection, valid_epochs)
-    @staticmethod
-    @dispatch(str, str, object)
-    def build_hr_features(subject_id, session_id, valid_epochs):
-        ibi_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_ibi)
-        return IbiFeatureService.build_from_collection(ibi_collection, valid_epochs)
-    
-    @staticmethod
-    @dispatch(str, object)
-    def build_hr_features(subject_id, valid_epochs):
-        ibi_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_ibi, DataSet.usi)
-        ibi_collection = Collection(subject_id=subject_id, data=ibi_feature, data_frequency=0)
-        return IbiFeatureService.build_from_collection(ibi_collection, valid_epochs)
 
 
     @staticmethod
@@ -87,8 +60,9 @@ class IbiFeatureService(object):
         if np.any(ibi_features):
             #removing any leftover nans
             ibi_features = ibi_features[~np.isnan(ibi_features).any(axis=1), :]
-            ibi_dataframe = pd.DataFrame(ibi_features, columns=np.array(list(feature_dict.items()))[:,0])
-            ibi_dataframe = ibi_dataframe[['epoch_timestamp','mean_hr', 'std_hr']]
+            columns=np.array(list(feature_dict.items()))[:,0]
+            columns = ["ibi_" + column if column != 'epoch_timestamp' else column for column in columns]
+            ibi_dataframe = pd.DataFrame(ibi_features, columns=columns)
 
         else:
             ibi_dataframe = pd.DataFrame([])

@@ -15,17 +15,17 @@ import sys
 
 
 
-class ClusterFeatureBuilder(object):
+class ClusterBuilder(object):
 
     @staticmethod
     def build(subject_id, session_id, dataset, clustering_model):
         
         if Constants.VERBOSE:
-            print("Predicting clusters...")
+            print("Predicting clusters for subject " + str(subject_id) + ", session " + str(session_id) + "...")
         try:
-        
+    
             # TODO: I need to implement this in a cleaner way as to avoid making mistakes
-            features_df = DataFrameLoader.load_feature_dataframe(subject_id, session_id, ClusteringFeatureService.cluster_feature_types, dataset)
+            features_df = DataFrameLoader.load_feature_dataframe(subject_id, session_id, [FeatureType.cluster_features], dataset)
             data = features_df.to_numpy().squeeze()
             features = data[:,1:].squeeze()
             timestamps = data[:,0].squeeze()
@@ -53,9 +53,9 @@ class ClusterFeatureBuilder(object):
             timestamped_clusters = np.stack([timestamps, clusters], axis=1)
             clusters_df = pd.DataFrame(timestamped_clusters)
             clusters_df.columns = ["epoch_timestamp", "cluster"]
-            DataWriter.write_epoched(clusters_df, subject_id, session_id, FeatureType.epoched_cluster, dataset)
+            DataWriter.write_cluster(clusters_df, subject_id, session_id, FeatureType.cluster, dataset)
         except:
-            print("Error: ", sys.exc_info()[0], " while building clusters for " + str(subject_id), ", session " + str(session_id))
+            print("Error: ", sys.exc_info()[0], " while building clusters for subject " + str(subject_id), ", session " + str(session_id))
 
 
         

@@ -15,9 +15,14 @@ class DataWriter(object):
     def write_epoched(epoched_feature, subject_id, session_id, feature_type, dataset):
         feature_path = PathService.get_epoched_file_path(subject_id, session_id, feature_type, dataset)
         epoched_feature.to_csv(feature_path, index=False)
+        
+    @staticmethod
+    def write_cluster(cluster_feature, subject_id, session_id, feature_type, dataset):
+        feature_path = PathService.get_clusters_file_path(subject_id, session_id, feature_type, dataset)
+        cluster_feature.to_csv(feature_path, index=False)
 
     
     @staticmethod
-    def write_nightly(nightly_dataframe):
-        nightly_feature_path = PathService.get_nightly_file_path()
+    def write_nightly(nightly_dataframe, feature_type):
+        nightly_feature_path = PathService.get_nightly_file_path(feature_type)
         nightly_dataframe.to_csv(nightly_feature_path, index=False)

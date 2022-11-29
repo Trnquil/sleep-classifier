@@ -14,7 +14,6 @@ from source.data_services.data_frame_loader import DataFrameLoader
 
 
 class ClusteringFeatureService(object):
-    cluster_feature_types = [FeatureType.epoched_hr, FeatureType.epoched_count]
     @staticmethod
     def get_predictions_from_imported_model(features):
         
@@ -27,7 +26,7 @@ class ClusteringFeatureService(object):
     @staticmethod
     def get_fitted_model(dataset):
         
-        features_df = DataFrameLoader.load_feature_dataframe(ClusteringFeatureService.cluster_feature_types, dataset)
+        features_df = DataFrameLoader.load_feature_dataframe([FeatureType.cluster_features], dataset)
         features = features_df.drop(columns=['epoch_timestamp']).to_numpy().squeeze()
         classifier=KMeans(n_clusters=6, random_state=0)
 

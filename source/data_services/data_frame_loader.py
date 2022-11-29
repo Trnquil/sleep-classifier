@@ -18,7 +18,7 @@ class DataFrameLoader(object):
     @staticmethod
     def load_epoched_dataframe(subject_id, session_id, feature_type, dataset):
         feature = DataService.load_feature_raw(subject_id, session_id, feature_type, dataset)
-        feature_columns = DataLoader.load_epoched_columns(feature_type, dataset)
+        feature_columns = DataLoader.load_columns(feature_type, dataset)
         feature_df = pd.DataFrame(feature)
         feature_df.columns = feature_columns
         return feature_df
@@ -45,21 +45,19 @@ class DataFrameLoader(object):
 
         feature_shape = DataFrameLoader.__get_dataframe_shape(subject_id, feature_types, dataset)
         
-        stacked_feature = np.zeros(feature_shape)
+        stacked_feature_df = pd.DataFrame(np.zeros(feature_shape))
         
         current_height = 0
         for session_id in session_ids:
             
             feature_df = DataFrameLoader.load_feature_dataframe(subject_id, session_id, feature_types, dataset)
             columns = feature_df.columns
-            feature = feature_df.to_numpy()
-            feature_height = feature.shape[0]
+            feature_height = feature_df.shape[0]
             
-            stacked_feature[current_height:(current_height + feature_height)][:] = feature
+            stacked_feature_df.iloc[current_height:(current_height + feature_height),:] = feature_df
             
             current_height += feature_height
         
-        stacked_feature_df = pd.DataFrame(stacked_feature)
         stacked_feature_df.columns = columns
         return stacked_feature_df
     
@@ -71,21 +69,19 @@ class DataFrameLoader(object):
 
         feature_shape = DataFrameLoader.__get_dataframe_shape(feature_types, dataset)
         
-        stacked_feature = np.zeros(feature_shape)
+        stacked_feature_df = pd.DataFrame(np.zeros(feature_shape))
         
         current_height = 0
         for subject_id in subject_ids:
             
             feature_df = DataFrameLoader.load_feature_dataframe(subject_id, feature_types, dataset)
             columns = feature_df.columns
-            feature = feature_df.to_numpy()
-            feature_height = feature.shape[0]
+            feature_height = feature_df.shape[0]
             
-            stacked_feature[current_height:(current_height + feature_height)][:] = feature
+            stacked_feature_df.iloc[current_height:(current_height + feature_height),:] = feature_df
             
             current_height += feature_height
         
-        stacked_feature_df = pd.DataFrame(stacked_feature)
         stacked_feature_df.columns = columns
         return stacked_feature_df
     

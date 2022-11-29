@@ -135,24 +135,35 @@ class DataLoader(object):
         return feature_dataframe
     
     @staticmethod
-    def load_epoched_columns(feature_type, dataset):
-        subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(FeatureType.epoched, dataset)
+    def load_cluster(subject_id, session_id, feature_type, dataset):
+        
+        feature_path = PathService.get_clusters_file_path(subject_id, session_id, feature_type, dataset)
+        feature_dataframe = pd.read_csv(str(feature_path))
+
+        return feature_dataframe
+    
+    @staticmethod
+    def load_columns(feature_type, dataset):
+        subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(feature_type, dataset)
         subject_id = list(subject_sleepsession_dictionary.keys())[0]
         session_id = subject_sleepsession_dictionary[subject_id][0]
-        feature_dataframe = DataLoader.load_epoched(subject_id, session_id, feature_type, dataset)
+        if(feature_type.name in FeatureType.get_epoched_names() or feature_type.name == FeatureType.epoched.name):
+            feature_dataframe = DataLoader.load_epoched(subject_id, session_id, feature_type, dataset)
+        elif(feature_type.name == FeatureType.cluster.name or feature_type.name == FeatureType.cluster_features.name):
+            feature_dataframe = DataLoader.load_cluster(subject_id, session_id, feature_type, dataset)
         return feature_dataframe.columns
     
     @staticmethod
     @dispatch()
     def load_nightly():
-        nightly_feature_path = PathService.get_nightly_file_path()
+        nightly_feature_path = PathService.get_nightly_feature_file_path()
         nightly_feature_dataframe = pd.read_csv(str(nightly_feature_path))
         return nightly_feature_dataframe
     
     @staticmethod
     @dispatch(str, str, object)
     def load_nightly(subject_id, session_id, feature_type):
-        nightly_feature_path = PathService.get_nightly_file_path()
+        nightly_feature_path = PathService.get_nightly_feature_file_path()
         nightly_feature_dataframe = pd.read_csv(str(nightly_feature_path))
     
         
@@ -171,7 +182,7 @@ class DataLoader(object):
         elif(feature_type.name == FeatureType.nightly_sleep_quality.name):
             nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("sleep_quality"))
         else:
-            raise Exception("FeatureType unknown to DataLoader")
+            raise Exception("FeatureType unknown to DataLoader: " + feature_type.name)
         
         return nightly_feature_dataframe
     

@@ -57,15 +57,8 @@ class MesaFeatureBuilder(object):
     
                 count_feature = ActivityCountFeatureService.build_from_collection(activity_count_collection,
                                                                                   valid_epochs)
-                count_std = np.std(count_feature.iloc[:,1:], axis=0)
                 
                 hr_features = HeartRateFeatureService.build_from_collection(heart_rate_collection, valid_epochs)
-                hr_mean = np.mean(hr_features.iloc[:,1:], axis=0)
-                hr_std = np.std(hr_features.iloc[:,1:], axis=0)
-                
-                hr_features.iloc[:,1:] = (hr_features.iloc[:,1:] - hr_mean)/hr_std  
-                # Normalizing count feature, the first row is a timestamp
-                count_feature.iloc[:,1:] = count_feature.iloc[:,1:]/count_std
                 
     
                 # Writing features to disk

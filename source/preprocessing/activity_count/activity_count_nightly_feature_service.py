@@ -12,10 +12,10 @@ import pandas as pd
 class ActivityCountNightlyFeatureService(object):
     
     @staticmethod
-    def build_feature_dict(subject_id, session_id, common_timestamps):
+    def build_feature_dict_from_epoched(subject_id, session_id, cluster_timestamps):
         
         count_feature = DataLoader.load_epoched(subject_id, session_id, FeatureType.epoched_count, DataSet.usi)
-        count_feature = pd.merge(common_timestamps, count_feature, how="inner", on=["epoch_timestamp"])
+        count_feature = pd.merge(cluster_timestamps, count_feature, how="inner", on=["epoch_timestamp"])
         count_feature = count_feature.to_numpy()
         
         features_dict = ActivityCountNightlyFeatureService.build_count_features(count_feature[:,1])
@@ -27,6 +27,9 @@ class ActivityCountNightlyFeatureService(object):
     
     @staticmethod
     def build_count_features(count_feature):
+        
+        if np.all(count_feature==0):
+            raise Exception("All entries in count_feature are zero")
         
         count_feature_len = count_feature.shape[0]
         features_dictionary = {

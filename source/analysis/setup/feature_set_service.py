@@ -21,6 +21,8 @@ class FeatureSetService(object):
             return 'Clusters, IBI and Count'
         if set(feature_set) == {FeatureType.nightly_cluster, FeatureType.nightly_hr}:
             return 'Clusters and HR'
+        else:
+            return 'unknown feature set'
 
     @staticmethod
     def get_color(feature_set: [FeatureType]):
@@ -38,3 +40,5 @@ class FeatureSetService(object):
             return sns.xkcd_rgb["greyish"]
         if set(feature_set) == {FeatureType.nightly_cluster, FeatureType.nightly_hr}:
             return sns.xkcd_rgb["green"]
+        else:
+            return sns.xkcd_rgb["grey"]

@@ -15,7 +15,7 @@ class FeatureType(Enum):
     cropped_ibi_from_ppg = "cropped inter beat intervals from ppg signal"
     cropped_ibi = "cropped inter beat intervals"
     cropped_hr = "cropped heart rate"
-    normalized_hr = "normalized hr"
+    cropped_normalized_hr = "cropped normalized hr"
     
     epoched = "epoched"
     
@@ -27,7 +27,11 @@ class FeatureType(Enum):
     epoched_ibi_from_ppg = "epoched ibi features from ppg signal"
     epoched_sleep_label = "epoched sleep label"
     
+    cluster = "cluster"
+    cluster_features = "features on which clustering is performed"
+    
     nightly = "nightly"
+    normalized_nightly = "normalized nightly"
     
     nightly_cluster = "nightly cluster features"
     nightly_ibi = "nightly ibi features"

@@ -76,4 +76,9 @@ class BuiltService(object):
                 path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.MESA_FOLDER_NAME)
         elif feature_type.name == FeatureType.cropped.name or feature_type.name in FeatureType.get_cropped_names():
             path = Constants.CROPPED_FILE_PATH
+        elif feature_type.name == FeatureType.cluster.name or feature_type.name == FeatureType.cluster_features.name:
+            if(dataset.name == DataSet.usi.name):
+                path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
+            elif(dataset.name == DataSet.mesa.name):
+                path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.MESA_FOLDER_NAME)
         return path

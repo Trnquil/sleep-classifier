@@ -14,6 +14,7 @@ from source.preprocessing.heart_rate.heart_rate_feature_service import HeartRate
 from source.data_services.data_service import DataService
 from source.preprocessing.collection import Collection
 from source.data_services.dataset import DataSet
+from source.data_services.data_loader import DataLoader
 
 import numpy as np
 import pandas as pd
@@ -24,23 +25,7 @@ from multipledispatch import dispatch
 class EpochedFeatureBuilder(object):
 
     @staticmethod
-    def build(subject_id):
-        
-        count_feature_subject = ActivityCountFeatureService.build_count_feature(subject_id)
-        count_std = np.std(count_feature_subject.iloc[:,1:])
-        
-        ibi_features_subject = IbiFeatureService.build_hr_features(subject_id)
-        ibi_mean = np.mean(ibi_features_subject.iloc[:,1:], axis=0)
-        ibi_std = np.std(ibi_features_subject.iloc[:,1:], axis=0)
-        
-        hr_features_subject = HeartRateFeatureService.build(subject_id)
-        hr_mean = np.mean(hr_features_subject.iloc[:,1:], axis=0)
-        hr_std = np.std(hr_features_subject.iloc[:,1:], axis=0)
-        
-        # If there is nothing inside ibi_features_subject, we return
-        if not np.any(ibi_features_subject):
-            return
-        
+    def build(subject_id):    
         
         sleepsessions = BuiltService.get_built_sleepsession_ids(subject_id, FeatureType.cropped, DataSet.usi)
         for session_id in sleepsessions:
@@ -51,23 +36,23 @@ class EpochedFeatureBuilder(object):
             try:
                 count_feature = ActivityCountFeatureService.build_count_feature(subject_id, session_id)
                 
-                # Normalizing count feature, the first row is a timestamp
-                count_feature.iloc[:,1:] = count_feature.iloc[:,1:]/count_std
-                
-                # Normalizing ibi features, the first row is a timestamp
-                ibi_features = IbiFeatureService.build_hr_features(subject_id, session_id)
-                ibi_features.iloc[:,1:] = (ibi_features.iloc[:,1:] - ibi_mean)/ibi_std      
-    
-                
                 hr_feature = HeartRateFeatureService.build(subject_id, session_id)
-                hr_feature.iloc[:,1:] = (hr_feature.iloc[:,1:] - hr_mean)/hr_std  
+                
+                ibi_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_ibi)
+                valid_epochs_ibi = RawDataProcessor.get_valid_epochs([ibi_collection])
+                ibi_features = IbiFeatureService.build_from_collection(ibi_collection, valid_epochs_ibi) 
+                
+                ibi_collection_from_ppg = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_ibi_from_ppg)
+                valid_epochs_ibi_from_ppg = RawDataProcessor.get_valid_epochs([ibi_collection_from_ppg])
+                ibi_features_from_ppg = IbiFeatureService.build_from_collection(ibi_collection_from_ppg, valid_epochs_ibi_from_ppg)    
                 
                 # Create needed folders if they don't already exist
                 PathService.create_epoched_folder_path(subject_id, session_id, DataSet.usi)
                 
                 DataWriter.write_epoched(count_feature, subject_id, session_id, FeatureType.epoched_count, DataSet.usi)
-                DataWriter.write_epoched(ibi_features, subject_id, session_id, FeatureType.epoched_ibi, DataSet.usi)
                 DataWriter.write_epoched(hr_feature, subject_id, session_id, FeatureType.epoched_hr, DataSet.usi)
+                DataWriter.write_epoched(ibi_features, subject_id, session_id, FeatureType.epoched_ibi, DataSet.usi)
+                DataWriter.write_epoched(ibi_features_from_ppg, subject_id, session_id, FeatureType.epoched_ibi_from_ppg, DataSet.usi)
             except:
                 print("Error: ", sys.exc_info()[0], " while building epoched features for " + str(subject_id), ", session " + str(session_id))
         
