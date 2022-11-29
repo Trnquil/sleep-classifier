@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 from source.data_services.dataset import DataSet
 from source.data_services.data_loader import DataLoader
 from source.analysis.setup.feature_type import FeatureType
-from source.preprocessing.clustering.clustering_feature_service import ClusteringFeatureService
+from source.preprocessing.clustering.cluster_feature_service import ClusterFeatureService
 from source.constants import Constants
 from sklearn import metrics
 from sklearn.metrics import plot_confusion_matrix

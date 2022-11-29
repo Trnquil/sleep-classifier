@@ -20,6 +20,7 @@ from source.data_services.data_frame_loader import DataFrameLoader
 
 import pandas as pd
 import numpy as np
+from sklearn.utils import resample
 
 
 
@@ -98,6 +99,25 @@ class NightlyFeatureBuilder(object):
         except:
             print("Error: ", sys.exc_info()[0], " while building nightly features for " + str(subject_id), ", session " + str(session_id))
         
-
+    @staticmethod 
+    def upsample_minority(nightly_dataframe):
+        
+        df_1 = nightly_dataframe[nightly_dataframe.sleep_quality==1]
+        df_0 = nightly_dataframe[nightly_dataframe.sleep_quality==0]
+        
+        if df_1.shape[0] > df_0.shape[0]:
+            df_majority = df_1
+            df_minority = df_0
+        else:
+            df_majority = df_0
+            df_minority = df_1
+                                        
+        df_minority_upsampled = resample(df_minority, 
+        replace=True,     # sample with replacement
+        n_samples=df_majority.shape[0],    # to match majority class
+        random_state=123)
+        
+        nightly_dataframe = pd.concat([df_majority, df_minority_upsampled])
+        return nightly_dataframe
 
         

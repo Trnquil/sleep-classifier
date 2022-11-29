@@ -85,7 +85,7 @@ class PathService(object):
         session_dirs = [str(subject_dir.joinpath(session_dirs[i])) + "/" + PathService.filenames[feature_type.name] 
          for i in range(len(session_dirs))]
      
-        return session_dirs[:25]
+        return session_dirs
     
     @staticmethod
     def get_epoched_file_path(subject_id, session_id, feature_type, dataset):

@@ -13,7 +13,7 @@ from source.data_services.data_frame_loader import DataFrameLoader
 
 
 
-class ClusteringFeatureService(object):
+class ClusterFeatureService(object):
     @staticmethod
     def get_predictions_from_imported_model(features):
         

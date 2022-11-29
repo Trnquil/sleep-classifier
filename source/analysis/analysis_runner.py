@@ -23,7 +23,7 @@ from source.data_services.data_service import DataService
 from source.data_services.data_loader import DataLoader
 from source.data_services.dataset import DataSet
 from source.analysis.figures.performance_analyzer import PerformanceAnalyzer
-from source.preprocessing.clustering.clustering_feature_service import ClusteringFeatureService
+from source.preprocessing.clustering.cluster_feature_service import ClusterFeatureService
 from source.data_services.data_frame_loader import DataFrameLoader
 
 
@@ -33,7 +33,7 @@ def cluster_analysis():
     
     print("Running Cluster Analysis...")
     
-    feature_types = ClusteringFeatureService.cluster_feature_types
+    feature_types = ClusterFeatureService.cluster_feature_types
     feature_types.append(FeatureType.epoched_cluster)
     feature_types.append(FeatureType.epoched_sleep_label)
     
@@ -54,7 +54,7 @@ def figures_leave_one_out():
                               AttributedClassifier(name='SVM',
                                                  classifier=SVC(probability=True))]
 
-    feature_sets = [[FeatureType.nightly_cluster, FeatureType.nightly_ibi]]
+    feature_sets = [[FeatureType.nightly_cluster, FeatureType.nightly_hr]]
     
     for attributed_classifier in attributed_classifiers:
         if Constants.VERBOSE:
