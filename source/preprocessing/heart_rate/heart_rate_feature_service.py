@@ -21,7 +21,6 @@ class HeartRateFeatureService(object):
     @staticmethod
     @dispatch(str, str)
     def build(subject_id, session_id):
-        heart_rate_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.normalized_hr)
         heart_rate_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_hr)
         valid_epochs = RawDataProcessor.get_valid_epochs([heart_rate_collection])
         return HeartRateFeatureService.build_from_collection(heart_rate_collection, valid_epochs)

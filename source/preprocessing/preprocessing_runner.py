@@ -22,10 +22,10 @@ from source.preprocessing.cluster_feature_builder import ClusterFeatureBuilder
 def run_preprocessing():
     start_time = time.time()
     
-    build_cropped()
+    # build_cropped()
     
     build_epoched()
-    build_mesa_epoched()
+    # build_mesa_epoched()
     
     build_cluster_features()
     build_cluster_features_mesa()
