@@ -111,8 +111,8 @@ def figure_leave_one_out_roc_and_pr():
         CurvePlotBuilder.make_pr_sw(classifier_summary)
         TableBuilder.print_table_sw(classifier_summary)
 
-    CurvePlotBuilder.combine_plots_as_grid(classifiers, len(SubjectBuilder.get_all_subject_ids()), '_sw_pr')
-    CurvePlotBuilder.combine_plots_as_grid(classifiers, len(SubjectBuilder.get_all_subject_ids()), '_sw_roc')
+    CurvePlotBuilder.combine_plots_as_grid(classifiers, len(SubjectBuilder.get_all_subject_ids()), '_pr')
+    CurvePlotBuilder.combine_plots_as_grid(classifiers, len(SubjectBuilder.get_all_subject_ids()), '_roc')
 
 
 def figures_mc_sleep_wake():
@@ -131,8 +131,8 @@ def figures_mc_sleep_wake():
         CurvePlotBuilder.make_pr_sw(classifier_summary)
         TableBuilder.print_table_sw(classifier_summary)
 
-    CurvePlotBuilder.combine_plots_as_grid(classifiers, trial_count, '_sw_pr')
-    CurvePlotBuilder.combine_plots_as_grid(classifiers, trial_count, '_sw_roc')
+    CurvePlotBuilder.combine_plots_as_grid(classifiers, trial_count, '_pr')
+    CurvePlotBuilder.combine_plots_as_grid(classifiers, trial_count, '_roc')
 
 
 def figures_mc_three_class():
@@ -177,8 +177,8 @@ def figures_mesa_sleep_wake():
         CurvePlotBuilder.make_pr_sw(classifier_summary, '_mesa')
         TableBuilder.print_table_sw(classifier_summary)
 
-    CurvePlotBuilder.combine_plots_as_grid(classifiers, 1, '_mesa_sw_pr')
-    CurvePlotBuilder.combine_plots_as_grid(classifiers, 1, '_mesa_sw_roc')
+    CurvePlotBuilder.combine_plots_as_grid(classifiers, 1, '_mesa_pr')
+    CurvePlotBuilder.combine_plots_as_grid(classifiers, 1, '_mesa_roc')
 
 
 def figures_mesa_three_class():
@@ -232,8 +232,8 @@ def figures_compare_time_based_features():
         CurvePlotBuilder.make_pr_sw(classifier_summary, '_time_only')
         TableBuilder.print_table_sw(classifier_summary)
 
-    CurvePlotBuilder.combine_plots_as_grid(classifiers, trial_count, '_time_only_sw_pr')
-    CurvePlotBuilder.combine_plots_as_grid(classifiers, trial_count, '_time_only_sw_roc')
+    CurvePlotBuilder.combine_plots_as_grid(classifiers, trial_count, '_time_only_pr')
+    CurvePlotBuilder.combine_plots_as_grid(classifiers, trial_count, '_time_only_roc')
 
 
 if __name__ == "__main__":

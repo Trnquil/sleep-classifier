@@ -41,8 +41,8 @@ class PerformanceAnalyzer(object):
             
             for bars in ax.containers:
                 ax.bar_label(bars, padding=3)
-            plt.savefig(str(Constants.ANALYSIS_FILE_PATH) + '/' + FeatureSetService.get_label(feature_set) + '_' \
-                              + classifier_summary.attributed_classifier.name + '_overall_performance.png')
+            plt.savefig(str(Constants.ANALYSIS_FILE_PATH) + '/' + classifier_summary.attributed_classifier.name + '_' \
+                              + FeatureSetService.get_label(feature_set) + '_overall_performance.png')
             
             plt.clf()
 

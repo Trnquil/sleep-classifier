@@ -46,7 +46,7 @@ class CurvePlotBuilder(object):
         number_of_trials = len(next(iter(classifier_summary.performance_dictionary.values())))
         plt.savefig(str(Constants.ANALYSIS_FILE_PATH.joinpath(
             classifier_summary.attributed_classifier.name + '_' + str(
-                number_of_trials) + '_' + description + '_sw_roc.png')))
+                number_of_trials) + '_' + description + '_roc.png')))
         plt.close()
 
     @staticmethod
@@ -110,7 +110,7 @@ class CurvePlotBuilder(object):
         number_of_trials = len(next(iter(classifier_summary.performance_dictionary.values())))
         plt.savefig(str(Constants.ANALYSIS_FILE_PATH.joinpath(
             classifier_summary.attributed_classifier.name + '_' + str(
-                number_of_trials) + '_' + description + '_sw_pr.png')))
+                number_of_trials) + '_' + description + '_pr.png')))
         plt.close()
 
     @staticmethod
@@ -186,13 +186,13 @@ class CurvePlotBuilder(object):
             new_image.paste(im, (x_offset, y_offset))
             count = count + 1
 
-        new_image.save(str(Constants.ANALYSIS_FILE_PATH) + '/figure_' + str(number_of_trials) + plot_extension + '.png')
+        new_image.save(str(Constants.ANALYSIS_FILE_PATH) + '/' + str(number_of_trials) + plot_extension + '.png')
 
     @staticmethod
     def combine_sw_and_three_class_plots(attributed_classifier, number_of_trials, plot_extension):
         combined_filenames = [str(Constants.ANALYSIS_FILE_PATH) + '/' +
                               attributed_classifier.name + '_' +
-                              str(number_of_trials) + '__' + plot_extension + '_sw_roc.png',
+                              str(number_of_trials) + '__' + plot_extension + 'roc.png',
                               str(Constants.ANALYSIS_FILE_PATH) + '/' +
                               attributed_classifier.name + '_' +
                               str(number_of_trials) + '__' + plot_extension + '_three_class_roc.png']
@@ -213,5 +213,5 @@ class CurvePlotBuilder(object):
             count = count + 1
 
         new_image.save(
-            str(Constants.ANALYSIS_FILE_PATH) + '/figure_' + attributed_classifier.name + str(
+            str(Constants.ANALYSIS_FILE_PATH) + '/' + attributed_classifier.name + str(
                 number_of_trials) + plot_extension + '_combined.png')
