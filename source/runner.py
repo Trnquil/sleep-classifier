@@ -8,7 +8,7 @@ from source.analysis.analysis import Analysis
 from source.data_services.data_frame_loader import DataFrameLoader
 def run():
 
-    #run_preprocessing()
+    run_preprocessing()
     
     run_analysis()
     
@@ -17,10 +17,10 @@ def run_preprocessing():
     
     start_time = time.time()
         
-    Preprocessing.build_cropped()
+    #Preprocessing.build_cropped()
     
-    Preprocessing.build_epoched()
-    Preprocessing.build_mesa_epoched()
+    # Preprocessing.build_epoched()
+    # Preprocessing.build_mesa_epoched()
     
     Preprocessing.build_cluster_features()
     Preprocessing.build_cluster_features_mesa()
@@ -44,4 +44,4 @@ def run_analysis():
 
         print('Elapsed time to generate figures: ' + str((end_time - start_time) / 60) + ' minutes')
         
-#run()
+run()

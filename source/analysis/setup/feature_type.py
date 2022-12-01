@@ -35,9 +35,11 @@ class FeatureType(Enum):
     
     nightly_cluster = "nightly cluster features"
     nightly_ibi = "nightly ibi features"
+    nightly_ibi_from_ppg = "nighty ibi features from ppg"
     nightly_count = "nightly count feature"
     nightly_sleep_quality = "nightly sleep quality label"
     nightly_hr = "nightly heart rate feature"
+    nightly_normalized_hr = "nightly normalized heart rate feature"
     
     sleep_quality = "sleep quality"
     
@@ -62,3 +64,7 @@ class FeatureType(Enum):
             if feature_type.name in FeatureType.get_nightly_names():
                 nightly_features.append(feature_type)
         return nightly_features
+    
+    def get_names(feature_types):
+        names = [feature_type.name for feature_type in feature_types]
+        return names

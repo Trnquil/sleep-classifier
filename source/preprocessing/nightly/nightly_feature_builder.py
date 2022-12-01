@@ -51,7 +51,10 @@ class NightlyFeatureBuilder(object):
                 session_index += 1
             
             #Normalizing features across the subject and filling 0 for features with std 0
-            regex="ibi_.*|count_.*|hr_.*"
+            if RunnerParameters.NIGHTLY_CLUSTER_NORMALIZATION:
+                regex="ibi_.*|count_.*|hr_.*|c_.*"
+            else:
+                regex="ibi_.*|count_.*|hr_.*"
             subject_mean = np.mean(subject_dataframe.filter(regex=regex), axis=0)
             subject_std = np.std(subject_dataframe.filter(regex=regex), axis=0)*2
             
@@ -85,20 +88,39 @@ class NightlyFeatureBuilder(object):
             
             subject_session_dict = {'subject_id': subject_id, 'session_id': session_id}
             
-            ibi_features_dict = IbiNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, cluster_timestamps)
+            merged_dict = {}
             
-            count_features_dict = ActivityCountNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, cluster_timestamps)
-            
-            hr_features_dict = HeartRateNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, cluster_timestamps)
-            
-            cluster_features_dict = ClusterNightlyFeatureService.build_feature_dict(subject_id, session_id)
+            if(FeatureType.nightly_cluster.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
+                cluster_features_dict = ClusterNightlyFeatureService.build_feature_dict(subject_id, session_id)
+                merged_dict = merged_dict | cluster_features_dict
+                
+            if(FeatureType.nightly_cluster.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
+                cluster_features_dict = ClusterNightlyFeatureService.build_feature_dict(subject_id, session_id)
+                merged_dict = merged_dict | cluster_features_dict
+                
+            if(FeatureType.nightly_hr.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
+                hr_features_dict = HeartRateNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, cluster_timestamps)
+                merged_dict = merged_dict | hr_features_dict
+                                         
+            if(FeatureType.nightly_count.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
+                count_features_dict = ActivityCountNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, cluster_timestamps)
+                merged_dict = merged_dict | count_features_dict
+                
+            if(FeatureType.nightly_ibi.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
+                ibi_features_dict = IbiNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, cluster_timestamps)
+                merged_dict = merged_dict | ibi_features_dict
+                
+            if(FeatureType.nightly_ibi_from_ppg.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
+                ibi_features_from_ppg_dict = IbiNightlyFeatureService.build_feature_dict_from_epoched_ppg(subject_id, session_id, cluster_timestamps)
+                merged_dict = merged_dict | ibi_features_from_ppg_dict
+
+
             
             sleepquality_avg = np.mean(DataService.load_feature_raw(subject_id, FeatureType.sleep_quality, DataSet.usi))
             sleepquality = DataService.load_feature_raw(subject_id, session_id, FeatureType.sleep_quality, DataSet.usi)
             sleepquality = 0 if sleepquality < sleepquality_avg else 1
             sleepquality_dict = {'sleep_quality': sleepquality}
             
-            merged_dict = subject_session_dict | cluster_features_dict | hr_features_dict | count_features_dict | ibi_features_dict | sleepquality_dict
             
             return merged_dict
         except:
@@ -124,5 +146,8 @@ class NightlyFeatureBuilder(object):
         
         nightly_dataframe = pd.concat([df_majority, df_minority_upsampled])
         return nightly_dataframe
+    
+
+        
 
         

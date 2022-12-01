@@ -175,8 +175,12 @@ class DataLoader(object):
             nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("c_.*"))
         elif(feature_type.name == FeatureType.nightly_count.name):
             nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("count_.*"))
+        elif(feature_type.name == FeatureType.nightly_normalized_hr.name):
+            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("normalized_hr.*"))
         elif(feature_type.name == FeatureType.nightly_ibi.name):
             nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("ibi_.*"))
+        elif(feature_type.name == FeatureType.nightly_ibi_from_ppg.name):
+            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("ppg_ibi.*"))
         elif(feature_type.name == FeatureType.nightly_hr.name):
             nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("hr_.*"))
         elif(feature_type.name == FeatureType.nightly_sleep_quality.name):

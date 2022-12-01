@@ -5,7 +5,7 @@ from source.constants import Constants
 import source.utils as utils
 from source.analysis.setup.feature_type import FeatureType
 from source.data_services.dataset import DataSet
-from source.runner_paramters import RunnerParamters
+from source.runner_parameters import RunnerParameters
 
 class PathService(object):
     filenames = {

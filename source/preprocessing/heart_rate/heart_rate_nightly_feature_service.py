@@ -13,12 +13,14 @@ import pandas as pd
 class HeartRateNightlyFeatureService(object):
     
     @staticmethod
-    def build_feature_dict_from_cropped(subject_id, session_id):
+    def build_feature_dict_from_cropped_normalized(subject_id, session_id):
         
         heart_rate_feature_raw = DataService.load_feature_raw(subject_id, session_id, FeatureType.normalized_hr, DataSet.usi)
         
         features_dict = HeartRateNightlyFeatureService.build_var_features(heart_rate_feature_raw[:,1])
-        merged_dict = features_dict             
+        merged_dict = features_dict
+        
+        merged_dict = {'normalized_' + str(key): val for key, val in merged_dict.items()}          
         
         return merged_dict
     
