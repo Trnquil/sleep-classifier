@@ -86,7 +86,30 @@ class DataFrameLoader(object):
         return stacked_feature_df
     
     @staticmethod
-    @dispatch(str, object, object)
+    @dispatch(list,list)
+    def load_feature_dataframe(feature_types, datasets):
+
+        feature_shape = DataFrameLoader.__get_dataframe_shape(feature_types, datasets)
+        
+        stacked_feature_df = pd.DataFrame(np.zeros(feature_shape))
+        
+        current_height = 0
+        for dataset in datasets:
+            
+            feature_df = DataFrameLoader.load_feature_dataframe(feature_types, dataset)
+            columns = feature_df.columns
+            feature_height = feature_df.shape[0]
+            
+            stacked_feature_df.iloc[current_height:(current_height + feature_height),:] = feature_df
+            
+            current_height += feature_height
+        
+        stacked_feature_df.columns = columns
+        return stacked_feature_df
+            
+    
+    @staticmethod
+    @dispatch(str, list, object)
     def __get_dataframe_shape(subject_id, feature_types, dataset):
         session_ids = BuiltService.get_built_sleepsession_ids(subject_id, feature_types[0], dataset)
 
@@ -106,7 +129,7 @@ class DataFrameLoader(object):
         return (stacked_height, feature_width)
     
     @staticmethod
-    @dispatch(object, object)
+    @dispatch(list, object)
     def __get_dataframe_shape(feature_types, dataset):
 
         subject_ids = BuiltService.get_built_subject_ids(feature_types[0], dataset)
@@ -123,5 +146,25 @@ class DataFrameLoader(object):
             else:
                 # This has quite a bad runtime, might want to make it faster at some point
                 stacked_height = stacked_height + feature_height
+        
+        return (stacked_height, feature_width)
+
+    @staticmethod
+    @dispatch(list, list)
+    def __get_dataframe_shape(feature_types, datasets):
+        
+        i = 0
+        for dataset in datasets:
+            
+            feature_shape = DataFrameLoader.__get_dataframe_shape(feature_types, dataset)
+            feature_height = feature_shape[0]
+            feature_width = feature_shape[1]
+            
+            if i == 0:
+                stacked_height = feature_height
+            else:
+                # This has quite a bad runtime, might want to make it faster at some point
+                stacked_height = stacked_height + feature_height
+            i += 1
         
         return (stacked_height, feature_width)

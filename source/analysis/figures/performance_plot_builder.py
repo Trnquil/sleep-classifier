@@ -79,7 +79,7 @@ class PerformancePlotBuilder(object):
             draw.text((int(scale_factor * width / 3), int(height * 0.9 * 0.625)), "TPR = 0.93", (0, 0, 0), font=font)
             draw.text((int(scale_factor * width / 3), int(height * 0.9 * 0.875)), "TPR = 0.95", (0, 0, 0), font=font)
 
-            new_image.save(str(Constants.ANALYSIS_FILE_PATH) + '/threshold_histogram.png')
+            new_image.save(file_save_name)
 
     @staticmethod
     def make_single_threshold_histograms(classifier_summary: ClassifierSummary, description=''):

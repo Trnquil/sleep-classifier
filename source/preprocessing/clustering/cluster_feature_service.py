@@ -1,15 +1,12 @@
 from source.preprocessing.path_service import PathService
 import joblib
-import numpy as np
-import pandas as pd
 
 from source.analysis.setup.feature_type import FeatureType
-from source.data_services.data_service import DataService
 from sklearn.cluster import KMeans
-from source.data_services.dataset import DataSet
-from source.data_services.data_loader import DataLoader
+from sklearn.mixture import GaussianMixture
 from source.data_services.data_frame_loader import DataFrameLoader
-
+from source.runner_parameters import RunnerParameters
+from source.analysis.setup.clustering_algorithm import ClusteringAlgorithm
 
 
 
@@ -24,11 +21,17 @@ class ClusterFeatureService(object):
         return class_predictions
     
     @staticmethod
-    def get_fitted_model(dataset):
+    def get_fitted_model():
         
-        features_df = DataFrameLoader.load_feature_dataframe([FeatureType.cluster_features], dataset)
+        features_df = DataFrameLoader.load_feature_dataframe([FeatureType.cluster_features], RunnerParameters.CLUSTERING_DATASETS)
         features = features_df.drop(columns=['epoch_timestamp']).to_numpy().squeeze()
-        classifier=KMeans(n_clusters=6, random_state=0)
+        
+        if RunnerParameters.CLUSTERING_ALGO.name == ClusteringAlgorithm.GMM.name:
+            classifier = GaussianMixture(n_components=RunnerParameters.NUMBER_OF_CLUSTERS)
+            
+        elif RunnerParameters.CLUSTERING_ALGO.name == ClusteringAlgorithm.KMeans.name:
+            classifier = KMeans(n_clusters=RunnerParameters.NUMBER_OF_CLUSTERS, random_state=0)
+
 
         # We are now fitting our features to the cluster
         classifier.fit(features)

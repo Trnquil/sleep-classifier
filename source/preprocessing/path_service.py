@@ -5,6 +5,7 @@ from source.constants import Constants
 import source.utils as utils
 from source.analysis.setup.feature_type import FeatureType
 from source.data_services.dataset import DataSet
+from source.runner_paramters import RunnerParamters
 
 class PathService(object):
     filenames = {
@@ -59,7 +60,7 @@ class PathService(object):
     
     @staticmethod
     def get_nightly_feature_file_path():
-        if Constants.NIGHTLY_NORMALIZED:
+        if RunnerParamters.USE_NIGHTLY_NORMALIZED:
             path = str(Constants.NIGHTLY_FILE_PATH) + "/" + PathService.filenames[FeatureType.normalized_nightly.name]
         else:
             path = str(Constants.NIGHTLY_FILE_PATH) + "/" + PathService.filenames[FeatureType.nightly.name]

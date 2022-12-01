@@ -17,6 +17,7 @@ from source.preprocessing.heart_rate.heart_rate_nightly_feature_service import H
 from source.data_services.dataset import DataSet
 from source.data_services.data_loader import DataLoader
 from source.data_services.data_frame_loader import DataFrameLoader
+from source.runner_parameters import RunnerParameters
 
 import pandas as pd
 import numpy as np
@@ -67,6 +68,10 @@ class NightlyFeatureBuilder(object):
             
             subject_index += 1
         
+        if RunnerParameters.UPSAME_NIGHTLY:
+            nightly_dataframe = NightlyFeatureBuilder.upsample_minority(nightly_dataframe)
+            nightly_dataframe_normalized = NightlyFeatureBuilder.upsample_minority(nightly_dataframe_normalized)
+
         DataWriter.write_nightly(nightly_dataframe, FeatureType.nightly)
         DataWriter.write_nightly(nightly_dataframe_normalized, FeatureType.normalized_nightly)
 
