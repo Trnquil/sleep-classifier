@@ -14,6 +14,7 @@ from source.preprocessing.epoch import Epoch
 from source.preprocessing.activity_count.activity_count_feature_service import ActivityCountFeatureService
 from source.preprocessing.collection_service import CollectionService
 from source.preprocessing.epoched_feature_builder import EpochedFeatureBuilder
+from source.exception_logger import ExceptionLogger
 
 import numpy as np
 import pandas as pd
@@ -23,8 +24,6 @@ class MesaFeatureBuilder(object):
     
     @staticmethod
     def build(subject_id):
-        if Constants.VERBOSE:
-            print('Building MESA subject ' + subject_id + '...')
             
         try:
             raw_labeled_sleep = MesaPSGService.load_raw(subject_id)
@@ -69,6 +68,7 @@ class MesaFeatureBuilder(object):
                 DataWriter.write_epoched(count_feature, subject_id, 'SS_01', FeatureType.epoched_count, DataSet.mesa)
                 DataWriter.write_epoched(labeled_sleep, subject_id, 'SS_01', FeatureType.epoched_sleep_label, DataSet.mesa)
         except:
+            ExceptionLogger.append_exception(subject_id, "SS_01", "Epoched", DataSet.mesa.name)
             print("Error: ", sys.exc_info()[0], " while building MESA feature for subject " + str(subject_id))
 
             

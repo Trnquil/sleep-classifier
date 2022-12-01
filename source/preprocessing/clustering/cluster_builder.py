@@ -5,6 +5,7 @@ from source.data_services.data_writer import DataWriter
 from source.data_services.dataset import DataSet
 from source.preprocessing.clustering.cluster_feature_service import ClusterFeatureService
 from source.data_services.data_frame_loader import DataFrameLoader
+from source.exception_logger import ExceptionLogger
 
 from matplotlib import cm
 import numpy as np
@@ -20,8 +21,6 @@ class ClusterBuilder(object):
     @staticmethod
     def build(subject_id, session_id, dataset, clustering_model):
         
-        if Constants.VERBOSE:
-            print("Predicting clusters for subject " + str(subject_id) + ", session " + str(session_id) + "...")
         try:
     
             # TODO: I need to implement this in a cleaner way as to avoid making mistakes
@@ -55,6 +54,7 @@ class ClusterBuilder(object):
             clusters_df.columns = ["epoch_timestamp", "cluster"]
             DataWriter.write_cluster(clusters_df, subject_id, session_id, FeatureType.cluster, dataset)
         except:
+            ExceptionLogger.append_exception(subject_id, session_id, "Nightly", dataset.name)
             print("Error: ", sys.exc_info()[0], " while building clusters for subject " + str(subject_id), ", session " + str(session_id))
 
 

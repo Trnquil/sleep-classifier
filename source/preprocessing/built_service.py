@@ -56,7 +56,7 @@ class BuiltService(object):
     
     # returns only subject ids for which there is data
     @staticmethod 
-    def get_built_subject_and_sleepsession_count(feature_type, dataset):
+    def get_built_sleepsession_count(feature_type, dataset):
         count = 0
         for subject_id in BuiltService.get_built_subject_ids(feature_type, dataset):
             for session_id in BuiltService.get_built_sleepsession_ids(subject_id, feature_type, dataset):

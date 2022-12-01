@@ -35,8 +35,7 @@ class PathService(object):
         FeatureType.nightly.name: "nightly_features.csv",
         FeatureType.normalized_nightly.name: "nightly_features_normalized.csv"
         }
-    
-    
+        
     @staticmethod
     def get_cropped_file_path(subject_id, session_id, feature_type):
         directory_path_string = str(subject_id) + "/" + str(session_id)
@@ -60,7 +59,7 @@ class PathService(object):
     
     @staticmethod
     def get_nightly_feature_file_path():
-        if RunnerParamters.USE_NIGHTLY_NORMALIZED:
+        if RunnerParameters.USE_NIGHTLY_NORMALIZED:
             path = str(Constants.NIGHTLY_FILE_PATH) + "/" + PathService.filenames[FeatureType.normalized_nightly.name]
         else:
             path = str(Constants.NIGHTLY_FILE_PATH) + "/" + PathService.filenames[FeatureType.nightly.name]
@@ -86,7 +85,8 @@ class PathService(object):
         session_dirs = [str(subject_dir.joinpath(session_dirs[i])) + "/" + PathService.filenames[feature_type.name] 
          for i in range(len(session_dirs))]
      
-        return session_dirs
+        return [session_dirs[3]]
+        
     
     @staticmethod
     def get_epoched_file_path(subject_id, session_id, feature_type, dataset):

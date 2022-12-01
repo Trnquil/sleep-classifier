@@ -15,6 +15,7 @@ from source.data_services.dataset import DataSet
 from source.mesa.mesa_data_service import MesaDataService
 from source.mesa.mesa_feature_builder import MesaFeatureBuilder
 from source.preprocessing.clustering.cluster_feature_builder import ClusterFeatureBuilder
+from tqdm import tqdm
 
 
 class Preprocessing(object):
@@ -22,28 +23,34 @@ class Preprocessing(object):
     @staticmethod
     def build_cropped():
         subject_set = Constants.SUBJECT_IDS
-        for subject in subject_set:
-            if Constants.VERBOSE:
-                print("Cropping data from subject " + str(subject) + "...")
-            RawDataProcessor.crop_all(str(subject))
-    
-        if Constants.INCLUDE_CIRCADIAN:
-            ActivityCountService.build_activity_counts()  # This uses MATLAB, but has been replaced with a python implementation
-            CircadianService.build_circadian_model()      # Both of the circadian lines require MATLAB to run
-            CircadianService.build_circadian_mesa()       # INCLUDE_CIRCADIAN = False by default because most people don't have MATLAB
+        with tqdm(subject_set, leave=True) as t:
+            t.set_description("Building USI Cropped")
+            for subject in t:
+                RawDataProcessor.crop_all(str(subject))
+        
+            if Constants.INCLUDE_CIRCADIAN:
+                ActivityCountService.build_activity_counts()  # This uses MATLAB, but has been replaced with a python implementation
+                CircadianService.build_circadian_model()      # Both of the circadian lines require MATLAB to run
+                CircadianService.build_circadian_mesa()       # INCLUDE_CIRCADIAN = False by default because most people don't have MATLAB
             
     @staticmethod
     def build_epoched():
         # Only building features for subjects and sleepsession for which folders exist
         subject_ids = BuiltService.get_built_subject_ids(FeatureType.cropped, DataSet.usi)
-        for subject_id in subject_ids:
-            EpochedFeatureBuilder.build(subject_id)
+        with tqdm(subject_ids, leave = True) as t:
+            for subject_id in t:
+                t.set_description("Building USI Epoched")
+                sleepsessions = BuiltService.get_built_sleepsession_ids(subject_id, FeatureType.cropped, DataSet.usi)
+                for session_id in sleepsessions:
+                    EpochedFeatureBuilder.build(subject_id, session_id)
             
     @staticmethod
     def build_mesa_epoched():
         subject_ids = MesaDataService.get_all_subject_ids()
-        for subject_id in subject_ids:
-            MesaFeatureBuilder.build(subject_id)
+        with tqdm(subject_ids, leave = True) as t:
+            for subject_id in t:
+                t.set_description("Building MESA Epoched")
+                MesaFeatureBuilder.build(subject_id)
             
     @staticmethod    
     def build_cluster_features():
@@ -58,14 +65,19 @@ class Preprocessing(object):
         clustering_model = ClusterFeatureService.get_fitted_model()
         # Only building features for subjects and sleepsession for which folders exist
         subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(FeatureType.epoched, DataSet.usi)
-        for subject in subject_sleepsession_dictionary.keys():
-            for session in subject_sleepsession_dictionary[subject]:
-                ClusterBuilder.build(subject, session, DataSet.usi, clustering_model)
+        
+        with tqdm(subject_sleepsession_dictionary.keys()) as t:
+            t.set_description("Building USI Clusters")
+            for subject in t:
+                for session in subject_sleepsession_dictionary[subject]:
+                    ClusterBuilder.build(subject, session, DataSet.usi, clustering_model)
                 
         subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(FeatureType.epoched, DataSet.mesa)
-        for subject in subject_sleepsession_dictionary.keys():
-            for session in subject_sleepsession_dictionary[subject]:
-                ClusterBuilder.build(subject, session, DataSet.mesa, clustering_model)
+        with tqdm(subject_sleepsession_dictionary.keys()) as t:
+            for subject in t:
+                t.set_description("Building MESA Clusters")
+                for session in subject_sleepsession_dictionary[subject]:
+                    ClusterBuilder.build(subject, session, DataSet.mesa, clustering_model)
                 
     @staticmethod   
     def build_nightly():

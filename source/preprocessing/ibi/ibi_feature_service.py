@@ -70,7 +70,6 @@ class IbiFeatureService(object):
 
     @staticmethod
     def get_features(ibi_values):
-        
         feature_dict = get_frequency_domain_features(ibi_values) | get_time_domain_features(ibi_values)
         return feature_dict
 

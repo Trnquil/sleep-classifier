@@ -18,12 +18,12 @@ from source.data_services.dataset import DataSet
 from source.data_services.data_loader import DataLoader
 from source.data_services.data_frame_loader import DataFrameLoader
 from source.runner_parameters import RunnerParameters
+from source.exception_logger import ExceptionLogger
 
 import pandas as pd
 import numpy as np
 from sklearn.utils import resample
-
-
+from tqdm import tqdm
 
 
 class NightlyFeatureBuilder(object):
@@ -35,43 +35,48 @@ class NightlyFeatureBuilder(object):
             print("Building nightly features...")
             
         subject_index = 0
-        for subject_id in BuiltService.get_built_subject_ids(FeatureType.epoched, DataSet.usi):
-            
-            session_index = 0
-            for session_id in BuiltService.get_built_sleepsession_ids(subject_id, FeatureType.epoched, DataSet.usi):
-                feature_dict = NightlyFeatureBuilder.build_feature_dict(subject_id, session_id)
-                
-                feature_row = pd.DataFrame(feature_dict)
-                
-                if session_index == 0:
-                    subject_dataframe = feature_row
-                else:    
-                    subject_dataframe = pd.concat([subject_dataframe, feature_row], axis=0)
-                    
-                session_index += 1
-            
-            #Normalizing features across the subject and filling 0 for features with std 0
-            if RunnerParameters.NIGHTLY_CLUSTER_NORMALIZATION:
-                regex="ibi_.*|count_.*|hr_.*|c_.*"
-            else:
-                regex="ibi_.*|count_.*|hr_.*"
-            subject_mean = np.mean(subject_dataframe.filter(regex=regex), axis=0)
-            subject_std = np.std(subject_dataframe.filter(regex=regex), axis=0)*2
-            
-            subject_dataframe_normalized = subject_dataframe.copy()
-            subject_dataframe_normalized[subject_dataframe_normalized.filter(regex=regex).columns] = (subject_dataframe_normalized.filter(regex=regex) - subject_mean)/subject_std
-            subject_dataframe_normalized = subject_dataframe_normalized.fillna(0)
-            
-            if subject_index == 0:
-                nightly_dataframe = subject_dataframe
-                nightly_dataframe_normalized = subject_dataframe_normalized
-            else:
-                nightly_dataframe = pd.concat([nightly_dataframe, subject_dataframe], axis=0)
-                nightly_dataframe_normalized = pd.concat([nightly_dataframe_normalized, subject_dataframe_normalized], axis=0)
-            
-            subject_index += 1
         
-        if RunnerParameters.UPSAME_NIGHTLY:
+        subject_ids = BuiltService.get_built_subject_ids(FeatureType.epoched, DataSet.usi)
+        
+        with tqdm(subject_ids) as t:
+            for subject_id in t:
+                t.set_description("Building USI Nightly Features")
+                
+                session_index = 0
+                for session_id in BuiltService.get_built_sleepsession_ids(subject_id, FeatureType.epoched, DataSet.usi):
+                    feature_dict = NightlyFeatureBuilder.build_feature_dict(subject_id, session_id)
+                    
+                    feature_row = pd.DataFrame(feature_dict)
+                    
+                    if session_index == 0:
+                        subject_dataframe = feature_row
+                    else:    
+                        subject_dataframe = pd.concat([subject_dataframe, feature_row], axis=0)
+                        
+                    session_index += 1
+                
+                #Normalizing features across the subject and filling 0 for features with std 0
+                if RunnerParameters.NIGHTLY_CLUSTER_NORMALIZATION:
+                    regex="ibi_.*|count_.*|hr_.*|c_.*"
+                else:
+                    regex="ibi_.*|count_.*|hr_.*"
+                subject_mean = np.mean(subject_dataframe.filter(regex=regex), axis=0)
+                subject_std = np.std(subject_dataframe.filter(regex=regex), axis=0)*2
+                
+                subject_dataframe_normalized = subject_dataframe.copy()
+                subject_dataframe_normalized[subject_dataframe_normalized.filter(regex=regex).columns] = (subject_dataframe_normalized.filter(regex=regex) - subject_mean)/subject_std
+                subject_dataframe_normalized = subject_dataframe_normalized.fillna(0)
+                
+                if subject_index == 0:
+                    nightly_dataframe = subject_dataframe
+                    nightly_dataframe_normalized = subject_dataframe_normalized
+                else:
+                    nightly_dataframe = pd.concat([nightly_dataframe, subject_dataframe], axis=0)
+                    nightly_dataframe_normalized = pd.concat([nightly_dataframe_normalized, subject_dataframe_normalized], axis=0)
+                
+                subject_index += 1
+            
+        if RunnerParameters.UPSAMPLE_NIGHTLY:
             nightly_dataframe = NightlyFeatureBuilder.upsample_minority(nightly_dataframe)
             nightly_dataframe_normalized = NightlyFeatureBuilder.upsample_minority(nightly_dataframe_normalized)
 
@@ -124,6 +129,7 @@ class NightlyFeatureBuilder(object):
             
             return merged_dict
         except:
+            ExceptionLogger.append_exception(subject_id, session_id, "Nightly", DataSet.usi.name)
             print("Error: ", sys.exc_info()[0], " while building nightly features for " + str(subject_id), ", session " + str(session_id))
         
     @staticmethod 

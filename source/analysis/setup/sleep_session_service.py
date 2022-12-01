@@ -67,6 +67,12 @@ class SleepSessionService(object):
         session_ids = [sleepsession.session_id for sleepsession in SleepSessionService.load(subject_id)]
         return session_ids
     
+    @staticmethod
+    def get_total_sleepsessions():
+        selfreports_file = SleepSessionService.get_file_path()
+        selfreports_array = pd.read_csv(str(selfreports_file))
+        
+    
 
     # assigning features to each sleepsession based on the features' timestamps
     @staticmethod

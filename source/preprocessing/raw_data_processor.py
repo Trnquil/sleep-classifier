@@ -16,9 +16,11 @@ from source.preprocessing.collection_service import CollectionService
 from source.preprocessing.path_service import PathService
 from source.preprocessing.bvp_service import BvpService
 from source.constants import Constants
+from source.data_services.dataset import DataSet
 
 
 from multipledispatch import dispatch
+from source.exception_logger import ExceptionLogger
 
 
 class RawDataProcessor:
@@ -50,6 +52,8 @@ class RawDataProcessor:
         '''writing all the data to disk'''
         for i in range(len(motion_sleepsession_tuples)):
             try:
+                session_id = motion_sleepsession_tuples[i][0].session_id
+                
                 motion_collection = motion_sleepsession_tuples[i][1]
                 count_collection = count_sleepsession_tuples[i][1]
                 hr_collection = hr_sleepsession_tuples[i][1]
@@ -57,22 +61,34 @@ class RawDataProcessor:
                 ibi_collection = ibi_sleepsession_tuples[i][1]
                 normalized_hr_collection = normalized_hr_sleepsession_tuples[i][1]
                 
-                ibi_collection_from_pgg = BvpService.get_ibi_from_bvp(bvp_collection)
                 
-                session_id = motion_sleepsession_tuples[i][0].session_id
-                
-                if Constants.VERBOSE:
-                    print("Writing cropped data from subject " + str(subject_id) +  ", session " + str(session_id) + "...")
-                
-                PathService.create_cropped_file_path(subject_id, session_id)
-                
-                DataWriter.write_cropped(motion_collection, session_id, FeatureType.cropped_motion)
-                DataWriter.write_cropped(ibi_collection, session_id, FeatureType.cropped_ibi)
-                DataWriter.write_cropped(ibi_collection_from_pgg, session_id, FeatureType.cropped_ibi_from_ppg)
-                DataWriter.write_cropped(count_collection, session_id, FeatureType.cropped_count)
-                DataWriter.write_cropped(hr_collection, session_id, FeatureType.cropped_hr)
-                DataWriter.write_cropped(normalized_hr_collection, session_id, FeatureType.normalized_hr)
+                if(np.any(motion_collection.data)):
+                    PathService.create_cropped_file_path(subject_id, session_id)
+                    DataWriter.write_cropped(motion_collection, session_id, FeatureType.cropped_motion)
+                    
+                if(np.any(ibi_collection.data)):
+                    PathService.create_cropped_file_path(subject_id, session_id)
+                    DataWriter.write_cropped(ibi_collection, session_id, FeatureType.cropped_ibi)
+                    
+                if(np.any(bvp_collection.data)):
+                    PathService.create_cropped_file_path(subject_id, session_id)
+                    ibi_collection_from_ppg = BvpService.get_ibi_from_bvp(bvp_collection)
+                    DataWriter.write_cropped(ibi_collection_from_ppg, session_id, FeatureType.cropped_ibi_from_ppg)
+                    
+                if(np.any(count_collection.data)):
+                    PathService.create_cropped_file_path(subject_id, session_id)
+                    DataWriter.write_cropped(count_collection, session_id, FeatureType.cropped_count)
+                    
+                if(np.any(hr_collection.data)):
+                    PathService.create_cropped_file_path(subject_id, session_id)
+                    DataWriter.write_cropped(hr_collection, session_id, FeatureType.cropped_hr)
+                    
+                if(np.any(normalized_hr_collection.data)):
+                    PathService.create_cropped_file_path(subject_id, session_id)
+                    DataWriter.write_cropped(normalized_hr_collection, session_id, FeatureType.cropped_normalized_hr)
+                    
             except:
+                ExceptionLogger.append_exception(subject_id, session_id, "Cropped", DataSet.usi.name)
                 print("Error: ", sys.exc_info()[0], " while building cropped features for " + str(subject_id), ", session " + str(session_id))
     
     @staticmethod 
