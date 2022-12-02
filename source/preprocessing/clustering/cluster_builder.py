@@ -54,7 +54,7 @@ class ClusterBuilder(object):
             clusters_df.columns = ["epoch_timestamp", "cluster"]
             DataWriter.write_cluster(clusters_df, subject_id, session_id, FeatureType.cluster, dataset)
         except:
-            ExceptionLogger.append_exception(subject_id, session_id, "Nightly", dataset.name)
+            ExceptionLogger.append_exception(subject_id, session_id, "Nightly", dataset.name, sys.exc_info()[0])
             print("Error: ", sys.exc_info()[0], " while building clusters for subject " + str(subject_id), ", session " + str(session_id))
 
 

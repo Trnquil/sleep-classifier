@@ -49,6 +49,6 @@ class EpochedFeatureBuilder(object):
             DataWriter.write_epoched(ibi_features, subject_id, session_id, FeatureType.epoched_ibi, DataSet.usi)
             DataWriter.write_epoched(ibi_features_from_ppg, subject_id, session_id, FeatureType.epoched_ibi_from_ppg, DataSet.usi)
         except:
-            ExceptionLogger.append_exception(subject_id, session_id, "Epoched", DataSet.usi.name)
+            ExceptionLogger.append_exception(subject_id, session_id, "Epoched", DataSet.usi.name, sys.exc_info()[0])
             print("Error: ", sys.exc_info()[0], " while building epoched features for " + str(subject_id), ", session " + str(session_id))
         

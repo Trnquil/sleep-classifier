@@ -6,7 +6,7 @@ class ExceptionLogger(object):
     
     file_path = Constants.LOGS_FILE_PATH.joinpath("exception_logs.csv")
     
-    def append_exception(subject_id, session_id, feature_type, dataset):
+    def append_exception(subject_id, session_id, feature_type, dataset, exception_class):
         if not os.path.exists(Constants.LOGS_FILE_PATH):
             os.mkdir(Constants.LOGS_FILE_PATH)
            
@@ -14,7 +14,8 @@ class ExceptionLogger(object):
             'subject_id': [subject_id],
             'session_id': [session_id],
             'feature_type': [feature_type],
-            'dataset': [dataset]
+            'dataset': [dataset],
+            'class' : [exception_class]
             }
         
         exception_df = pd.DataFrame.from_dict(exception_dict)

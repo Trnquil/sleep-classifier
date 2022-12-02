@@ -129,7 +129,7 @@ class NightlyFeatureBuilder(object):
             
             return merged_dict
         except:
-            ExceptionLogger.append_exception(subject_id, session_id, "Nightly", DataSet.usi.name)
+            ExceptionLogger.append_exception(subject_id, session_id, "Nightly", DataSet.usi.name, sys.exc_info()[0])
             print("Error: ", sys.exc_info()[0], " while building nightly features for " + str(subject_id), ", session " + str(session_id))
         
     @staticmethod 

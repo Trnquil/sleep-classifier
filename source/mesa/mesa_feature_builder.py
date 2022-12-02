@@ -82,7 +82,7 @@ class MesaFeatureBuilder(object):
                 DataWriter.write_epoched(count_feature, subject_id, 'SS_01', FeatureType.epoched_count, DataSet.mesa)
                 DataWriter.write_epoched(labeled_sleep, subject_id, 'SS_01', FeatureType.epoched_sleep_label, DataSet.mesa)
         except:
-            ExceptionLogger.append_exception(subject_id, "SS_01", "Epoched", DataSet.mesa.name)
+            ExceptionLogger.append_exception(subject_id, "SS_01", "Epoched", DataSet.mesa.name, sys.exc_info()[0])
             print("Error: ", sys.exc_info()[0], " while building MESA feature for subject " + str(subject_id))
     
     @staticmethod
