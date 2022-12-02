@@ -38,7 +38,7 @@ class NightlyFeatureBuilder(object):
         
         subject_ids = BuiltService.get_built_subject_ids(FeatureType.epoched, DataSet.usi)
         
-        with tqdm(subject_ids) as t:
+        with tqdm(subject_ids, colour='green', unit='subject') as t:
             for subject_id in t:
                 t.set_description("Building USI Nightly Features")
                 

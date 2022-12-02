@@ -32,7 +32,7 @@ class IbiFeatureService(object):
             ibi_values_in_range = ibi_collection.values[indices_in_range].squeeze()
             ibi_timestamps_in_range = ibi_collection.timestamps[indices_in_range].squeeze()
             
-            if ibi_timestamps_in_range.ndim == 0:
+            if ibi_timestamps_in_range.shape[0] == 0:
                 continue
             
             ibi_values_delta = np.sum(ibi_values_in_range)

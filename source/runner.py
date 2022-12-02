@@ -21,15 +21,15 @@ def run_preprocessing():
     
     start_time = time.time()
         
-    #Preprocessing.build_cropped()
+    Preprocessing.build_cropped()
     
-    # Preprocessing.build_epoched()
-    # Preprocessing.build_mesa_epoched()
+    Preprocessing.build_epoched()
+    Preprocessing.build_mesa_epoched()
     
-    # Preprocessing.build_cluster_features()
-    # Preprocessing.build_cluster_features_mesa()
+    Preprocessing.build_cluster_features()
+    Preprocessing.build_cluster_features_mesa()
     
-    # Preprocessing.build_clusters()
+    Preprocessing.build_clusters()
     
     Preprocessing.build_nightly()
     

@@ -20,7 +20,7 @@ class ExceptionLogger(object):
         exception_df = pd.DataFrame.from_dict(exception_dict)
         
         if (os.path.exists(ExceptionLogger.file_path)):
-            exceptions_df = pd.read(Constants.LOGS_FILE_PATH)
+            exceptions_df = pd.read_csv(ExceptionLogger.file_path)
             exceptions_df = pd.concat([exceptions_df, exception_df], axis=0)
         else:
             exceptions_df = exception_df

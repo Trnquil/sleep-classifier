@@ -22,7 +22,7 @@ class ClusterFeatureBuilder(object):
         
         subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(FeatureType.epoched, dataset)
         
-        with tqdm(subject_sleepsession_dictionary.keys()) as t:
+        with tqdm(subject_sleepsession_dictionary.keys(), unit='subject', colour='green') as t:
             for subject_id in t:
                 t.set_description("Building " + dataset.name.upper() + " Cluster Features")
                 

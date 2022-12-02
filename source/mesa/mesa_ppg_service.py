@@ -5,7 +5,7 @@ from source import utils
 from source.preprocessing.collection import Collection
 
 
-class MesaPpgService(object):
+class MesaPPGService(object):
     @staticmethod
     def load_raw(file_id):
         project_root = str(utils.get_project_root())
@@ -25,4 +25,4 @@ class MesaPpgService(object):
 
         data = np.transpose(np.vstack((time_ppg, ppg)))
         data = utils.remove_nans(data)
-        return Collection(subject_id=file_id, data=data)
+        return Collection(subject_id=file_id, data=data, data_frequency=sf)

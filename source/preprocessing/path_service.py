@@ -85,7 +85,7 @@ class PathService(object):
         session_dirs = [str(subject_dir.joinpath(session_dirs[i])) + "/" + PathService.filenames[feature_type.name] 
          for i in range(len(session_dirs))]
      
-        return [session_dirs[3]]
+        return session_dirs[:15]
         
     
     @staticmethod
