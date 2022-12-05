@@ -22,7 +22,7 @@ class BvpService(object):
         # Working on BVP values to produce IBI sequence
         processing_window = BvpService.PROCESSING_WINDOW_DATAPOINTS
         current_height = 0
-        ibi_data = []
+        ibi_data = np.zeros((2,0))
         
         while current_height < bvp_values.shape[0]:
             

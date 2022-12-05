@@ -57,9 +57,9 @@ class NightlyFeatureBuilder(object):
                 
                 #Normalizing features across the subject and filling 0 for features with std 0
                 if RunnerParameters.NIGHTLY_CLUSTER_NORMALIZATION:
-                    regex="ibi_.*|count_.*|hr_.*|c_.*"
+                    regex="^((?!subject_|session_|sleep_quality).)*$"
                 else:
-                    regex="ibi_.*|count_.*|hr_.*"
+                    regex="^((?!c_|subject_|session_|sleep_quality).)*$"
                 subject_mean = np.mean(subject_dataframe.filter(regex=regex), axis=0)
                 subject_std = np.std(subject_dataframe.filter(regex=regex), axis=0)*2
                 
@@ -93,7 +93,7 @@ class NightlyFeatureBuilder(object):
             
             subject_session_dict = {'subject_id': subject_id, 'session_id': session_id}
             
-            merged_dict = {}
+            merged_dict = subject_session_dict
             
             if(FeatureType.nightly_cluster.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
                 cluster_features_dict = ClusterNightlyFeatureService.build_feature_dict(subject_id, session_id)
@@ -125,6 +125,8 @@ class NightlyFeatureBuilder(object):
             sleepquality = DataService.load_feature_raw(subject_id, session_id, FeatureType.sleep_quality, DataSet.usi)
             sleepquality = 0 if sleepquality < sleepquality_avg else 1
             sleepquality_dict = {'sleep_quality': sleepquality}
+            
+            merged_dict = merged_dict | sleepquality_dict
             
             
             return merged_dict

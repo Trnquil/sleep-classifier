@@ -29,7 +29,7 @@ class MesaFeatureBuilder(object):
     @staticmethod
     def build(subject_id):
             
-        try:
+        # try:
             raw_labeled_sleep = MesaPSGService.load_raw(subject_id)
             heart_rate_collection = MesaHeartRateService.load_raw(subject_id)
             activity_count_collection = MesaActigraphyService.load_raw(subject_id)
@@ -81,9 +81,9 @@ class MesaFeatureBuilder(object):
                 DataWriter.write_epoched(ibi_features_from_ppg, subject_id, 'SS_01', FeatureType.epoched_ibi_from_ppg, DataSet.mesa)
                 DataWriter.write_epoched(count_feature, subject_id, 'SS_01', FeatureType.epoched_count, DataSet.mesa)
                 DataWriter.write_epoched(labeled_sleep, subject_id, 'SS_01', FeatureType.epoched_sleep_label, DataSet.mesa)
-        except:
-            ExceptionLogger.append_exception(subject_id, "SS_01", "Epoched", DataSet.mesa.name, sys.exc_info()[0])
-            print("Error: ", sys.exc_info()[0], " while building MESA feature for subject " + str(subject_id))
+        # except:
+        #     ExceptionLogger.append_exception(subject_id, "SS_01", "Epoched", DataSet.mesa.name, sys.exc_info()[0])
+        #     print("Error: ", sys.exc_info()[0], " while building MESA feature for subject " + str(subject_id))
     
     @staticmethod
     def downsample_signal(signal_collection, factor):

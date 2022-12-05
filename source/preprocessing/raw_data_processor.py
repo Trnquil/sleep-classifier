@@ -31,17 +31,15 @@ class RawDataProcessor:
         
 
         '''Loading data'''
-        hr_collection = DataLoader.load_raw(subject_id, FeatureType.raw_hr)
         motion_collection = DataLoader.load_raw(subject_id, FeatureType.raw_acc)
-        count_collection = ActivityCountService.build_activity_counts_without_matlab(subject_id, motion_collection.data) # Builds activity counts with python, not MATLAB
+        hr_collection = DataLoader.load_raw(subject_id, FeatureType.raw_hr)
         bvp_collection = DataLoader.load_raw(subject_id, FeatureType.raw_bvp)
         ibi_collection = DataLoader.load_raw(subject_id, FeatureType.raw_ibi)
         normalized_hr_collection = RawDataProcessor.normalize(hr_collection)
-
+        
         
         '''splitting each collection into sleepsessions'''
         motion_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, motion_collection)
-        count_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, count_collection)
         hr_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, hr_collection)
         bvp_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, bvp_collection)
         ibi_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, ibi_collection)
@@ -55,15 +53,15 @@ class RawDataProcessor:
                 session_id = motion_sleepsession_tuples[i][0].session_id
                 
                 motion_collection = motion_sleepsession_tuples[i][1]
-                count_collection = count_sleepsession_tuples[i][1]
                 hr_collection = hr_sleepsession_tuples[i][1]
                 bvp_collection = bvp_sleepsession_tuples[i][1]
                 ibi_collection = ibi_sleepsession_tuples[i][1]
                 normalized_hr_collection = normalized_hr_sleepsession_tuples[i][1]
-                
-                
+                                
                 if(np.any(motion_collection.data)):
                     PathService.create_cropped_file_path(subject_id, session_id)
+                    count_collection = ActivityCountService.build_activity_counts_without_matlab(subject_id, motion_collection.data)
+                    DataWriter.write_cropped(count_collection, session_id, FeatureType.cropped_count)
                     DataWriter.write_cropped(motion_collection, session_id, FeatureType.cropped_motion)
                     
                 if(np.any(ibi_collection.data)):
@@ -74,10 +72,6 @@ class RawDataProcessor:
                     PathService.create_cropped_file_path(subject_id, session_id)
                     ibi_collection_from_ppg = BvpService.get_ibi_from_bvp(bvp_collection)
                     DataWriter.write_cropped(ibi_collection_from_ppg, session_id, FeatureType.cropped_ibi_from_ppg)
-                    
-                if(np.any(count_collection.data)):
-                    PathService.create_cropped_file_path(subject_id, session_id)
-                    DataWriter.write_cropped(count_collection, session_id, FeatureType.cropped_count)
                     
                 if(np.any(hr_collection.data)):
                     PathService.create_cropped_file_path(subject_id, session_id)

@@ -50,7 +50,7 @@ class ActivityCountService(object):
         time_counts = np.expand_dims(time_counts, axis=1)
         counts = np.expand_dims(counts, axis=1)
         output = np.hstack((time_counts, counts))
-        
+
         return Collection(subject_id, output, 0)
 
     @staticmethod
