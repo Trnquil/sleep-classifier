@@ -24,6 +24,8 @@ class Constants(object):
     LOGS_FILE_PATH = utils.get_project_root().joinpath('logs/')
     LOWER_BOUND = -0.2
     MATLAB_PATH = '/Applications/MATLAB_R2019a.app/bin/matlab'  # Replace with your MATLAB path
-    TIME_CENTER = 1614400000.000000
+    TIME_CENTER_USI = 1614400000.000000
+    TIME_CENTER_MSS = 1568600000.000000
+
     SUBJECT_IDS = ['S01', 'S02', 'S03', 'S04', 'S05', 'S06', 'S07', 'S08', 'S09', 'S10', 'S11', 'S12', 'S13', 'S14', 'S15', 'S16']
 

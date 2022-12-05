@@ -21,7 +21,7 @@ class DataLoader(object):
         if(feature_type.name == FeatureType.raw_ibi.name):
             return DataLoader.load_raw_ibi(subject_id)
         
-        raw_paths = PathService.get_raw_file_paths(subject_id, feature_type)
+        raw_paths = PathService.get_raw_file_paths_usi(subject_id, feature_type)
         
         final_feature_shape = DataLoader.load_raw_shape(subject_id, feature_type)
         final_feature_array = np.zeros(final_feature_shape)
@@ -37,7 +37,7 @@ class DataLoader(object):
             start_time = float(start_time[0])
             
             #Let us center the time so that time values aren't too big
-            start_time = start_time - Constants.TIME_CENTER
+            start_time = start_time - Constants.TIME_CENTER_USI
             
             if(feature_array.ndim == 1):
                 np.expand_dims(feature_array, axis=1)
@@ -67,7 +67,7 @@ class DataLoader(object):
     
     @staticmethod
     def load_raw_ibi(subject_id):
-        raw_paths = PathService.get_raw_file_paths(subject_id, FeatureType.raw_ibi)
+        raw_paths = PathService.get_raw_file_paths_usi(subject_id, FeatureType.raw_ibi)
         
         final_feature_shape = DataLoader.load_raw_shape(subject_id, FeatureType.raw_ibi)
         final_feature_array = np.zeros(final_feature_shape)
@@ -83,7 +83,7 @@ class DataLoader(object):
             start_time = float(start_time[0])
             
             #Let us center the time so that time values aren't too big
-            start_time = start_time - Constants.TIME_CENTER
+            start_time = start_time - Constants.TIME_CENTER_USI
             
             feature_array = feature_array.to_numpy()
     
@@ -99,7 +99,7 @@ class DataLoader(object):
         
     @staticmethod
     def load_raw_shape(subject_id, feature_type):
-        raw_paths = PathService.get_raw_file_paths(subject_id, feature_type)
+        raw_paths = PathService.get_raw_file_paths_usi(subject_id, feature_type)
         feature_height = 0
 
         for raw_path in raw_paths:

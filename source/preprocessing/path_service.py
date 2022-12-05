@@ -9,10 +9,6 @@ from source.runner_parameters import RunnerParameters
 
 class PathService(object):
     filenames = {
-        FeatureType.raw_hr.name: "HR.csv",
-        FeatureType.raw_acc.name: "ACC.csv",
-        FeatureType.raw_ibi.name: "IBI.csv",
-        FeatureType.raw_bvp.name: "BVP.csv",
         
         FeatureType.cropped_count.name: "cropped_counts.out",
         FeatureType.cropped_ibi.name: "cropped_ibi.out",
@@ -34,6 +30,22 @@ class PathService(object):
         
         FeatureType.nightly.name: "nightly_features.csv",
         FeatureType.normalized_nightly.name: "nightly_features_normalized.csv"
+        }
+    
+    filenames_usi = {
+        
+        FeatureType.raw_hr.name: "HR.csv",
+        FeatureType.raw_acc.name: "ACC.csv",
+        FeatureType.raw_ibi.name: "IBI.csv",
+        FeatureType.raw_bvp.name: "BVP.csv"
+        }
+    
+    filenames_mss = {
+        
+        FeatureType.raw_hrv.name: "hrv_segments.csv",
+        FeatureType.raw_acc.name: "accelerometer.csv",
+        FeatureType.raw_algo1.name: "algo1.csv",
+        FeatureType.raw_algo2.name: "algo2.csv"
         }
         
     @staticmethod
@@ -74,7 +86,7 @@ class PathService(object):
         return path
     
     @staticmethod
-    def get_raw_file_paths(subject_id, feature_type):
+    def get_raw_file_paths_usi(subject_id, feature_type):
         subject_dir = utils.get_project_root().joinpath('data/USI Sleep/E4_Data/' + subject_id)
         session_dirs = os.listdir(subject_dir)
         session_dirs.sort()
@@ -82,10 +94,18 @@ class PathService(object):
         #Removing .DS_Store from the list of directories because we don't care about it
         session_dirs.remove('.DS_Store')
         
-        session_dirs = [str(subject_dir.joinpath(session_dirs[i])) + "/" + PathService.filenames[feature_type.name] 
+        session_dirs = [str(subject_dir.joinpath(session_dirs[i])) + "/" + PathService.filenames_usi[feature_type.name] 
          for i in range(len(session_dirs))]
      
-        return session_dirs
+        return session_dirs[5:8]
+    
+    @staticmethod
+    def get_raw_file_path_mss(subject_id, feature_type):
+        subject_dir = utils.get_project_root().joinpath('data/MS Sleep/Sensor and smartphone data export/data_max/' + subject_id)
+
+        file_dir = subject_dir.joinpath(PathService.filenames_mss[feature_type.name])
+     
+        return file_dir
         
     
     @staticmethod

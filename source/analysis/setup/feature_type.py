@@ -7,6 +7,9 @@ class FeatureType(Enum):
     raw_acc = "raw acceleration"
     raw_ibi = "raw inter beat interval"
     raw_bvp = "raw BVP signal"
+    raw_hrv = "raw HRV metrics"
+    raw_algo1 = "raw algo 1"
+    raw_algo2 = "raw algo 2"
     
     cropped = "cropped"
     

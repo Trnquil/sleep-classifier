@@ -117,7 +117,7 @@ class SleepSessionService(object):
         timestamp = time.mktime(timestamp.timetuple())
         
         #centering unix epoch timestamp so that it isn't too large
-        return timestamp - Constants.TIME_CENTER
+        return timestamp - Constants.TIME_CENTER_USI
     
     @staticmethod
     def assert_inorder(sleepsessions):
