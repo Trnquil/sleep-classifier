@@ -79,14 +79,18 @@ class DataFrameLoader(object):
         current_height = 0
         for subject_id in subject_ids:
             
-            feature_df = DataFrameLoader.load_feature_dataframe(subject_id, feature_types, dataset)
-            columns = feature_df.columns
-            feature_height = feature_df.shape[0]
-            
-            stacked_feature_df.iloc[current_height:(current_height + feature_height),:] = feature_df
-            
-            current_height += feature_height
-        
+            try:
+                feature_df = DataFrameLoader.load_feature_dataframe(subject_id, feature_types, dataset)
+                columns = feature_df.columns
+                feature_height = feature_df.shape[0]
+                
+                stacked_feature_df.iloc[current_height:(current_height + feature_height),:] = feature_df
+                
+                current_height += feature_height
+            except:
+                ExceptionLogger.append_exception(subject_id, 'N/A', str(feature_types), dataset.name, sys.exc_info()[0])
+                print("Error: ", sys.exc_info()[0], " loading from DataFrameLoader for  " + str(subject_id))
+                
         stacked_feature_df.columns = columns
         return stacked_feature_df
     
@@ -140,18 +144,16 @@ class DataFrameLoader(object):
 
         subject_ids = BuiltService.get_built_subject_ids(feature_types[0], dataset)
 
-        
+        stacked_height = 0
         for i in range(len(subject_ids)):
-            
-            feature_shape = DataFrameLoader.__get_dataframe_shape(subject_ids[i], feature_types, dataset)
-            feature_height = feature_shape[0]
-            feature_width = feature_shape[1]
-            
-            if i == 0:
-                stacked_height = feature_height
-            else:
-                # This has quite a bad runtime, might want to make it faster at some point
+            try:
+                feature_shape = DataFrameLoader.__get_dataframe_shape(subject_ids[i], feature_types, dataset)
+                feature_height = feature_shape[0]
+                feature_width = feature_shape[1]
+
                 stacked_height = stacked_height + feature_height
+            except:
+                pass
         
         return (stacked_height, feature_width)
 

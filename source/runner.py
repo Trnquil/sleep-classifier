@@ -10,8 +10,6 @@ from source.exception_logger import ExceptionLogger
 
 def run():
     
-    ExceptionLogger.remove_logs()
-    
     run_preprocessing()
     
     run_analysis()
@@ -21,6 +19,7 @@ def run_preprocessing():
     
     start_time = time.time()
         
+    ExceptionLogger.remove_logs()
     Preprocessing.build_cropped()
     
     Preprocessing.build_epoched()
