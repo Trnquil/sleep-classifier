@@ -53,7 +53,7 @@ class ClusterFeatureBuilder(object):
                             ExceptionLogger.append_exception(subject_id, session_id, "Cluster Features", dataset.name, sys.exc_info()[0])
                             print("Error: ", sys.exc_info()[0], " while building cluster features for " + str(subject_id), ", session " + str(session_id))
                 except:
-                    ExceptionLogger.append_exception(subject_id, "Cluster Features", dataset.name, sys.exc_info()[0])
+                    ExceptionLogger.append_exception(subject_id, "N/A", "Cluster Features", dataset.name, sys.exc_info()[0])
                     print("Error: ", sys.exc_info()[0], " while building cluster features for " + str(subject_id))
                     
 
