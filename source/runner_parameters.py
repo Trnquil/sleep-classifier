@@ -1,8 +1,10 @@
 from source.analysis.setup.clustering_algorithm import ClusteringAlgorithm
 from source.data_services.dataset import DataSet
 from source.analysis.setup.feature_type import FeatureType
+from enum import Enum
+from source.constants import Constants
 
-class RunnerParameters(object):
+class RunnerParameters(Enum):
     CLUSTERING_ALGO = ClusteringAlgorithm.KMeans
     NUMBER_OF_CLUSTERS = 5
     CLUSTERING_DATASETS = [DataSet.mesa]
@@ -18,3 +20,27 @@ class RunnerParameters(object):
                         FeatureType.nightly_count,
                         FeatureType.nightly_ibi,
                         FeatureType.nightly_ibi_from_ppg]
+    
+    
+    def print_settings():
+        with open(Constants.FIGURE_FILE_PATH.joinpath("settings.txt"), "w") as log_file:
+            for var in RunnerParameters:
+                log_file.write(str(var.name) + " = ")
+                
+                if(type(var.value) is list):
+                    array = var.value
+                    if len(array) == 1:
+                        log_file.write("[" + str(array[0]) + "]")
+                    else:
+                        for i in range(len(array)):
+                            if i == 0:
+                                log_file.write("[\n\t" + str(array[i]) + ", ")
+                            elif i == len(array) - 1:
+                                log_file.write("\n\t" + str(array[i]) + "\n\t]")
+                            else:
+                                log_file.write("\n\t" + str(array[i]) + ", ")
+                            
+                else:
+                    log_file.write(str(var.value))
+                log_file.write("\n\n")
+            
