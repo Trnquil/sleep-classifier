@@ -16,9 +16,9 @@ class ClusterFeatureBuilder(object):
     def build(dataset):
         
         if not RunnerParameters.CLUSTERING_PER_SUBJECT_NORMALIZATION:
-            subject_df = DataFrameLoader.load_feature_dataframe(RunnerParameters.CLUSTERING_FEATURES, dataset)
-            overall_mean = np.mean(subject_df.iloc[:,1:], axis=0)
-            overall_std = np.std(subject_df.iloc[:,1:], axis=0)
+            overall_df = DataFrameLoader.load_feature_dataframe(RunnerParameters.CLUSTERING_FEATURES, dataset)
+            overall_mean = np.mean(overall_df.iloc[:,1:], axis=0)
+            overall_std = np.std(overall_df.iloc[:,1:], axis=0)
         
         subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(FeatureType.epoched, dataset)
         
