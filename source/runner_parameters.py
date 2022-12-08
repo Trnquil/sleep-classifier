@@ -8,6 +8,7 @@ import pathlib
 from pprint import pprint
 
 class RunnerParameters(object):
+    PROCESS_BVP_SEGMENTWISE = False
     CLUSTERING_ALGO = ClusteringAlgorithm.KMeans
     NUMBER_OF_CLUSTERS = 15
     CLUSTERING_DATASETS = [DataSet.mesa]

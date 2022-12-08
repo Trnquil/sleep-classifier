@@ -17,6 +17,7 @@ from source.preprocessing.path_service import PathService
 from source.preprocessing.bvp_service import BvpService
 from source.constants import Constants
 from source.data_services.dataset import DataSet
+from source.runner_parameters import RunnerParameters
 
 
 from multipledispatch import dispatch
@@ -70,7 +71,11 @@ class RawDataProcessor:
                     
                 if(np.any(bvp_collection.data)):
                     PathService.create_cropped_file_path(subject_id, session_id)
-                    ibi_collection_from_ppg = BvpService.get_ibi_from_bvp(bvp_collection)
+                    if RunnerParameters.PROCESS_BVP_SEGMENTWISE:
+                        ibi_collection_from_ppg = BvpService.get_ibi_from_bvp_segmentwise(bvp_collection)
+                    else:
+                        ibi_collection_from_ppg = BvpService.get_ibi_from_bvp(bvp_collection)
+                        
                     DataWriter.write_cropped(ibi_collection_from_ppg, session_id, FeatureType.cropped_ibi_from_ppg)
                     
                 if(np.any(hr_collection.data)):

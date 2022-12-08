@@ -14,7 +14,7 @@ class BvpService(object):
     ACCEPTABLE_DRIFT = 10
     
     @staticmethod
-    def get_ibi_from_bvp(bvp_collection):
+    def get_ibi_from_bvp_segmentwise(bvp_collection):
         
         bvp_values = bvp_collection.values.squeeze()
         bvp_timestamps = bvp_collection.timestamps.squeeze()
@@ -35,7 +35,7 @@ class BvpService(object):
             bvp_collection_cropped = Collection(bvp_collection.subject_id, bvp_data_cropped, bvp_collection.data_frequency)
             
             try:
-                ibi_collection_cropped = BvpService.get_ibi_from_bvp_segment(bvp_collection_cropped)
+                ibi_collection_cropped = BvpService.get_ibi_from_bvp(bvp_collection_cropped)
                 ibi_data_cropped = ibi_collection_cropped.data
                 
                 if not np.any(ibi_data):
@@ -55,7 +55,7 @@ class BvpService(object):
         return ibi_collection
     
     @staticmethod
-    def get_ibi_from_bvp_segment(bvp_collection):
+    def get_ibi_from_bvp(bvp_collection):
         # Filtering the raw bvp signal
         bvp_values = bvp_collection.values.squeeze()
         filtered = BvpService.bvp_filter(bvp_values, bvp_collection.data_frequency)

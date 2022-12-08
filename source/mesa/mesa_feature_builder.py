@@ -37,7 +37,7 @@ class MesaFeatureBuilder(object):
             
             bvp_downsampled_collection = MesaFeatureBuilder.downsample_signal(bvp_collection, 4)
             
-            ibi_collection = BvpService.get_ibi_from_bvp_segment(bvp_downsampled_collection)
+            ibi_collection = BvpService.get_ibi_from_bvp_segmentwise(bvp_downsampled_collection)
             
             
             if activity_count_collection.data[0][0] != -1:
