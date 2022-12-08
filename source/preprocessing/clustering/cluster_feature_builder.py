@@ -42,10 +42,12 @@ class ClusterFeatureBuilder(object):
                             
                             if RunnerParameters.CLUSTERING_PER_SUBJECT_NORMALIZATION:
                                 normalized_session_df.iloc[:,1:] = (normalized_session_df.iloc[:,1:] - subject_mean)/subject_std
-                                normalized_session_df[['count']] = normalized_session_df[['count']] + (subject_mean['count']/subject_std['count'])
+                                if(FeatureType.epoched_count in RunnerParameters.CLUSTERING_FEATURES):
+                                    normalized_session_df[['count']] = normalized_session_df[['count']] + (subject_mean['count']/subject_std['count'])
                             else:
                                 normalized_session_df.iloc[:,1:] = (normalized_session_df.iloc[:,1:] - overall_mean)/overall_std
-                                normalized_session_df[['count']] = normalized_session_df[['count']] + (overall_mean['count']/overall_std['count'])
+                                if(FeatureType.epoched_count in RunnerParameters.CLUSTERING_FEATURES):
+                                    normalized_session_df[['count']] = normalized_session_df[['count']] + (overall_mean['count']/overall_std['count'])
                            
                             PathService.create_clusters_folder_path(subject_id, session_id, dataset)
                             DataWriter.write_cluster(normalized_session_df, subject_id, session_id, FeatureType.cluster_features, dataset)
