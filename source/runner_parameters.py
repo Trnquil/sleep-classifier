@@ -9,9 +9,9 @@ from pprint import pprint
 
 class RunnerParameters(object):
     CLUSTERING_ALGO = ClusteringAlgorithm.KMeans
-    NUMBER_OF_CLUSTERS = 5
+    NUMBER_OF_CLUSTERS = 15
     CLUSTERING_DATASETS = [DataSet.mesa]
-    CLUSTERING_FEATURES = [FeatureType.epoched_ibi_from_ppg, FeatureType.epoched_count]
+    CLUSTERING_FEATURES = [FeatureType.epoched_ibi_from_ppg]
     CLUSTERING_PER_SUBJECT_NORMALIZATION = False  # True: normalize clustering features over subjects, 
                                                   # False: normalize clustering features over all data
                                                   
@@ -28,7 +28,17 @@ class RunnerParameters(object):
     ANALYSIS_FEATURES = [[FeatureType.nightly_cluster],
                          [FeatureType.nightly_cluster, FeatureType.nightly_hr],
                          [FeatureType.nightly_cluster, FeatureType.nightly_normalized_hr],
-                         [FeatureType.nightly_cluster, FeatureType.nightly_ibi, FeatureType.nightly_count]]
+                         [FeatureType.nightly_ibi],
+                         [FeatureType.nightly_ibi_from_ppg],
+                         [FeatureType.nightly_cluster, FeatureType.nightly_ibi, FeatureType.nightly_count],
+                         [FeatureType.nightly_cluster, FeatureType.nightly_normalized_hr, FeatureType.nightly_count],
+                         [FeatureType.nightly_cluster, 
+                                             FeatureType.nightly_hr, 
+                                             FeatureType.nightly_normalized_hr,
+                                             FeatureType.nightly_count,
+                                             FeatureType.nightly_ibi,
+                                             FeatureType.nightly_ibi_from_ppg]
+                         ]
     
         
     def print_settings():
