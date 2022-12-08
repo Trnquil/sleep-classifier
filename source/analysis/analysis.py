@@ -25,6 +25,7 @@ from source.data_services.dataset import DataSet
 from source.analysis.figures.performance_analyzer import PerformanceAnalyzer
 from source.preprocessing.clustering.cluster_feature_service import ClusterFeatureService
 from source.data_services.data_frame_loader import DataFrameLoader
+from source.runner_parameters import RunnerParameters
 
 
 import pandas as pd
@@ -59,7 +60,7 @@ class Analysis(object):
                                   AttributedClassifier(name='SVM',
                                                      classifier=SVC(probability=True))]
     
-        feature_sets = [[FeatureType.nightly_cluster, FeatureType.nightly_hr]]
+        feature_sets = RunnerParameters.ANALYSIS_FEATURES
         
         for attributed_classifier in attributed_classifiers:
             if Constants.VERBOSE:

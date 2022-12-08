@@ -7,13 +7,18 @@ from source.preprocessing.preprocessing import Preprocessing
 from source.analysis.analysis import Analysis
 from source.data_services.data_frame_loader import DataFrameLoader
 from source.exception_logger import ExceptionLogger
+from source.runner_parameters import RunnerParameters
+from source.analysis.setup.clustering_algorithm import ClusteringAlgorithm
+from source.figures_saver import FiguresSaver
+import utils
+
 
 def run():
     
     run_preprocessing()
     
     run_analysis()
-    
+
     
 def run_preprocessing():
     
@@ -42,9 +47,13 @@ def run_analysis():
         
         Analysis.all_figures()
         # Analysis.cluster_analysis()
+        
+        RunnerParameters.print_settings()
+        FiguresSaver.save_figures()
 
         end_time = time.time()
 
         print('Elapsed time to generate figures: ' + str((end_time - start_time) / 60) + ' minutes')
-        
+    
+    
 run()

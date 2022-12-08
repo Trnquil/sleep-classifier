@@ -5,7 +5,7 @@ import re
 class FeatureType(Enum):
     raw_hr = "raw heart rate"
     raw_acc = "raw acceleration"
-    raw_ibi = "raw inter beat interval"
+    raw_ibi = "raw IBI"
     raw_bvp = "raw BVP signal"
     raw_hrv = "raw HRV metrics"
     raw_algo1 = "raw algo 1"
@@ -15,8 +15,8 @@ class FeatureType(Enum):
     
     cropped_count = "cropped count"
     cropped_motion = "cropped motion"
-    cropped_ibi_from_ppg = "cropped inter beat intervals from ppg signal"
-    cropped_ibi = "cropped inter beat intervals"
+    cropped_ibi_from_ppg = "cropped IBI from PPG"
+    cropped_ibi = "cropped IBI"
     cropped_hr = "cropped heart rate"
     cropped_normalized_hr = "cropped normalized hr"
     
@@ -26,23 +26,23 @@ class FeatureType(Enum):
     epoched_hr = "epoched heart rate"
     epoched_normalized_hr = "epoched normalized hr"
     epoched_count = "epoched count"
-    epoched_ibi = "epoched ibi features"
-    epoched_ibi_from_ppg = "epoched ibi features from ppg signal"
+    epoched_ibi = "epoched IBI"
+    epoched_ibi_from_ppg = "epoched IBI from PPG"
     epoched_sleep_label = "epoched sleep label"
     
     cluster = "cluster"
-    cluster_features = "features on which clustering is performed"
+    cluster_features = "cluster features"
     
     nightly = "nightly"
     normalized_nightly = "normalized nightly"
     
-    nightly_cluster = "nightly cluster features"
-    nightly_ibi = "nightly ibi features"
-    nightly_ibi_from_ppg = "nighty ibi features from ppg"
-    nightly_count = "nightly count feature"
-    nightly_sleep_quality = "nightly sleep quality label"
-    nightly_hr = "nightly heart rate feature"
-    nightly_normalized_hr = "nightly normalized heart rate feature"
+    nightly_cluster = "Cluster"
+    nightly_ibi = "IBI"
+    nightly_ibi_from_ppg = "IBI_PPG"
+    nightly_count = "Count"
+    nightly_sleep_quality = "Sleep Quality"
+    nightly_hr = "HR"
+    nightly_normalized_hr = "normalized HR"
     
     sleep_quality = "sleep quality"
     

@@ -58,7 +58,7 @@ class BvpService(object):
     def get_ibi_from_bvp_segment(bvp_collection):
         # Working on BVP values to produce IBI sequence
         bvp_values = bvp_collection.values.squeeze()
-        filtered = BvpService.bvp_filter(bvp_values)
+        filtered = BvpService.bvp_filter(bvp_values, bvp_collection.data_frequency)
         working_data, measures = hp.process(filtered, bvp_collection.data_frequency)
         ibi_values = working_data['RR_list']/1000
         timestamps_ibi = np.cumsum(ibi_values) + bvp_collection.timestamps[0]
@@ -77,10 +77,9 @@ class BvpService(object):
         return ibi_collection
     
     @staticmethod
-    def bvp_filter(signal):
+    def bvp_filter(signal, freq):
         fH = 4
         fL = 0.5
-        freq = 64
         nyquist = freq / 2
         sos = s.cheby2(4, 20, Wn=(fL / nyquist, fH / nyquist), btype='bandpass', output = 'sos')
         filtered = s.sosfiltfilt(sos, signal)

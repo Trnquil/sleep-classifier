@@ -14,7 +14,6 @@ from sklearn.neural_network import MLPClassifier
 from source.analysis.setup.attributed_classifier import AttributedClassifier
 from source.analysis.setup.feature_type import FeatureType
 
-
 def get_project_root() -> Path:
     return Path(__file__).parent.parent
 

@@ -6,23 +6,15 @@ from source.analysis.setup.feature_type import FeatureType
 class FeatureSetService(object):
 
     @staticmethod
-    def get_label(feature_set: [FeatureType]):
-        if set(feature_set) == {FeatureType.nightly_cluster}:
-            return 'Clusters only'
-        if set(feature_set) == {FeatureType.nightly_ibi}:
-            return 'IBI only'
-        if set(feature_set) == {FeatureType.nightly_cluster, FeatureType.nightly_ibi}:
-            return 'Clusters and IBI'
-        if set(feature_set) == {FeatureType.nightly_cluster, FeatureType.nightly_count}:
-            return 'Clusters and Count'
-        if set(feature_set) == {FeatureType.nightly_ibi, FeatureType.nightly_count}:
-            return 'IBI and Count'
-        if set(feature_set) == {FeatureType.nightly_cluster, FeatureType.nightly_ibi, FeatureType.nightly_count}:
-            return 'Clusters, IBI and Count'
-        if set(feature_set) == {FeatureType.nightly_cluster, FeatureType.nightly_hr}:
-            return 'Clusters and HR'
-        else:
-            return 'unknown feature set'
+    def get_label(feature_types):
+        string = ""
+        for i in range(len(feature_types)):
+            if i < len(feature_types) - 1:
+                string = string + str(feature_types[i].value) + ", "
+            else:
+                string = string + "and " + str(feature_types[i].value)
+        return string
+
 
     @staticmethod
     def get_color(feature_set: [FeatureType]):

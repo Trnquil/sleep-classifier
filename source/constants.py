@@ -19,7 +19,7 @@ class Constants(object):
     MESA_FOLDER_NAME = 'mesa'
     USI_FOLDER_NAME = 'usi'
     NIGHTLY_FILE_PATH = utils.get_project_root().joinpath('outputs/nightly features/')
-    FIGURE_FILE_PATH = utils.get_project_root().joinpath('outputs/figures/')
+    FIGURE_FILE_PATH = utils.get_project_root().joinpath('figures/current settings')
     ANALYSIS_FILE_PATH = FIGURE_FILE_PATH.joinpath('performance analysis')
     LOGS_FILE_PATH = utils.get_project_root().joinpath('logs/')
     LOWER_BOUND = -0.2
