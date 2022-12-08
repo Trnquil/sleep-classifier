@@ -1,4 +1,5 @@
 from source.analysis.setup.clustering_algorithm import ClusteringAlgorithm
+from source.analysis.setup.upsampling_technique import UpsamplingTechnique
 from source.data_services.dataset import DataSet
 from source.analysis.setup.feature_type import FeatureType
 from enum import Enum
@@ -7,8 +8,9 @@ import shutil
 import pathlib
 from pprint import pprint
 
+
 class RunnerParameters(object):
-    PROCESS_BVP_SEGMENTWISE = False
+    PROCESS_USI_BVP_SEGMENTWISE = False
     CLUSTERING_ALGO = ClusteringAlgorithm.KMeans
     NUMBER_OF_CLUSTERS = 15
     CLUSTERING_DATASETS = [DataSet.mesa]
@@ -18,7 +20,7 @@ class RunnerParameters(object):
                                                   
     NIGHTLY_CLUSTER_NORMALIZATION = not CLUSTERING_PER_SUBJECT_NORMALIZATION
     USE_NIGHTLY_NORMALIZED = True
-    UPSAMPLE_NIGHTLY = True
+    UPSAMPLING_TECHNIQUE = UpsamplingTechnique.random_duplication
     NIGHTLY_FEATURES = [FeatureType.nightly_cluster, 
                         FeatureType.nightly_hr, 
                         FeatureType.nightly_normalized_hr,

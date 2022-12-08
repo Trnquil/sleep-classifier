@@ -71,7 +71,7 @@ class RawDataProcessor:
                     
                 if(np.any(bvp_collection.data)):
                     PathService.create_cropped_file_path(subject_id, session_id)
-                    if RunnerParameters.PROCESS_BVP_SEGMENTWISE:
+                    if RunnerParameters.PROCESS_USI_BVP_SEGMENTWISE:
                         ibi_collection_from_ppg = BvpService.get_ibi_from_bvp_segmentwise(bvp_collection)
                     else:
                         ibi_collection_from_ppg = BvpService.get_ibi_from_bvp(bvp_collection)
