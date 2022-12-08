@@ -17,17 +17,17 @@ def run():
     
     run_preprocessing()
     
-    run_analysis()
+    # run_analysis()
 
     
 def run_preprocessing():
     
     start_time = time.time()
         
-    # ExceptionLogger.remove_logs()
-    # Preprocessing.build_cropped()
+    ExceptionLogger.remove_logs()
+    Preprocessing.build_cropped()
     
-    # Preprocessing.build_epoched()
+    Preprocessing.build_epoched()
     Preprocessing.build_mesa_epoched()
     
     Preprocessing.build_cluster_features()
@@ -46,7 +46,7 @@ def run_analysis():
         start_time = time.time()
         
         Analysis.all_figures()
-        # Analysis.cluster_analysis()
+        Analysis.cluster_analysis()
         
         RunnerParameters.print_settings()
         FiguresSaver.save_figures()

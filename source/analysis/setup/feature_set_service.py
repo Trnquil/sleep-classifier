@@ -8,11 +8,16 @@ class FeatureSetService(object):
     @staticmethod
     def get_label(feature_types):
         string = ""
+        if len(feature_types) == 1:
+            return str(feature_types[0].value)
+        
         for i in range(len(feature_types)):
-            if i < len(feature_types) - 1:
+            if i < len(feature_types) - 2:
                 string = string + str(feature_types[i].value) + ", "
+            elif i == len(feature_types) - 2:
+                string = string + str(feature_types[i].value)
             else:
-                string = string + "and " + str(feature_types[i].value)
+                string = string + " and " + str(feature_types[i].value)
         return string
 
 
@@ -26,9 +31,9 @@ class FeatureSetService(object):
             return sns.xkcd_rgb["medium green"]
         if set(feature_set) == {FeatureType.nightly_cluster, FeatureType.nightly_ibi, FeatureType.nightly_count}:
             return sns.xkcd_rgb["medium pink"]
-        if set(feature_set) == {FeatureType.nightly_cluster, FeatureType.nightly_count}:
+        if set(feature_set) == {FeatureType.nightly_cluster, FeatureType.nightly_ibi_from_ppg}:
             return sns.xkcd_rgb["plum"]
-        if set(feature_set) == {FeatureType.nightly_ibi, FeatureType.nightly_count}:
+        if set(feature_set) == {FeatureType.nightly_cluster, FeatureType.nightly_ibi}:
             return sns.xkcd_rgb["greyish"]
         if set(feature_set) == {FeatureType.nightly_cluster, FeatureType.nightly_hr}:
             return sns.xkcd_rgb["green"]

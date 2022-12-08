@@ -18,7 +18,7 @@ from source.constants import Constants
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
-from source.analysis.clustering.clustering_analyzer import ClusterAnalyzer
+from source.analysis.clustering.cluster_analyzer import ClusterAnalyzer
 from source.data_services.data_service import DataService
 from source.data_services.data_loader import DataLoader
 from source.data_services.dataset import DataSet
@@ -38,10 +38,7 @@ class Analysis(object):
         
         print("Running Cluster Analysis...")
         
-        feature_types = ClusterFeatureService.cluster_feature_types
-        feature_types.append(FeatureType.epoched_cluster)
-        feature_types.append(FeatureType.epoched_sleep_label)
-        
+        feature_types = [FeatureType.cluster_features, FeatureType.cluster, FeatureType.epoched_sleep_label]
         full_df = DataFrameLoader.load_feature_dataframe(feature_types, DataSet.mesa)
         
         features_df = full_df.drop(columns=["epoch_timestamp", "cluster", "sleep_label"])
@@ -68,7 +65,6 @@ class Analysis(object):
             classifier_summary = SleepWakeClassifierSummaryBuilder.build_leave_one_out(attributed_classifier, feature_sets)
     
             PerformanceAnalyzer.make_overall_performance_summary(classifier_summary)
-            PerformancePlotBuilder.make_histogram_with_thresholds(classifier_summary)
             PerformancePlotBuilder.make_single_threshold_histograms(classifier_summary)
             CurvePlotBuilder.make_roc_sw(classifier_summary)
             CurvePlotBuilder.make_pr_sw(classifier_summary)

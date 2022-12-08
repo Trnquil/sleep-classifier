@@ -127,7 +127,7 @@ class PerformancePlotBuilder(object):
             plt.tight_layout()
             file_save_name = str(
                 Constants.ANALYSIS_FILE_PATH) + '/' + classifier_summary.attributed_classifier.name + '_' + \
-                             description + '_single_threshold_histograms.png'
+                             FeatureSetService.get_label(feature_set) + '_single_threshold_histograms.png'
 
             plt.savefig(file_save_name, dpi=300)
             plt.close()
