@@ -56,9 +56,10 @@ class BvpService(object):
     
     @staticmethod
     def get_ibi_from_bvp_segment(bvp_collection):
-        # Working on BVP values to produce IBI sequence
+        # Filtering the raw bvp signal
         bvp_values = bvp_collection.values.squeeze()
         filtered = BvpService.bvp_filter(bvp_values, bvp_collection.data_frequency)
+        
         working_data, measures = hp.process(filtered, bvp_collection.data_frequency)
         ibi_values = working_data['RR_list']/1000
         timestamps_ibi = np.cumsum(ibi_values) + bvp_collection.timestamps[0]

@@ -97,7 +97,7 @@ class PathService(object):
         session_dirs = [str(subject_dir.joinpath(session_dirs[i])) + "/" + PathService.filenames_usi[feature_type.name] 
          for i in range(len(session_dirs))]
      
-        return session_dirs[5:8]
+        return session_dirs
     
     @staticmethod
     def get_raw_file_path_mss(subject_id, feature_type):

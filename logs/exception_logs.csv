@@ -40,3 +40,14 @@ S08,SS_02,Nightly,usi,<class 'KeyboardInterrupt'>
 S08,SS_03,Nightly,usi,<class 'KeyboardInterrupt'>
 S10,SS_07,Nightly,usi,<class 'KeyboardInterrupt'>
 S09,SS_05,Nightly,usi,<class 'KeyboardInterrupt'>
+0001,SS_01,Epoched,mesa,<class 'bdb.BdbQuit'>
+0002,SS_01,Epoched,mesa,<class 'bdb.BdbQuit'>
+0001,SS_01,Epoched,mesa,<class 'bdb.BdbQuit'>
+0001,SS_01,Epoched,mesa,<class 'bdb.BdbQuit'>
+0002,SS_01,Epoched,mesa,<class 'bdb.BdbQuit'>
+0006,SS_01,Epoched,mesa,<class 'bdb.BdbQuit'>
+0010,SS_01,Epoched,mesa,<class 'bdb.BdbQuit'>
+0012,SS_01,Epoched,mesa,<class 'bdb.BdbQuit'>
+0001,SS_01,Epoched,mesa,<class 'bdb.BdbQuit'>
+0001,SS_01,Epoched,mesa,<class 'bdb.BdbQuit'>
+0002,SS_01,Epoched,mesa,<class 'bdb.BdbQuit'>

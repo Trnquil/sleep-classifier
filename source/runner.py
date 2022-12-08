@@ -24,10 +24,10 @@ def run_preprocessing():
     
     start_time = time.time()
         
-    ExceptionLogger.remove_logs()
-    Preprocessing.build_cropped()
+    # ExceptionLogger.remove_logs()
+    # Preprocessing.build_cropped()
     
-    Preprocessing.build_epoched()
+    # Preprocessing.build_epoched()
     Preprocessing.build_mesa_epoched()
     
     Preprocessing.build_cluster_features()

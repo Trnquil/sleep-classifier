@@ -34,9 +34,10 @@ class MesaFeatureBuilder(object):
             heart_rate_collection = MesaHeartRateService.load_raw(subject_id)
             activity_count_collection = MesaActigraphyService.load_raw(subject_id)
             bvp_collection = MesaPPGService.load_raw(subject_id)
+            
             bvp_downsampled_collection = MesaFeatureBuilder.downsample_signal(bvp_collection, 4)
             
-            ibi_collection = BvpService.get_ibi_from_bvp(bvp_downsampled_collection)
+            ibi_collection = BvpService.get_ibi_from_bvp_segment(bvp_downsampled_collection)
             
             
             if activity_count_collection.data[0][0] != -1:
