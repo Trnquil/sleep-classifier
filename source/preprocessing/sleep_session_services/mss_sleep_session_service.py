@@ -29,7 +29,9 @@ class MssSleepSessionService(object):
         sleepsessions = []
         
         for session_id in wake_sleep_dict.keys():
-            try:    
+            try:
+                if wake_sleep_dict[session_id][0] is None or wake_sleep_dict[session_id][1] is None:
+                    continue
                 if(wake_sleep_dict[session_id][0] < wake_sleep_dict[session_id][1]):
                     start_timestamp = wake_sleep_dict[session_id][0]
                     end_timestamp = wake_sleep_dict[session_id][1]
@@ -42,7 +44,7 @@ class MssSleepSessionService(object):
                 start_timestamp_centered = start_timestamp - Constants.TIME_CENTER_MSS
                 sleepquality = MssSleepSessionService.get_sleepquality(subject_id, end_timestamp)
                 
-                sleep_session = SleepSession(session_id, sleepquality, start_timestamp, end_timestamp)
+                sleep_session = SleepSession(session_id, sleepquality, start_timestamp_centered, end_timestamp_centered)
                 sleepsessions.append(sleep_session)
                 
             except:

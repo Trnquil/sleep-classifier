@@ -164,6 +164,7 @@ class NightlyFeatureBuilder(object):
     
     @staticmethod
     def upsample_smote(nightly_dataframe):
+        nightly_dataframe = nightly_dataframe.dropna()
         height = nightly_dataframe.shape[0]
         X = nightly_dataframe.drop(columns=['sleep_quality'])
         y = nightly_dataframe['sleep_quality']

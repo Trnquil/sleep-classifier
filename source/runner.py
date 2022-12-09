@@ -25,9 +25,12 @@ def run_preprocessing():
     start_time = time.time()
         
     ExceptionLogger.remove_logs()
-    Preprocessing.build_cropped()
     
-    Preprocessing.build_epoched()
+    # Preprocessing.build_usi_cropped()
+    # Preprocessing.build_mss_cropped()
+    
+    # Preprocessing.build_usi_epoched()
+    Preprocessing.build_mss_epoched()
     Preprocessing.build_mesa_epoched()
     
     Preprocessing.build_cluster_features()

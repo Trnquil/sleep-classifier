@@ -49,24 +49,31 @@ class PathService(object):
         }
         
     @staticmethod
-    def get_cropped_file_path(subject_id, session_id, feature_type):
-        directory_path_string = str(subject_id) + "/" + str(session_id)
+    def get_cropped_file_path(subject_id, session_id, feature_type, dataset):
+        if(dataset.name == DataSet.usi.name):
+            directory_path_string = Constants.USI_FOLDER_NAME + "/" + str(subject_id) + "/" + str(session_id)
+        elif(dataset.name == DataSet.mss.name):
+            directory_path_string = Constants.MSS_FOLDER_NAME + "/" + str(subject_id) + "/" + str(session_id)
         
         return str(Constants.CROPPED_FILE_PATH.joinpath(directory_path_string)) + "/" + PathService.filenames[feature_type.name]
     
     @staticmethod
-    def create_cropped_file_path(subject_id, session_id):
-        directory_path_string = str(subject_id) + "/" + str(session_id)
+    def create_cropped_file_path(subject_id, session_id, dataset):
+        if(dataset.name == DataSet.usi.name):
+            directory_path = Constants.CROPPED_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
+        elif(dataset.name == DataSet.mss.name):
+            directory_path = Constants.CROPPED_FILE_PATH.joinpath(Constants.MSS_FOLDER_NAME)
         
-        subject_folder_path = Constants.CROPPED_FILE_PATH.joinpath(str(subject_id))
-        # creating a subject folder if it doesn't already exist
-        if not os.path.exists(subject_folder_path):
-            os.mkdir(subject_folder_path)
-            
-        sleep_session_path = Constants().CROPPED_FILE_PATH.joinpath(directory_path_string)
-        # creating a sleep session folder if it doesn't already exist
-        if not os.path.exists(sleep_session_path):
-            os.mkdir(sleep_session_path)
+        if not (os.path.exists(directory_path)):
+            os.mkdir(directory_path)
+        
+        subject_path = directory_path.joinpath(subject_id)
+        if not (os.path.exists(subject_path)):
+            os.mkdir(subject_path)
+        
+        session_path = subject_path.joinpath(session_id)
+        if not (os.path.exists(session_path)):
+            os.mkdir(session_path)
 
     
     @staticmethod
@@ -114,6 +121,8 @@ class PathService(object):
             directory_path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
         elif(dataset.name == DataSet.mesa.name):
             directory_path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.MESA_FOLDER_NAME)
+        elif(dataset.name == DataSet.mss.name):
+            directory_path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.MSS_FOLDER_NAME)
             
         full_path = directory_path.joinpath(subject_id + "/" + str(session_id))
         return str(full_path) + "/" + PathService.filenames[feature_type.name]
@@ -134,6 +143,8 @@ class PathService(object):
             directory_path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
         elif(dataset.name == DataSet.mesa.name):
             directory_path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.MESA_FOLDER_NAME)
+        elif(dataset.name == DataSet.mss.name):
+            directory_path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.MSS_FOLDER_NAME)
         
         if not (os.path.exists(directory_path)):
             os.mkdir(directory_path)

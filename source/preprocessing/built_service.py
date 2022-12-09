@@ -31,7 +31,7 @@ class BuiltService(object):
             return subject_to_session_dictionary  
         
         
-        elif(dataset.name == DataSet.mesa.name):
+        elif(dataset.name == DataSet.mesa.name or dataset.name == DataSet.mss.name):
             for subject_id in os.listdir(path):
                     if '.' not in subject_id:
                         session_dirs = os.listdir(path.joinpath(subject_id))
@@ -67,6 +67,8 @@ class BuiltService(object):
     def get_path(feature_type, dataset):
         # Getting the correct path for every featuretype and dataset
         # For nightly, we assume that the same subjects and sessions will have been built than for epoched
+        
+        # epoched and nightly features
         if (feature_type.name == FeatureType.epoched.name or feature_type.name in FeatureType.get_epoched_names() 
         or feature_type.name == FeatureType.nightly.name or feature_type.name in FeatureType.get_nightly_names()
         or feature_type.name == FeatureType.sleep_quality.name):
@@ -74,11 +76,20 @@ class BuiltService(object):
                 path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
             elif(dataset.name == DataSet.mesa.name):
                 path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.MESA_FOLDER_NAME)
+           
+        # cropped features
         elif feature_type.name == FeatureType.cropped.name or feature_type.name in FeatureType.get_cropped_names():
-            path = Constants.CROPPED_FILE_PATH
+            if(dataset.name == DataSet.usi.name):
+                path = Constants.CROPPED_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
+            elif(dataset.name == DataSet.mss.name):
+                path = Constants.CROPPED_FILE_PATH.joinpath(Constants.MSS_FOLDER_NAME)
+            
+        # clusters
         elif feature_type.name == FeatureType.cluster.name or feature_type.name == FeatureType.cluster_features.name:
             if(dataset.name == DataSet.usi.name):
                 path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
             elif(dataset.name == DataSet.mesa.name):
                 path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.MESA_FOLDER_NAME)
         return path
+    
+    

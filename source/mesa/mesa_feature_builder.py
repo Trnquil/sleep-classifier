@@ -13,7 +13,7 @@ from source.preprocessing.feature_service import FeatureService
 from source.preprocessing.epoch import Epoch
 from source.preprocessing.activity_count.activity_count_feature_service import ActivityCountFeatureService
 from source.preprocessing.collection_service import CollectionService
-from source.preprocessing.epoched_feature_builder import EpochedFeatureBuilder
+from source.preprocessing.usi_epoched_feature_builder import UsiEpochedFeatureBuilder
 from source.exception_logger import ExceptionLogger
 from source.mesa.mesa_ppg_service import MesaPPGService
 from source.preprocessing.ibi.ibi_feature_service import IbiFeatureService

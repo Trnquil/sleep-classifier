@@ -7,8 +7,8 @@ import numpy as np
 class DataWriter(object):
     
     @staticmethod
-    def write_cropped(collection, session_id, feature_type):
-        output_path = PathService.get_cropped_file_path(collection.subject_id, session_id, feature_type)
+    def write_cropped(collection, session_id, feature_type, dataset):
+        output_path = PathService.get_cropped_file_path(collection.subject_id, session_id, feature_type, dataset)
         np.savetxt(output_path, collection.data, fmt='%f')
     
     @staticmethod

@@ -121,8 +121,8 @@ class DataLoader(object):
         return (feature_height, feature_width)
     
     @staticmethod
-    def load_cropped(subject_id, session_id, feature_type):
-        file_path = PathService.get_cropped_file_path(subject_id, session_id, feature_type)
+    def load_cropped(subject_id, session_id, feature_type, dataset):
+        file_path = PathService.get_cropped_file_path(subject_id, session_id, feature_type, dataset)
         values = pd.read_csv(str(file_path), delimiter=" ").values
         return Collection(subject_id=subject_id, data=values, data_frequency=0)
     

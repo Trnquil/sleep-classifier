@@ -17,6 +17,7 @@ class Constants(object):
     EPOCHED_FILE_PATH = utils.get_project_root().joinpath('outputs/epoched features/')
     CLUSTERS_FILE_PATH = utils.get_project_root().joinpath('outputs/clusters/')
     MESA_FOLDER_NAME = 'mesa'
+    MSS_FOLDER_NAME = 'mss'
     USI_FOLDER_NAME = 'usi'
     NIGHTLY_FILE_PATH = utils.get_project_root().joinpath('outputs/nightly features/')
     FIGURE_FILE_PATH = utils.get_project_root().joinpath('figures/current settings')
