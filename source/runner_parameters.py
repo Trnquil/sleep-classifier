@@ -12,7 +12,7 @@ from pprint import pprint
 class RunnerParameters(object):
     PROCESS_USI_BVP_SEGMENTWISE = False
     CLUSTERING_ALGO = ClusteringAlgorithm.KMeans
-    NUMBER_OF_CLUSTERS = 15
+    NUMBER_OF_CLUSTERS = 5
     CLUSTERING_DATASETS = [DataSet.mesa]
     CLUSTERING_FEATURES = [FeatureType.epoched_ibi_from_ppg]
     CLUSTERING_PER_SUBJECT_NORMALIZATION = False  # True: normalize clustering features over subjects, 
@@ -20,8 +20,8 @@ class RunnerParameters(object):
                                                   
     NIGHTLY_CLUSTER_NORMALIZATION = not CLUSTERING_PER_SUBJECT_NORMALIZATION
     USE_NIGHTLY_NORMALIZED = True
-    UPSAMPLING_TECHNIQUE = UpsamplingTechnique.random_duplication
-    NIGHTLY_FEATURES = [FeatureType.nightly_cluster, 
+    UPSAMPLING_TECHNIQUE = UpsamplingTechnique.SMOTE
+    NIGHTLY_FEATURES = [FeatureType.nightly_cluster,
                         FeatureType.nightly_hr, 
                         FeatureType.nightly_normalized_hr,
                         FeatureType.nightly_count,

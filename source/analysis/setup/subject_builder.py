@@ -10,7 +10,7 @@ from source.constants import Constants
 from source.preprocessing.activity_count.activity_count_feature_service import ActivityCountFeatureService
 from source.preprocessing.heart_rate.heart_rate_feature_service import HeartRateFeatureService
 from source.preprocessing.time.time_based_feature_service import TimeBasedFeatureService
-from source.analysis.setup.sleep_session_service import SleepSessionService
+from source.preprocessing.sleep_session_services.sleep_session_service import SleepSessionService
 from source.data_services.data_service import DataService
 from source.preprocessing.built_service import BuiltService
 from source.data_services.dataset import DataSet

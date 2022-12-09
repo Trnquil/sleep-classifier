@@ -22,8 +22,6 @@ class ClusterBuilder(object):
     def build(subject_id, session_id, dataset, clustering_model):
         
         try:
-    
-            # TODO: I need to implement this in a cleaner way as to avoid making mistakes
             features_df = DataFrameLoader.load_feature_dataframe(subject_id, session_id, [FeatureType.cluster_features], dataset)
             data = features_df.to_numpy().squeeze()
             features = data[:,1:].squeeze()

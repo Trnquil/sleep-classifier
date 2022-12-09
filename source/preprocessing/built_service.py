@@ -2,7 +2,7 @@ import os
 
 
 from source.constants import Constants
-from source.analysis.setup.sleep_session_service import SleepSessionService
+from source.preprocessing.sleep_session_services.sleep_session_service import SleepSessionService
 from source.analysis.setup.feature_type import FeatureType
 from source.data_services.dataset import DataSet
 from source.preprocessing.path_service import PathService
@@ -22,7 +22,7 @@ class BuiltService(object):
             for subject_id in Constants.SUBJECT_IDS:
                     if subject_id in os.listdir(path):
                         session_dirs = os.listdir(path.joinpath(subject_id))
-                        for session_id in SleepSessionService.get_starttime_ordered_ids(subject_id):
+                        for session_id in SleepSessionService.get_starttime_ordered_ids(subject_id, dataset):
                             if session_id in session_dirs:
                                 if subject_id not in subject_to_session_dictionary.keys():
                                     subject_to_session_dictionary[subject_id] = []

@@ -3,7 +3,7 @@ sys.path.insert(1, '../..') # tells system where project root is
 
 from source.analysis.setup.feature_type import FeatureType
 from source.preprocessing.built_service import BuiltService
-from source.analysis.setup.sleep_session_service import SleepSessionService
+from source.preprocessing.sleep_session_services.usi_sleep_session_service import UsiSleepSessionService
 from source.data_services.data_loader import DataLoader
 from source.constants import Constants
 from source.data_services.dataset import DataSet
@@ -30,7 +30,7 @@ class DataService(object):
             feature = DataLoader.load_nightly(subject_id, session_id, feature_type).to_numpy()
             
         elif FeatureType.sleep_quality.name == feature_type.name and dataset.name == DataSet.usi.name:
-            feature = np.array([SleepSessionService.load_sleepquality(subject_id, session_id)]).reshape(1,1)
+            feature = np.array([UsiSleepSessionService.load_sleepquality(subject_id, session_id)]).reshape(1,1)
             
         else:
             raise Exception("FeatureType unknown to DataService")

@@ -7,7 +7,7 @@ from source import utils
 from source.preprocessing.activity_count.activity_count_service import ActivityCountService
 from source.preprocessing.epoch import Epoch
 from source.preprocessing.interval import Interval
-from source.analysis.setup.sleep_session_service import SleepSessionService
+from source.preprocessing.sleep_session_services.sleep_session_service import SleepSessionService
 from source.analysis.setup.feature_type import FeatureType
 from source.preprocessing.collection import Collection
 from source.data_services.data_loader import DataLoader
@@ -18,10 +18,9 @@ from source.preprocessing.bvp_service import BvpService
 from source.constants import Constants
 from source.data_services.dataset import DataSet
 from source.runner_parameters import RunnerParameters
-
+from source.exception_logger import ExceptionLogger
 
 from multipledispatch import dispatch
-from source.exception_logger import ExceptionLogger
 
 
 class RawDataProcessor:
