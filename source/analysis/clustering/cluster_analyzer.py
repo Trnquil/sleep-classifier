@@ -8,6 +8,8 @@ from source.data_services.data_loader import DataLoader
 from source.analysis.setup.feature_type import FeatureType
 from source.preprocessing.clustering.cluster_feature_service import ClusterFeatureService
 from source.constants import Constants
+from source.figures_saver import FiguresSaver
+
 from sklearn import metrics
 from sklearn.metrics import plot_confusion_matrix
 
@@ -31,7 +33,7 @@ class ClusterAnalyzer(object):
         confusion_matrix = metrics.confusion_matrix(labels.to_numpy(), clusters.to_numpy())
         cm_display = metrics.ConfusionMatrixDisplay(confusion_matrix = confusion_matrix)
         cm_display.plot()
-        plt.savefig(str(Constants.FIGURE_FILE_PATH) + "/cluster analysis/confusion_matrix")
+        plt.savefig(str(FiguresSaver.get_figures_path(DataSet.usi)) + "/cluster analysis/confusion_matrix")
         plt.clf()
 
     @staticmethod
@@ -47,7 +49,7 @@ class ClusterAnalyzer(object):
         cluster_means_df = pd.DataFrame(cluster_means_dict).transpose()
         feature_count = features.shape[1]
         cluster_means_df.plot(kind='bar', subplots=True, figsize = (5,3*feature_count))
-        plt.savefig(str(Constants.FIGURE_FILE_PATH) + "/cluster analysis/means")
+        plt.savefig(str(FiguresSaver.get_figures_path(DataSet.usi)) + "/cluster analysis/means")
         plt.clf()
     
     @staticmethod
@@ -56,7 +58,7 @@ class ClusterAnalyzer(object):
         embedding = reducer.fit_transform(features)
         plt.scatter(embedding[:, 0], embedding[:, 1], c=clusters.values, cmap='Spectral', s=8)
         plt.plot()
-        plt.savefig(str(Constants.FIGURE_FILE_PATH) + "/cluster analysis/umap")
+        plt.savefig(FiguresSaver.get_figures_path(DataSet.usi) + "/cluster analysis/umap")
         plt.clf()
     
         

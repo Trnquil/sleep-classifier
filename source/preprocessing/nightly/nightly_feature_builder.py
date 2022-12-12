@@ -7,7 +7,6 @@ from source.preprocessing.clustering.cluster_nightly_feature_service import Clus
 from source.preprocessing.ibi.ibi_nightly_feature_service import IbiNightlyFeatureService
 from source.data_services.data_service import DataService
 from source.analysis.setup.feature_type import FeatureType
-from source.analysis.setup.subject_builder import SubjectBuilder
 from source.data_services.data_service import DataService
 from source.preprocessing.built_service import BuiltService
 from source.data_services.data_writer import DataWriter
@@ -31,22 +30,19 @@ from tqdm import tqdm
 class NightlyFeatureBuilder(object):
 
     @staticmethod
-    def build():
-
-        if Constants.VERBOSE:
-            print("Building nightly features...")
+    def build(dataset):
             
         subject_index = 0
         
-        subject_ids = BuiltService.get_built_subject_ids(FeatureType.epoched, DataSet.usi)
+        subject_ids = BuiltService.get_built_subject_ids(FeatureType.epoched, dataset)
         
         with tqdm(subject_ids, colour='green', unit='subject') as t:
             for subject_id in t:
-                t.set_description("Building USI Nightly Features")
+                t.set_description("Building " + dataset.name +" Nightly Features")
                 
                 session_index = 0
-                for session_id in BuiltService.get_built_sleepsession_ids(subject_id, FeatureType.epoched, DataSet.usi):
-                    feature_dict = NightlyFeatureBuilder.build_feature_dict(subject_id, session_id)
+                for session_id in BuiltService.get_built_sleepsession_ids(subject_id, FeatureType.epoched, dataset):
+                    feature_dict = NightlyFeatureBuilder.build_feature_dict(subject_id, session_id, dataset)
                     
                     feature_row = pd.DataFrame(feature_dict)
                     
@@ -87,15 +83,15 @@ class NightlyFeatureBuilder(object):
             nightly_dataframe = NightlyFeatureBuilder.upsample_smote(nightly_dataframe)
             nightly_dataframe_normalized = NightlyFeatureBuilder.upsample_smote(nightly_dataframe_normalized)
 
-        DataWriter.write_nightly(nightly_dataframe, FeatureType.nightly)
-        DataWriter.write_nightly(nightly_dataframe_normalized, FeatureType.normalized_nightly)
+        DataWriter.write_nightly(nightly_dataframe, FeatureType.nightly, dataset)
+        DataWriter.write_nightly(nightly_dataframe_normalized, FeatureType.normalized_nightly, dataset)
 
         
         
     @staticmethod
-    def build_feature_dict(subject_id, session_id):
+    def build_feature_dict(subject_id, session_id, dataset):
         try:
-            clusters = DataFrameLoader.load_feature_dataframe(subject_id, session_id, [FeatureType.cluster], DataSet.usi)
+            clusters = DataFrameLoader.load_feature_dataframe(subject_id, session_id, [FeatureType.cluster], dataset)
             cluster_timestamps = clusters['epoch_timestamp']
             
             subject_session_dict = {'subject_id': subject_id, 'session_id': session_id}
@@ -103,33 +99,32 @@ class NightlyFeatureBuilder(object):
             merged_dict = subject_session_dict
             
             if(FeatureType.nightly_cluster.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
-                cluster_features_dict = ClusterNightlyFeatureService.build_feature_dict(subject_id, session_id)
+                cluster_features_dict = ClusterNightlyFeatureService.build_feature_dict(subject_id, session_id, dataset)
                 merged_dict = merged_dict | cluster_features_dict
-                
-            if(FeatureType.nightly_cluster.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
-                cluster_features_dict = ClusterNightlyFeatureService.build_feature_dict(subject_id, session_id)
-                merged_dict = merged_dict | cluster_features_dict
-                
-            if(FeatureType.nightly_hr.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
-                hr_features_dict = HeartRateNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, cluster_timestamps)
-                merged_dict = merged_dict | hr_features_dict
                                          
             if(FeatureType.nightly_count.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
-                count_features_dict = ActivityCountNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, cluster_timestamps)
+                count_features_dict = ActivityCountNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, dataset, cluster_timestamps)
                 merged_dict = merged_dict | count_features_dict
                 
             if(FeatureType.nightly_ibi.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
-                ibi_features_dict = IbiNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, cluster_timestamps)
+                ibi_features_dict = IbiNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, dataset, cluster_timestamps)
                 merged_dict = merged_dict | ibi_features_dict
                 
-            if(FeatureType.nightly_ibi_from_ppg.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
-                ibi_features_from_ppg_dict = IbiNightlyFeatureService.build_feature_dict_from_epoched_ppg(subject_id, session_id, cluster_timestamps)
-                merged_dict = merged_dict | ibi_features_from_ppg_dict
 
-
+                
+            # These Features only exist for USI
+            if(dataset.name == DataSet.usi.name):
+                
+                if(FeatureType.nightly_hr.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
+                    hr_features_dict = HeartRateNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, dataset, cluster_timestamps)
+                    merged_dict = merged_dict | hr_features_dict
+                    
+                if(FeatureType.nightly_ibi_from_ppg.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
+                    ibi_features_from_ppg_dict = IbiNightlyFeatureService.build_feature_dict_from_epoched_ppg(subject_id, session_id, dataset, cluster_timestamps)
+                    merged_dict = merged_dict | ibi_features_from_ppg_dict
             
-            sleepquality_avg = np.mean(DataService.load_feature_raw(subject_id, FeatureType.sleep_quality, DataSet.usi))
-            sleepquality = DataService.load_feature_raw(subject_id, session_id, FeatureType.sleep_quality, DataSet.usi)
+            sleepquality_avg = np.mean(DataService.load_feature_raw(subject_id, FeatureType.sleep_quality, dataset))
+            sleepquality = DataService.load_feature_raw(subject_id, session_id, FeatureType.sleep_quality, dataset)
             sleepquality = 0 if sleepquality < sleepquality_avg else 1
             sleepquality_dict = {'sleep_quality': sleepquality}
             
@@ -138,8 +133,9 @@ class NightlyFeatureBuilder(object):
             
             return merged_dict
         except:
-            ExceptionLogger.append_exception(subject_id, session_id, "Nightly", DataSet.usi.name, sys.exc_info()[0])
-            print("Error: ", sys.exc_info()[0], " while building nightly features for " + str(subject_id), ", session " + str(session_id))
+            ExceptionLogger.append_exception(subject_id, session_id, "Nightly", dataset.name, sys.exc_info()[0])
+            print("Skip subject ", str(subject_id), ", session ", str(session_id), " due to ", sys.exc_info()[0])
+
         
     @staticmethod 
     def upsample_random_duplication(nightly_dataframe):

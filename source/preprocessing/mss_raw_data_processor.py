@@ -1,5 +1,5 @@
 from source import utils
-from source.data_services.mss_loader import MSSLoader
+from source.data_services.mss_loader import MssLoader
 from source.preprocessing.sleep_session_services.sleep_session_service import SleepSessionService
 from source.preprocessing.path_service import PathService
 from source.preprocessing.activity_count.activity_count_service import ActivityCountService
@@ -19,8 +19,8 @@ class MssRawDataProcessor(object):
         try:
         
             '''Loading Data'''
-            motion_collection = MSSLoader.load_raw_motion(subject_id)
-            ibi_collection = MSSLoader.load_raw_ibi(subject_id)
+            motion_collection = MssLoader.load_raw_motion(subject_id)
+            ibi_collection = MssLoader.load_raw_ibi(subject_id)
             
             
             '''splitting each collection into sleepsessions'''
@@ -37,22 +37,20 @@ class MssRawDataProcessor(object):
                     ibi_collection = ibi_sleepsession_tuples[i][1]
                                     
                     if(np.any(motion_collection.data)):
-                        PathService.create_cropped_file_path(subject_id, session_id, DataSet.mss)
                         count_collection = ActivityCountService.build_activity_counts_without_matlab(subject_id, motion_collection.data)
                         DataWriter.write_cropped(count_collection, session_id, FeatureType.cropped_count, DataSet.mss)
                         DataWriter.write_cropped(motion_collection, session_id, FeatureType.cropped_motion, DataSet.mss)
                         
                     if(np.any(ibi_collection.data)):
-                        PathService.create_cropped_file_path(subject_id, session_id, DataSet.mss)
                         DataWriter.write_cropped(ibi_collection, session_id, FeatureType.cropped_ibi, DataSet.mss)
                         
                         
                 except:
                     ExceptionLogger.append_exception(subject_id, session_id, "Cropped", DataSet.mss.name, sys.exc_info()[0])
-                    print("Error: ", sys.exc_info()[0], " while building MSS cropped features for " + str(subject_id), ", session " + str(session_id))
+                    print("Skip subject ", str(subject_id), ", session ", str(session_id), " due to ", sys.exc_info()[0])
         except:
             ExceptionLogger.append_exception(subject_id, "N/A", "Cropped", DataSet.mss.name, sys.exc_info()[0])
-            print("Error: ", sys.exc_info()[0], " while building MSS cropped features for " + str(subject_id))
+            print("Skip subject ", str(subject_id), " due to ", sys.exc_info()[0])
             
     @staticmethod
     def get_user_ids():

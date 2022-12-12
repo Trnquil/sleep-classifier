@@ -71,20 +71,19 @@ class MesaFeatureBuilder(object):
                 hr_features = HeartRateFeatureService.build_from_collection(heart_rate_collection, valid_epochs)
                 
 
-                ibi_features_from_ppg = IbiFeatureService.build_from_collection(ibi_collection, valid_epochs)
+                ibi_features_from_ppg = IbiFeatureService.build_from_collection(ibi_collection, DataSet.mesa, valid_epochs)
                 
     
                 # Writing features to disk
     
                 # Create needed folders if they don't already exist
-                PathService.create_epoched_folder_path(subject_id, 'SS_01', DataSet.mesa)
                 DataWriter.write_epoched(hr_features, subject_id, 'SS_01', FeatureType.epoched_hr, DataSet.mesa)
                 DataWriter.write_epoched(ibi_features_from_ppg, subject_id, 'SS_01', FeatureType.epoched_ibi_from_ppg, DataSet.mesa)
                 DataWriter.write_epoched(count_feature, subject_id, 'SS_01', FeatureType.epoched_count, DataSet.mesa)
                 DataWriter.write_epoched(labeled_sleep, subject_id, 'SS_01', FeatureType.epoched_sleep_label, DataSet.mesa)
         except:
             ExceptionLogger.append_exception(subject_id, "SS_01", "Epoched", DataSet.mesa.name, sys.exc_info()[0])
-            print("Error: ", sys.exc_info()[0], " while building MESA feature for subject " + str(subject_id))
+            print("Skip subject ", str(subject_id), " due to ", sys.exc_info()[0])
     
     @staticmethod
     def downsample_signal(signal_collection, factor):

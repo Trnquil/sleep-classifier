@@ -3,7 +3,7 @@ from sklearn.model_selection import GridSearchCV
 
 class ParameterSearch(object):
     parameter_dictionary = {
-        'Nearest Neighbors': {'n_neighbors': [3,5,7, 9, 11, 13 ,15], 'weights': ['auto','distance']},
+        'Nearest Neighbors': {'n_neighbors': [3,5,7, 9, 11, 13 ,15], 'weights': ['distance']},
         'SVM': {'gamma': [0.001, 0.01 ,0.1, 1, 10, 100, 1000] , 'C': [0.001, 0.01, 0.1, 1, 10, 100]},
         'Logistic Regression': {'C': [0.001, 0.01, 0.1, 1, 10, 100], 'penalty': ['l1', 'l2']},
         'Random Forest': {'max_depth': [2, 5, 10, 50, 100, 1000]},

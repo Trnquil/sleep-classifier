@@ -26,14 +26,12 @@ class UsiEpochedFeatureBuilder(object):
             
             ibi_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_ibi, DataSet.usi)
             valid_epochs_ibi = RawDataProcessor.get_valid_epochs([ibi_collection])
-            ibi_features = IbiFeatureService.build_from_collection(ibi_collection, valid_epochs_ibi) 
+            ibi_features = IbiFeatureService.build_from_collection(ibi_collection, DataSet.usi, valid_epochs_ibi) 
             
             ibi_collection_from_ppg = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_ibi_from_ppg, DataSet.usi)
             valid_epochs_ibi_from_ppg = RawDataProcessor.get_valid_epochs([ibi_collection_from_ppg])
-            ibi_features_from_ppg = IbiFeatureService.build_from_collection(ibi_collection_from_ppg, valid_epochs_ibi_from_ppg)    
-            
-            # Create needed folders if they don't already exist
-            PathService.create_epoched_folder_path(subject_id, session_id, DataSet.usi)
+            ibi_features_from_ppg = IbiFeatureService.build_from_collection(ibi_collection_from_ppg, DataSet.usi, valid_epochs_ibi_from_ppg)    
+
             
             DataWriter.write_epoched(count_feature, subject_id, session_id, FeatureType.epoched_count, DataSet.usi)
             DataWriter.write_epoched(hr_feature, subject_id, session_id, FeatureType.epoched_hr, DataSet.usi)
@@ -41,5 +39,5 @@ class UsiEpochedFeatureBuilder(object):
             DataWriter.write_epoched(ibi_features_from_ppg, subject_id, session_id, FeatureType.epoched_ibi_from_ppg, DataSet.usi)
         except:
             ExceptionLogger.append_exception(subject_id, session_id, "Epoched", DataSet.usi.name, sys.exc_info()[0])
-            print("Error: ", sys.exc_info()[0], " while building USI epoched features for " + str(subject_id), ", session " + str(session_id))
+            print("Skip subject ", str(subject_id), ", session ", str(session_id), " due to ", sys.exc_info()[0])
         

@@ -8,7 +8,7 @@ import numpy as np
 class PerformanceAnalyzer(object):
     
     @staticmethod
-    def make_overall_performance_summary(classifier_summary):
+    def make_overall_performance_summary(classifier_summary, figures_path):
         
         performance_dictionary = classifier_summary.get_unified_performance_dictionary()
         for feature_set in performance_dictionary:
@@ -41,7 +41,7 @@ class PerformanceAnalyzer(object):
             
             for bars in ax.containers:
                 ax.bar_label(bars, padding=3)
-            plt.savefig(str(Constants.ANALYSIS_FILE_PATH) + '/' + classifier_summary.attributed_classifier.name + '_' \
+            plt.savefig(str(figures_path) + '/' + classifier_summary.attributed_classifier.name + '_' \
                               + FeatureSetService.get_label(feature_set) + '_overall_performance.png')
             
             plt.clf()

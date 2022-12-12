@@ -1,28 +1,20 @@
 import numpy as np
 import pandas as pd
-import os
 
-from source import utils
-from source.constants import Constants
-from source.preprocessing.path_service import PathService
-from source.data_services.data_service import DataService
-from source.analysis.setup.feature_type import FeatureType
 from source.preprocessing.feature_service import FeatureService
-from source.data_services.data_loader import DataLoader
-from source.preprocessing.collection import Collection
 from source.data_services.dataset import DataSet
-from source.preprocessing.raw_data_processor import RawDataProcessor
 
-from multipledispatch import dispatch
 from hrvanalysis import *
 
 class IbiFeatureService(object):
     # This controlls what ratio of ibi data there must be inside of a 10-minute window to be accepted 
     DataRatio = 0.95
+    # This controls how many datapoints are atleast needed to calculate HRV features
+    MinimumValueCount = 256
 
 
     @staticmethod
-    def build_from_collection(ibi_collection, valid_epochs):
+    def build_from_collection(ibi_collection, dataset, valid_epochs):
         ibi_features = []
 
         i = 0
@@ -38,12 +30,19 @@ class IbiFeatureService(object):
             ibi_values_delta = np.sum(ibi_values_in_range)
             ibi_timestamps_delta = ibi_timestamps_in_range[-1] - ibi_timestamps_in_range[0]
             
-
-            if(ibi_values_delta/ibi_timestamps_delta < IbiFeatureService.DataRatio):
+            # We cannot apply this criterion on MSS Data,because MSS IBI is derived from heart rate values
+            if(not dataset.name == DataSet.mss.name):
+                if(ibi_values_delta/ibi_timestamps_delta < IbiFeatureService.DataRatio):
+                    continue
+                
+            # Applying another criterion
+            if(len(ibi_values_in_range) < IbiFeatureService.MinimumValueCount):
                 continue
             
             # We need the IBI values in milliseconds, not seconds
             ibi_values = ibi_values_in_range*1000
+            
+
             feature_dict = IbiFeatureService.get_features(ibi_values)
                 
             epoch_timestamp_dict = {'epoch_timestamp': epoch.timestamp}

@@ -47,50 +47,6 @@ class PathService(object):
         FeatureType.raw_algo1.name: "algo1.csv",
         FeatureType.raw_algo2.name: "algo2.csv"
         }
-        
-    @staticmethod
-    def get_cropped_file_path(subject_id, session_id, feature_type, dataset):
-        if(dataset.name == DataSet.usi.name):
-            directory_path_string = Constants.USI_FOLDER_NAME + "/" + str(subject_id) + "/" + str(session_id)
-        elif(dataset.name == DataSet.mss.name):
-            directory_path_string = Constants.MSS_FOLDER_NAME + "/" + str(subject_id) + "/" + str(session_id)
-        
-        return str(Constants.CROPPED_FILE_PATH.joinpath(directory_path_string)) + "/" + PathService.filenames[feature_type.name]
-    
-    @staticmethod
-    def create_cropped_file_path(subject_id, session_id, dataset):
-        if(dataset.name == DataSet.usi.name):
-            directory_path = Constants.CROPPED_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
-        elif(dataset.name == DataSet.mss.name):
-            directory_path = Constants.CROPPED_FILE_PATH.joinpath(Constants.MSS_FOLDER_NAME)
-        
-        if not (os.path.exists(directory_path)):
-            os.mkdir(directory_path)
-        
-        subject_path = directory_path.joinpath(subject_id)
-        if not (os.path.exists(subject_path)):
-            os.mkdir(subject_path)
-        
-        session_path = subject_path.joinpath(session_id)
-        if not (os.path.exists(session_path)):
-            os.mkdir(session_path)
-
-    
-    @staticmethod
-    def get_nightly_feature_file_path():
-        if RunnerParameters.USE_NIGHTLY_NORMALIZED:
-            path = str(Constants.NIGHTLY_FILE_PATH) + "/" + PathService.filenames[FeatureType.normalized_nightly.name]
-        else:
-            path = str(Constants.NIGHTLY_FILE_PATH) + "/" + PathService.filenames[FeatureType.nightly.name]
-        return path
-    
-    @staticmethod
-    def get_nightly_file_path(feature_type):
-        if feature_type.name == FeatureType.normalized_nightly.name:
-            path = str(Constants.NIGHTLY_FILE_PATH) + "/" + PathService.filenames[FeatureType.normalized_nightly.name]
-        elif feature_type.name == FeatureType.nightly.name:
-            path = str(Constants.NIGHTLY_FILE_PATH) + "/" + PathService.filenames[FeatureType.nightly.name]
-        return path
     
     @staticmethod
     def get_raw_file_paths_usi(subject_id, feature_type):
@@ -114,28 +70,32 @@ class PathService(object):
      
         return file_dir
         
-    
     @staticmethod
-    def get_epoched_file_path(subject_id, session_id, feature_type, dataset):
+    def create_cropped_folder_path(subject_id, session_id, dataset):
         if(dataset.name == DataSet.usi.name):
-            directory_path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
-        elif(dataset.name == DataSet.mesa.name):
-            directory_path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.MESA_FOLDER_NAME)
+            directory_path = Constants.CROPPED_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
         elif(dataset.name == DataSet.mss.name):
-            directory_path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.MSS_FOLDER_NAME)
+            directory_path = Constants.CROPPED_FILE_PATH.joinpath(Constants.MSS_FOLDER_NAME)
+        
+        if not (os.path.exists(directory_path)):
+            os.mkdir(directory_path)
+        
+        subject_path = directory_path.joinpath(subject_id)
+        if not (os.path.exists(subject_path)):
+            os.mkdir(subject_path)
+        
+        session_path = subject_path.joinpath(session_id)
+        if not (os.path.exists(session_path)):
+            os.mkdir(session_path)
             
-        full_path = directory_path.joinpath(subject_id + "/" + str(session_id))
-        return str(full_path) + "/" + PathService.filenames[feature_type.name]
-    
     @staticmethod
-    def get_clusters_file_path(subject_id, session_id, feature_type, dataset):
+    def get_cropped_file_path(subject_id, session_id, feature_type, dataset):
         if(dataset.name == DataSet.usi.name):
-            directory_path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
-        elif(dataset.name == DataSet.mesa.name):
-            directory_path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.MESA_FOLDER_NAME)
-            
-        full_path = directory_path.joinpath(subject_id + "/" + str(session_id))
-        return str(full_path) + "/" + PathService.filenames[feature_type.name]
+            directory_path_string = Constants.USI_FOLDER_NAME + "/" + str(subject_id) + "/" + str(session_id)
+        elif(dataset.name == DataSet.mss.name):
+            directory_path_string = Constants.MSS_FOLDER_NAME + "/" + str(subject_id) + "/" + str(session_id)
+        
+        return str(Constants.CROPPED_FILE_PATH.joinpath(directory_path_string)) + "/" + PathService.filenames[feature_type.name]
     
     @staticmethod
     def create_epoched_folder_path(subject_id, session_id, dataset):
@@ -158,11 +118,25 @@ class PathService(object):
             os.mkdir(session_path)
             
     @staticmethod
+    def get_epoched_file_path(subject_id, session_id, feature_type, dataset):
+        if(dataset.name == DataSet.usi.name):
+            directory_path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
+        elif(dataset.name == DataSet.mesa.name):
+            directory_path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.MESA_FOLDER_NAME)
+        elif(dataset.name == DataSet.mss.name):
+            directory_path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.MSS_FOLDER_NAME)
+            
+        full_path = directory_path.joinpath(subject_id + "/" + str(session_id))
+        return str(full_path) + "/" + PathService.filenames[feature_type.name]
+    
+    @staticmethod
     def create_clusters_folder_path(subject_id, session_id, dataset):
         if(dataset.name == DataSet.usi.name):
             directory_path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
         elif(dataset.name == DataSet.mesa.name):
             directory_path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.MESA_FOLDER_NAME)
+        elif(dataset.name == DataSet.mss.name):
+            directory_path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.MSS_FOLDER_NAME)
         
         if not (os.path.exists(directory_path)):
             os.mkdir(directory_path)
@@ -174,6 +148,51 @@ class PathService(object):
         session_path = subject_path.joinpath(session_id)
         if not (os.path.exists(session_path)):
             os.mkdir(session_path)
+    
+    @staticmethod
+    def get_clusters_file_path(subject_id, session_id, feature_type, dataset):
+        if(dataset.name == DataSet.usi.name):
+            directory_path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
+        elif(dataset.name == DataSet.mesa.name):
+            directory_path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.MESA_FOLDER_NAME)
+        elif(dataset.name == DataSet.mss.name):
+            directory_path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.MSS_FOLDER_NAME)
+            
+        full_path = directory_path.joinpath(subject_id + "/" + str(session_id))
+        return str(full_path) + "/" + PathService.filenames[feature_type.name]
+       
+    @staticmethod
+    def create_nightly_folder_path(dataset):
+        directory_path = PathService.get_nightly_folder_path(dataset)
+        
+        if not (os.path.exists(directory_path)):
+            os.mkdir(directory_path)
+            
+    @staticmethod
+    def get_nightly_folder_path(dataset):
+        if(dataset.name == DataSet.usi.name):
+            directory_path = Constants.NIGHTLY_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
+        elif(dataset.name == DataSet.mss.name):
+            directory_path = Constants.NIGHTLY_FILE_PATH.joinpath(Constants.MSS_FOLDER_NAME)
+        return directory_path
+    
+    @staticmethod
+    def get_nightly_feature_file_path(dataset):
+        folder_path = PathService.get_nightly_folder_path(dataset)
+        if RunnerParameters.USE_NIGHTLY_NORMALIZED:
+            path = folder_path.joinpath(PathService.filenames[FeatureType.normalized_nightly.name])
+        else:
+            path = folder_path.joinpath(PathService.filenames[FeatureType.nightly.name])
+        return path
+    
+    @staticmethod
+    def get_nightly_file_path(feature_type, dataset):
+        folder_path = PathService.get_nightly_folder_path(dataset)
+        if feature_type.name == FeatureType.normalized_nightly.name:
+            path = folder_path.joinpath(PathService.filenames[FeatureType.normalized_nightly.name])
+        elif feature_type.name == FeatureType.nightly.name:
+            path = folder_path.joinpath(PathService.filenames[FeatureType.nightly.name]) 
+        return path         
     
     @staticmethod
     def get_model_path():

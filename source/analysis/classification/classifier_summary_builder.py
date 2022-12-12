@@ -28,10 +28,10 @@ class SleepWakeClassifierSummaryBuilder(object):
 
     @staticmethod
     def build_leave_one_out(attributed_classifier: AttributedClassifier,
-                            feature_sets: [[FeatureType]]) -> ClassifierSummary:
-        subject_ids = BuiltService.get_built_subject_ids(FeatureType.epoched, DataSet.usi)
-        subject_dictionary = SubjectBuilder.get_subject_dictionary()
-
+                            feature_sets: [[FeatureType]],
+                            dataset: DataSet) -> ClassifierSummary:
+        subject_ids = BuiltService.get_built_subject_ids(FeatureType.nightly, dataset)
+        subject_dictionary = SubjectBuilder.get_subject_dictionary(dataset)
         data_splits = TrainTestSplitter.leave_one_out(subject_ids)
 
         return SleepWakeClassifierSummaryBuilder.run_feature_sets(data_splits, subject_dictionary,

@@ -76,12 +76,16 @@ class Preprocessing(object):
 
             
     @staticmethod    
-    def build_cluster_features():
+    def build_cluster_features_usi():
             ClusterFeatureBuilder.build(DataSet.usi)
     
     @staticmethod   
     def build_cluster_features_mesa():
             ClusterFeatureBuilder.build(DataSet.mesa)
+    
+    @staticmethod   
+    def build_cluster_features_mss():
+            ClusterFeatureBuilder.build(DataSet.mss)
     
     @staticmethod   
     def build_clusters():
@@ -101,10 +105,22 @@ class Preprocessing(object):
                 t.set_description("Building MESA Clusters")
                 for session in subject_sleepsession_dictionary[subject]:
                     ClusterBuilder.build(subject, session, DataSet.mesa, clustering_model)
+                    
+        subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(FeatureType.epoched, DataSet.mss)
+        with tqdm(subject_sleepsession_dictionary.keys(), unit='subject', colour='green') as t:
+            for subject in t:
+                t.set_description("Building MSS Clusters")
+                for session in subject_sleepsession_dictionary[subject]:
+                    ClusterBuilder.build(subject, session, DataSet.mss, clustering_model)
                 
     @staticmethod   
-    def build_nightly():
-        NightlyFeatureBuilder.build()
+    def build_nightly_usi():
+        NightlyFeatureBuilder.build(DataSet.usi)
+    
+    @staticmethod   
+    def build_nightly_mss():
+        NightlyFeatureBuilder.build(DataSet.mss)
+    
     
 # for subject_id in subject_ids:
     # DataPlotBuilder.make_data_demo(subject_id, False)

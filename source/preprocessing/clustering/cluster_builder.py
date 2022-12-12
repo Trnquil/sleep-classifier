@@ -6,6 +6,7 @@ from source.data_services.dataset import DataSet
 from source.preprocessing.clustering.cluster_feature_service import ClusterFeatureService
 from source.data_services.data_frame_loader import DataFrameLoader
 from source.exception_logger import ExceptionLogger
+from source.figures_saver import FiguresSaver
 
 from matplotlib import cm
 import numpy as np
@@ -34,14 +35,14 @@ class ClusterBuilder(object):
             
             if Constants.MAKE_PLOTS_PREPROCESSING and dataset.name == DataSet.usi.name:
                 plt.scatter((timestamps - timestamps[0])/3600, clusters, color=cm.cool(30*np.abs(clusters)), edgecolors='none')
-                plt.savefig(str(Constants.FIGURE_FILE_PATH) + "/clusters/" + subject_id + "_" + session_id)
+                plt.savefig(str(FiguresSaver.get_figures_path(dataset)) + "/clusters/" + subject_id + "_" + session_id)
                 plt.clf()
                 
                 if(features.shape[0] > 20):
                     reducer = umap.UMAP()
                     embedding = reducer.fit_transform(features)
                     plt.scatter(embedding[:, 0], embedding[:, 1], c=clusters, cmap='Spectral', s=8)
-                    plt.savefig(str(Constants.FIGURE_FILE_PATH) + "/umap/" + subject_id + "_" + session_id)
+                    plt.savefig(str(FiguresSaver.get_figures_path(dataset)) + "/umap/" + subject_id + "_" + session_id)
                     plt.clf()
                 
                 
@@ -53,7 +54,7 @@ class ClusterBuilder(object):
             DataWriter.write_cluster(clusters_df, subject_id, session_id, FeatureType.cluster, dataset)
         except:
             ExceptionLogger.append_exception(subject_id, session_id, "Nightly", dataset.name, sys.exc_info()[0])
-            print("Error: ", sys.exc_info()[0], " while building clusters for subject " + str(subject_id), ", session " + str(session_id))
+            print("Skip subject ", str(subject_id), ", session ", str(session_id), " due to ", sys.exc_info()[0])
 
 
         

@@ -15,26 +15,25 @@ from source.data_services.data_service import DataService
 from source.preprocessing.built_service import BuiltService
 from source.data_services.dataset import DataSet
 
-
 class SubjectBuilder(object):
     
 
     @staticmethod
-    def get_subject_dictionary():
+    def get_subject_dictionary(dataset):
         subject_dictionary = {}
-        all_subject_ids = BuiltService.get_built_subject_ids(FeatureType.epoched, DataSet.usi)
+        all_subject_ids = BuiltService.get_built_subject_ids(FeatureType.nightly, dataset)
         for subject_id in all_subject_ids:
-            subject_dictionary[subject_id] = SubjectBuilder.build(subject_id)
+            subject_dictionary[subject_id] = SubjectBuilder.build(subject_id, dataset)
 
         return subject_dictionary
 
     @staticmethod
-    def build(subject_id):
+    def build(subject_id, dataset):
         
         feature_dictionary = {}
         
         for feature_type in FeatureType.get_nightly_featuretypes():
-            feature = DataService.load_feature_raw(subject_id, feature_type, DataSet.usi)
+            feature = DataService.load_feature_raw(subject_id, feature_type, dataset)
             feature_dictionary[feature_type.name] = feature
             
 

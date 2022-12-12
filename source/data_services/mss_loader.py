@@ -8,7 +8,7 @@ import os
 import pandas as pd
 import numpy as np
 
-class MSSLoader(object):
+class MssLoader(object):
     
     HR_QUALITY_MIN = 85
     
@@ -38,8 +38,8 @@ class MSSLoader(object):
         raw_path = PathService.get_raw_file_path_mss(subject_id, FeatureType.raw_hrv)
           
         feature_array = pd.read_csv(str(raw_path))
-        feature_array = feature_array[MSSLoader.MSS_feature_dict.keys()]
-        feature_array.columns = MSSLoader.MSS_feature_dict.values()
+        feature_array = feature_array[MssLoader.MSS_feature_dict.keys()]
+        feature_array.columns = MssLoader.MSS_feature_dict.values()
         
         feature_array['epoch_timestamp'] = (feature_array['epoch_timestamp']/1000 - Constants.TIME_CENTER_MSS).astype(int)
         return feature_array
@@ -63,7 +63,7 @@ class MSSLoader(object):
         feature_array = pd.read_csv(str(raw_path))
         
         # Throwing away data with low quality
-        feature_array = feature_array[(feature_array['hrQuality'] > MSSLoader.HR_QUALITY_MIN)]
+        feature_array = feature_array[(feature_array['hrQuality'] > MssLoader.HR_QUALITY_MIN)]
         feature_array = feature_array[['timestamp', 'hr']]
         feature_array['timestamp'] = feature_array['timestamp'] - Constants.TIME_CENTER_MSS
         feature_array['hr'] = 60/feature_array['hr']

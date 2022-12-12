@@ -59,17 +59,14 @@ class RawDataProcessor:
                 normalized_hr_collection = normalized_hr_sleepsession_tuples[i][1]
                                 
                 if(np.any(motion_collection.data)):
-                    PathService.create_cropped_file_path(subject_id, session_id, DataSet.usi)
                     count_collection = ActivityCountService.build_activity_counts_without_matlab(subject_id, motion_collection.data)
                     DataWriter.write_cropped(count_collection, session_id, FeatureType.cropped_count, DataSet.usi)
                     DataWriter.write_cropped(motion_collection, session_id, FeatureType.cropped_motion, DataSet.usi)
                     
                 if(np.any(ibi_collection.data)):
-                    PathService.create_cropped_file_path(subject_id, session_id, DataSet.usi)
                     DataWriter.write_cropped(ibi_collection, session_id, FeatureType.cropped_ibi, DataSet.usi)
                     
                 if(np.any(bvp_collection.data)):
-                    PathService.create_cropped_file_path(subject_id, session_id, DataSet.usi)
                     if RunnerParameters.PROCESS_USI_BVP_SEGMENTWISE:
                         ibi_collection_from_ppg = BvpService.get_ibi_from_bvp_segmentwise(bvp_collection)
                     else:
@@ -78,16 +75,14 @@ class RawDataProcessor:
                     DataWriter.write_cropped(ibi_collection_from_ppg, session_id, FeatureType.cropped_ibi_from_ppg, DataSet.usi)
                     
                 if(np.any(hr_collection.data)):
-                    PathService.create_cropped_file_path(subject_id, session_id, DataSet.usi)
                     DataWriter.write_cropped(hr_collection, session_id, FeatureType.cropped_hr, DataSet.usi)
                     
                 if(np.any(normalized_hr_collection.data)):
-                    PathService.create_cropped_file_path(subject_id, session_id, DataSet.usi)
                     DataWriter.write_cropped(normalized_hr_collection, session_id, FeatureType.cropped_normalized_hr, DataSet.usi)
                     
             except:
                 ExceptionLogger.append_exception(subject_id, session_id, "Cropped", DataSet.usi.name, sys.exc_info()[0])
-                print("Error: ", sys.exc_info()[0], " while building USI cropped features for " + str(subject_id), ", session " + str(session_id))
+                print("Skip subject ", str(subject_id), ", session ", str(session_id), " due to ", sys.exc_info()[0])
     
     @staticmethod 
     def normalize(collection):

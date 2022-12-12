@@ -26,6 +26,7 @@ from source.analysis.figures.performance_analyzer import PerformanceAnalyzer
 from source.preprocessing.clustering.cluster_feature_service import ClusterFeatureService
 from source.data_services.data_frame_loader import DataFrameLoader
 from source.runner_parameters import RunnerParameters
+from source.figures_saver import FiguresSaver
 
 
 import pandas as pd
@@ -49,7 +50,7 @@ class Analysis(object):
         
     
     @staticmethod
-    def all_figures():
+    def all_figures(dataset):
         attributed_classifiers = [AttributedClassifier(name='Nearest Neighbors',
                                                      classifier=KNeighborsClassifier()),
                                   AttributedClassifier(name='Random Forest',
@@ -57,18 +58,22 @@ class Analysis(object):
                                   AttributedClassifier(name='SVM',
                                                      classifier=SVC(probability=True))]
     
-        feature_sets = RunnerParameters.ANALYSIS_FEATURES
+        if(dataset.name == DataSet.usi.name):
+            feature_sets = RunnerParameters.ANALYSIS_FEATURES_USI
+        elif(dataset.name == DataSet.mss.name):
+            feature_sets = RunnerParameters.ANALYSIS_FEATURES_MSS
         
         for attributed_classifier in attributed_classifiers:
             if Constants.VERBOSE:
                 print('Running ' + attributed_classifier.name + '...')
-            classifier_summary = SleepWakeClassifierSummaryBuilder.build_leave_one_out(attributed_classifier, feature_sets)
-    
-            PerformanceAnalyzer.make_overall_performance_summary(classifier_summary)
-            PerformancePlotBuilder.make_single_threshold_histograms(classifier_summary)
-            CurvePlotBuilder.make_roc_sw(classifier_summary)
-            CurvePlotBuilder.make_pr_sw(classifier_summary)
-            TableBuilder.print_table_sw(classifier_summary)
+            classifier_summary = SleepWakeClassifierSummaryBuilder.build_leave_one_out(attributed_classifier, feature_sets, dataset)
+            
+            figures_path = FiguresSaver.get_figures_path(dataset).joinpath("performance analysis")
+                
+            PerformanceAnalyzer.make_overall_performance_summary(classifier_summary, figures_path)
+            PerformancePlotBuilder.make_single_threshold_histograms(classifier_summary, figures_path)
+            CurvePlotBuilder.make_roc_sw(classifier_summary, figures_path)
+            CurvePlotBuilder.make_pr_sw(classifier_summary, figures_path)
         
     @staticmethod 
     def figures_leave_one_out_sleep_wake_performance():

@@ -12,9 +12,9 @@ import pandas as pd
 class ActivityCountNightlyFeatureService(object):
     
     @staticmethod
-    def build_feature_dict_from_epoched(subject_id, session_id, cluster_timestamps):
+    def build_feature_dict_from_epoched(subject_id, session_id, dataset, cluster_timestamps):
         
-        count_feature = DataLoader.load_epoched(subject_id, session_id, FeatureType.epoched_count, DataSet.usi)
+        count_feature = DataLoader.load_epoched(subject_id, session_id, FeatureType.epoched_count, dataset)
         count_feature = pd.merge(cluster_timestamps, count_feature, how="inner", on=["epoch_timestamp"])
         count_feature = count_feature.to_numpy()
         

@@ -155,15 +155,15 @@ class DataLoader(object):
     
     @staticmethod
     @dispatch()
-    def load_nightly():
-        nightly_feature_path = PathService.get_nightly_feature_file_path()
+    def load_nightly(dataset):
+        nightly_feature_path = PathService.get_nightly_feature_file_path(dataset)
         nightly_feature_dataframe = pd.read_csv(str(nightly_feature_path))
         return nightly_feature_dataframe
     
     @staticmethod
-    @dispatch(str, str, object)
-    def load_nightly(subject_id, session_id, feature_type):
-        nightly_feature_path = PathService.get_nightly_feature_file_path()
+    @dispatch(str, str, object, object)
+    def load_nightly(subject_id, session_id, feature_type, dataset):
+        nightly_feature_path = PathService.get_nightly_feature_file_path(dataset)
         nightly_feature_dataframe = pd.read_csv(str(nightly_feature_path))
     
         

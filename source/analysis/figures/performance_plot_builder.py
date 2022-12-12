@@ -13,7 +13,7 @@ from source.constants import Constants
 
 class PerformancePlotBuilder(object):
     @staticmethod
-    def make_histogram_with_thresholds(classifier_summary: ClassifierSummary):
+    def make_histogram_with_thresholds(classifier_summary: ClassifierSummary, figures_path):
 
         for feature_set in classifier_summary.performance_dictionary:
             raw_performances = classifier_summary.performance_dictionary[feature_set]
@@ -58,7 +58,7 @@ class PerformancePlotBuilder(object):
 
                 row_count = row_count + 1
 
-            file_save_name = str(Constants.ANALYSIS_FILE_PATH) + '/' + classifier_summary.attributed_classifier.name + '_' \
+            file_save_name = str(figures_path) + '/' + classifier_summary.attributed_classifier.name + '_' \
                              + FeatureSetService.get_label(feature_set) + '_histograms_with_thresholds.png'
 
             plt.tight_layout()
@@ -82,7 +82,7 @@ class PerformancePlotBuilder(object):
             new_image.save(file_save_name)
 
     @staticmethod
-    def make_single_threshold_histograms(classifier_summary: ClassifierSummary, description=''):
+    def make_single_threshold_histograms(classifier_summary: ClassifierSummary, figures_path, description=''):
         font_name = "Arial"
         font_size = 14
 
@@ -125,15 +125,14 @@ class PerformancePlotBuilder(object):
             ax[1, 1].set_xlabel('Fraction high Q correct (sensitivity)', fontsize=font_size, fontname=font_name)
             ax[1, 1].set_xlim((0, 1))
             plt.tight_layout()
-            file_save_name = str(
-                Constants.ANALYSIS_FILE_PATH) + '/' + classifier_summary.attributed_classifier.name + '_' + \
+            file_save_name = str(figures_path) + '/' + classifier_summary.attributed_classifier.name + '_' + \
                              FeatureSetService.get_label(feature_set) + '_single_threshold_histograms.png'
 
             plt.savefig(file_save_name, dpi=300)
             plt.close()
 
     @staticmethod
-    def make_bland_altman(classifier_summary: ClassifierSummary, description=''):
+    def make_bland_altman(classifier_summary: ClassifierSummary, figures_path, description=''):
         fig, ax = plt.subplots(nrows=3, ncols=2, figsize=(8, 8))
 
         wake_threshold = Constants.WAKE_THRESHOLD
@@ -214,7 +213,7 @@ class PerformancePlotBuilder(object):
 
         plt.tight_layout()
         file_save_name = str(
-            Constants.ANALYSIS_FILE_PATH) + '/' + classifier_summary.attributed_classifier.name + '_' + \
+            figures_path) + '/' + classifier_summary.attributed_classifier.name + '_' + \
                          description + '_bland_altman.png'
 
         plt.savefig(file_save_name, dpi=300)

@@ -13,12 +13,17 @@ from source.data_services.dataset import DataSet
 class SleepSessionService(object):
       
     @staticmethod
+    def load_sleepquality(subject_id, session_id, dataset):
+        if(dataset.name == DataSet.usi.name):
+            sleepquality = UsiSleepSessionService.load_sleepquality(subject_id, session_id)
+        elif(dataset.name == DataSet.mss.name):
+            sleepquality = MssSleepSessionService.load_sleepquality(subject_id, session_id)
+        return sleepquality
+    
+    @staticmethod
     def get_starttime_ordered_ids(subject_id, dataset):
         if(dataset.name == DataSet.usi.name):
             session_ids = [sleepsession.session_id for sleepsession in UsiSleepSessionService.load(subject_id)]
-        elif(dataset.name == DataSet.mss.name):
-            pass
-            # TODO: Implement for MSS DataSet
         return session_ids
         
 

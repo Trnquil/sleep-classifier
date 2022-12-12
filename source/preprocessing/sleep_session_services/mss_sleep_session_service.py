@@ -21,6 +21,24 @@ class MssSleepSessionService(object):
                                                  str(subject_id) + "/morningsurvey.csv")
     
     @staticmethod
+    def load_sleepquality(subject_id, session_id):
+        wake_sleep_file = open(MssSleepSessionService.get_file_path())
+        wake_sleep_dict = json.load(wake_sleep_file)
+        wake_sleep_dict = wake_sleep_dict[subject_id]
+        
+        # We check which timestamp is lower and set it to start_timestamp and the other to end_timestamp
+        if(wake_sleep_dict[session_id][0] < wake_sleep_dict[session_id][1]):
+            start_timestamp = wake_sleep_dict[session_id][0]
+            end_timestamp = wake_sleep_dict[session_id][1]
+        else:
+            start_timestamp = wake_sleep_dict[session_id][1]
+            end_timestamp = wake_sleep_dict[session_id][0]
+            
+        sleepquality = MssSleepSessionService.get_sleepquality(subject_id, end_timestamp)
+        return int(sleepquality)
+        
+        
+    @staticmethod
     def load(subject_id):
         wake_sleep_file = open(MssSleepSessionService.get_file_path())
         wake_sleep_dict = json.load(wake_sleep_file)
@@ -30,8 +48,10 @@ class MssSleepSessionService(object):
         
         for session_id in wake_sleep_dict.keys():
             try:
+                # If the timestamps don't exist, we continue with the next session
                 if wake_sleep_dict[session_id][0] is None or wake_sleep_dict[session_id][1] is None:
                     continue
+                # We check which timestamp is lower and set it to start_timestamp and the other to end_timestamp
                 if(wake_sleep_dict[session_id][0] < wake_sleep_dict[session_id][1]):
                     start_timestamp = wake_sleep_dict[session_id][0]
                     end_timestamp = wake_sleep_dict[session_id][1]
@@ -49,7 +69,7 @@ class MssSleepSessionService(object):
                 
             except:
                 ExceptionLogger.append_exception(subject_id, session_id, "MSS SleepSession", DataSet.mss.name, sys.exc_info()[0])
-                print("Error: ", sys.exc_info()[0], " while fetching MSS sleep session for subject " + str(subject_id))
+                print("Skip subject ", str(subject_id), " due to ", sys.exc_info()[0])
                 
         return sleepsessions
                 

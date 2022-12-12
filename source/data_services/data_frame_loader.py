@@ -60,8 +60,8 @@ class DataFrameLoader(object):
                 
                 current_height += feature_height
             except:
-                ExceptionLogger.append_exception(subject_id, session_id, str(feature_types), dataset.name, sys.exc_info()[0])
-                print("Error: ", sys.exc_info()[0], " loading from DataFrameLoader for  " + str(subject_id) + ", session " + str(session_id))
+                ExceptionLogger.append_exception(subject_id, session_id, "DataLoader", dataset.name, sys.exc_info()[0])
+                print("Skip subject ", str(subject_id), ", session ", str(session_id), " due to ", sys.exc_info()[0])
         
         stacked_feature_df.columns = columns
         return stacked_feature_df
@@ -88,8 +88,9 @@ class DataFrameLoader(object):
                 
                 current_height += feature_height
             except:
-                ExceptionLogger.append_exception(subject_id, 'N/A', str(feature_types), dataset.name, sys.exc_info()[0])
-                print("Error: ", sys.exc_info()[0], " loading from DataFrameLoader for  " + str(subject_id))
+                ExceptionLogger.append_exception(subject_id, 'N/A', "DataLoader", dataset.name, sys.exc_info()[0])
+                print("Skip subject ", str(subject_id), " due to ", sys.exc_info()[0])
+
                 
         stacked_feature_df.columns = columns
         return stacked_feature_df

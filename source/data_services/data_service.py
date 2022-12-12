@@ -3,7 +3,7 @@ sys.path.insert(1, '../..') # tells system where project root is
 
 from source.analysis.setup.feature_type import FeatureType
 from source.preprocessing.built_service import BuiltService
-from source.preprocessing.sleep_session_services.usi_sleep_session_service import UsiSleepSessionService
+from source.preprocessing.sleep_session_services.sleep_session_service import SleepSessionService
 from source.data_services.data_loader import DataLoader
 from source.constants import Constants
 from source.data_services.dataset import DataSet
@@ -26,11 +26,11 @@ class DataService(object):
         elif feature_type.name == FeatureType.cluster.name or feature_type.name == FeatureType.cluster_features.name: 
             feature = DataLoader.load_cluster(subject_id, session_id, feature_type, dataset).values
             
-        elif feature_type.name in FeatureType.get_nightly_names() and dataset.name == DataSet.usi.name: 
-            feature = DataLoader.load_nightly(subject_id, session_id, feature_type).to_numpy()
+        elif feature_type.name in FeatureType.get_nightly_names(): 
+            feature = DataLoader.load_nightly(subject_id, session_id, feature_type, dataset).to_numpy()
             
-        elif FeatureType.sleep_quality.name == feature_type.name and dataset.name == DataSet.usi.name:
-            feature = np.array([UsiSleepSessionService.load_sleepquality(subject_id, session_id)]).reshape(1,1)
+        elif FeatureType.sleep_quality.name == feature_type.name:
+            feature = np.array([SleepSessionService.load_sleepquality(subject_id, session_id, dataset)]).reshape(1,1)
             
         else:
             raise Exception("FeatureType unknown to DataService")
@@ -38,7 +38,7 @@ class DataService(object):
     
     @staticmethod
     @dispatch(str, object, object)
-    def load_feature_raw(subject_id, feature_type, dataset): 
+    def load_feature_raw(subject_id, feature_type, dataset):
         session_ids = BuiltService.get_built_sleepsession_ids(subject_id, feature_type, dataset)
 
             
