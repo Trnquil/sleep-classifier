@@ -14,8 +14,10 @@ class TrainTestSplitter(object):
         for index in range(len(subject_ids)):
             training_set = subject_ids.copy()
             testing_set = [training_set.pop(index)]
-
-            splits.append(DataSplit(training_set=training_set, testing_set=testing_set))
+            
+            # Making sure that RESAMPLED data points are only used for training, not for evaluation
+            if("RESAMPLED" not in testing_set):
+                splits.append(DataSplit(training_set=training_set, testing_set=testing_set))
 
         return splits
 
