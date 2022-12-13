@@ -23,7 +23,7 @@ from source.exception_logger import ExceptionLogger
 from multipledispatch import dispatch
 
 
-class RawDataProcessor:
+class UsiRawDataProcessor:
     BASE_FILE_PATH = utils.get_project_root().joinpath('outputs/cropped/')
     
     @staticmethod
@@ -35,7 +35,7 @@ class RawDataProcessor:
         hr_collection = DataLoader.load_raw(subject_id, FeatureType.raw_hr)
         bvp_collection = DataLoader.load_raw(subject_id, FeatureType.raw_bvp)
         ibi_collection = DataLoader.load_raw(subject_id, FeatureType.raw_ibi)
-        normalized_hr_collection = RawDataProcessor.normalize(hr_collection)
+        normalized_hr_collection = UsiRawDataProcessor.normalize(hr_collection)
         
         
         '''splitting each collection into sleepsessions'''
@@ -114,7 +114,7 @@ class RawDataProcessor:
         timestamps_array = []
         dictionary_array = []
         for collection in collections:
-            timestamps, dictionary = RawDataProcessor.get_valid_epoch_dictionary(collection.timestamps)
+            timestamps, dictionary = UsiRawDataProcessor.get_valid_epoch_dictionary(collection.timestamps)
             timestamps_array.append(timestamps)
             dictionary_array.append(dictionary)
 

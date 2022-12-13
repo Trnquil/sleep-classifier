@@ -13,7 +13,7 @@ from source.preprocessing.feature_service import FeatureService
 from source.data_services.data_loader import DataLoader
 from source.preprocessing.collection import Collection
 from source.data_services.dataset import DataSet
-from source.preprocessing.raw_data_processor import RawDataProcessor
+from source.preprocessing.usi_raw_data_processor import UsiRawDataProcessor
 
 
 from multipledispatch import dispatch
@@ -25,7 +25,7 @@ class ActivityCountFeatureService(object):
     @dispatch(str, str, object)
     def build_count_feature(subject_id, session_id, dataset):
         activity_count_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_count, dataset)
-        valid_epochs = RawDataProcessor.get_valid_epochs([activity_count_collection])
+        valid_epochs = UsiRawDataProcessor.get_valid_epochs([activity_count_collection])
         return ActivityCountFeatureService.build_from_collection(activity_count_collection, valid_epochs)
     
     @staticmethod
@@ -33,7 +33,7 @@ class ActivityCountFeatureService(object):
     def build_count_feature(subject_id, dataset):
         activity_count_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_count, dataset)
         activity_count_collection = Collection(subject_id=subject_id, data=activity_count_feature, data_frequency=0)
-        valid_epochs = RawDataProcessor.get_valid_epochs([activity_count_collection])
+        valid_epochs = UsiRawDataProcessor.get_valid_epochs([activity_count_collection])
         return ActivityCountFeatureService.build_from_collection(activity_count_collection, valid_epochs)
 
     @staticmethod

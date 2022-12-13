@@ -3,7 +3,7 @@ sys.path.insert(1, '../..')
 
 from source.preprocessing.ibi.ibi_feature_service import IbiFeatureService
 from source.preprocessing.activity_count.activity_count_feature_service import ActivityCountFeatureService
-from source.preprocessing.raw_data_processor import RawDataProcessor
+from source.preprocessing.usi_raw_data_processor import UsiRawDataProcessor
 from source.analysis.setup.feature_type import FeatureType
 from source.data_services.data_writer import DataWriter
 from source.preprocessing.path_service import PathService
@@ -25,11 +25,11 @@ class UsiEpochedFeatureBuilder(object):
             hr_feature = HeartRateFeatureService.build(subject_id, session_id, DataSet.usi)
             
             ibi_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_ibi, DataSet.usi)
-            valid_epochs_ibi = RawDataProcessor.get_valid_epochs([ibi_collection])
+            valid_epochs_ibi = UsiRawDataProcessor.get_valid_epochs([ibi_collection])
             ibi_features = IbiFeatureService.build_from_collection(ibi_collection, DataSet.usi, valid_epochs_ibi) 
             
             ibi_collection_from_ppg = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_ibi_from_ppg, DataSet.usi)
-            valid_epochs_ibi_from_ppg = RawDataProcessor.get_valid_epochs([ibi_collection_from_ppg])
+            valid_epochs_ibi_from_ppg = UsiRawDataProcessor.get_valid_epochs([ibi_collection_from_ppg])
             ibi_features_from_ppg = IbiFeatureService.build_from_collection(ibi_collection_from_ppg, DataSet.usi, valid_epochs_ibi_from_ppg)    
 
             

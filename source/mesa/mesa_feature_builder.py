@@ -2,7 +2,7 @@ from source.mesa.mesa_heart_rate_service import MesaHeartRateService
 from source.preprocessing.heart_rate.heart_rate_feature_service import HeartRateFeatureService
 from source.mesa.mesa_actigraphy_service import MesaActigraphyService
 from source.mesa.mesa_psg_service import MesaPSGService
-from source.preprocessing.raw_data_processor import RawDataProcessor
+from source.preprocessing.usi_raw_data_processor import UsiRawDataProcessor
 from source.preprocessing.path_service import PathService
 from source.data_services.dataset import DataSet
 from source.data_services.data_writer import DataWriter

@@ -21,8 +21,10 @@ class RunnerParameters(object):
     CLUSTER_FEATURES_MSS = [FeatureType.epoched_ibi]
     
     CLUSTERING_PER_SUBJECT_NORMALIZATION = True  # True: normalize clustering features over subjects, 
-                                                  # False: normalize clustering features over all data
-                                                  
+                                                 # False: normalize clustering features over all data  
+    PCA_REDUCTION = False # TODO: Actually implement PCA Reduction in nightly feature builder
+    NIGHTLY_PCA_COMPONENTS = 5
+    
     NIGHTLY_CLUSTER_NORMALIZATION = not CLUSTERING_PER_SUBJECT_NORMALIZATION
     USE_NIGHTLY_NORMALIZED = True
     UPSAMPLING_TECHNIQUE = UpsamplingTechnique.SMOTE

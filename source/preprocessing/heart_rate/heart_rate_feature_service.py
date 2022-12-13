@@ -11,7 +11,7 @@ from source.preprocessing.feature_service import FeatureService
 from source.data_services.data_loader import DataLoader
 from source.preprocessing.collection import Collection
 from source.data_services.dataset import DataSet
-from source.preprocessing.raw_data_processor import RawDataProcessor
+from source.preprocessing.usi_raw_data_processor import UsiRawDataProcessor
 
 
 from multipledispatch import dispatch
@@ -22,7 +22,7 @@ class HeartRateFeatureService(object):
     @dispatch(str, str, object)
     def build(subject_id, session_id, dataset):
         heart_rate_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_hr, dataset)
-        valid_epochs = RawDataProcessor.get_valid_epochs([heart_rate_collection])
+        valid_epochs = UsiRawDataProcessor.get_valid_epochs([heart_rate_collection])
         return HeartRateFeatureService.build_from_collection(heart_rate_collection, valid_epochs)
     
     @staticmethod
@@ -30,7 +30,7 @@ class HeartRateFeatureService(object):
     def build(subject_id, dataset):
         heart_rate_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_hr, dataset)
         heart_rate_collection = Collection(subject_id=subject_id, data=heart_rate_feature, data_frequency=0)
-        valid_epochs = RawDataProcessor.get_valid_epochs([heart_rate_collection])
+        valid_epochs = UsiRawDataProcessor.get_valid_epochs([heart_rate_collection])
         return HeartRateFeatureService.build_from_collection(heart_rate_collection, valid_epochs)
 
 

@@ -7,7 +7,7 @@ from source.preprocessing.activity_count.activity_count_service import ActivityC
 from source.preprocessing.usi_epoched_feature_builder import UsiEpochedFeatureBuilder
 from source.preprocessing.mss_epoched_feature_builder import MssEpochedFeatureBuilder
 from source.preprocessing.nightly.nightly_feature_builder import NightlyFeatureBuilder
-from source.preprocessing.raw_data_processor import RawDataProcessor
+from source.preprocessing.usi_raw_data_processor import UsiRawDataProcessor
 from source.preprocessing.mss_raw_data_processor import MssRawDataProcessor
 from source.preprocessing.time.circadian_service import CircadianService
 from source.preprocessing.clustering.cluster_feature_service import ClusterFeatureService
@@ -28,7 +28,7 @@ class Preprocessing(object):
         with tqdm(subject_ids, leave=True, unit='subject', colour='green') as t:
             t.set_description("Building USI Cropped")
             for subject in t:
-                RawDataProcessor.crop_all(str(subject))
+                UsiRawDataProcessor.crop_all(str(subject))
         
             if Constants.INCLUDE_CIRCADIAN:
                 ActivityCountService.build_activity_counts()  # This uses MATLAB, but has been replaced with a python implementation
