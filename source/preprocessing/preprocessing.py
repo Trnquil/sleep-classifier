@@ -106,12 +106,12 @@ class Preprocessing(object):
                 for session in subject_sleepsession_dictionary[subject]:
                     ClusterBuilder.build(subject, session, DataSet.mesa, clustering_model)
                     
-        subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(FeatureType.epoched, DataSet.mss)
-        with tqdm(subject_sleepsession_dictionary.keys(), unit='subject', colour='green') as t:
-            for subject in t:
-                t.set_description("Building MSS Clusters")
-                for session in subject_sleepsession_dictionary[subject]:
-                    ClusterBuilder.build(subject, session, DataSet.mss, clustering_model)
+        # subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(FeatureType.epoched, DataSet.mss)
+        # with tqdm(subject_sleepsession_dictionary.keys(), unit='subject', colour='green') as t:
+        #     for subject in t:
+        #         t.set_description("Building MSS Clusters")
+        #         for session in subject_sleepsession_dictionary[subject]:
+        #             ClusterBuilder.build(subject, session, DataSet.mss, clustering_model)
                 
     @staticmethod   
     def build_nightly_usi():
