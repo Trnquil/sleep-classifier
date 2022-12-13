@@ -13,14 +13,14 @@ class RunnerParameters(object):
     CLUSTERING_ALGO = ClusteringAlgorithm.KMeans
     NUMBER_OF_CLUSTERS = 5
     
-    CLUSTERING_DATASETS = [DataSet.mesa]
+    CLUSTERING_DATASETS = [DataSet.mesa, DataSet.usi]
     
     # The following three features need to have compatible types (like epoched_ibi and epoched_ibi_from_ppg)
     CLUSTER_FEATURES_USI = [FeatureType.epoched_ibi_from_ppg]
     CLUSTER_FEATURES_MESA = [FeatureType.epoched_ibi_from_ppg]
     CLUSTER_FEATURES_MSS = [FeatureType.epoched_ibi]
     
-    CLUSTERING_PER_SUBJECT_NORMALIZATION = False  # True: normalize clustering features over subjects, 
+    CLUSTERING_PER_SUBJECT_NORMALIZATION = True  # True: normalize clustering features over subjects, 
                                                   # False: normalize clustering features over all data
                                                   
     NIGHTLY_CLUSTER_NORMALIZATION = not CLUSTERING_PER_SUBJECT_NORMALIZATION

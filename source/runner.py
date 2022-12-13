@@ -16,9 +16,9 @@ import utils
 
 def run():
     
-    # run_preprocessing()
+    run_preprocessing()
     
-    run_analysis()
+    # run_analysis()
 
     
 def run_preprocessing():
@@ -34,13 +34,13 @@ def run_preprocessing():
     # Preprocessing.build_mss_epoched()
     # Preprocessing.build_mesa_epoched()
     
-    # Preprocessing.build_cluster_features_usi()
-    # Preprocessing.build_cluster_features_mesa()
+    Preprocessing.build_cluster_features_usi()
+    Preprocessing.build_cluster_features_mesa()
     # Preprocessing.build_cluster_features_mss()
     
-    # Preprocessing.build_clusters()
+    Preprocessing.build_clusters()
     
-    # Preprocessing.build_nightly_usi()
+    Preprocessing.build_nightly_usi()
     # Preprocessing.build_nightly_mss()
     
     end_time = time.time()
@@ -51,8 +51,8 @@ def run_analysis():
     if __name__ == "__main__":
         start_time = time.time()
         
-        # Analysis.all_figures(DataSet.usi)
-        # Analysis.all_figures(DataSet.mss)
+        Analysis.all_figures(DataSet.usi)
+        Analysis.all_figures(DataSet.mss)
         # Analysis.cluster_analysis()
         
         RunnerParameters.print_settings(DataSet.usi)
