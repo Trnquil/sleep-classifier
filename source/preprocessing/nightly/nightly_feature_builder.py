@@ -31,7 +31,7 @@ class NightlyFeatureBuilder(object):
 
     @staticmethod
     def build(dataset):
-            
+
         subject_index = 0
         
         subject_ids = BuiltService.get_built_subject_ids(FeatureType.epoched, dataset)
@@ -173,7 +173,8 @@ class NightlyFeatureBuilder(object):
         
         # We're calculating the count of new datapoints to label them "RESAMPLED"
         count_new = resampled_height - height
-        s_ss_resampled_df = pd.DataFrame("RESAMPLED", index=np.arange(0, count_new, 1), columns=['subject_id', 'session_id'])
+        s_ss_resampled_df = pd.DataFrame("RESAMPLED", index=np.arange(0, count_new, 1), columns=['subject_id'])
+        s_ss_resampled_df['session_id'] = ["SS_" + str(x + 1).zfill(2) for x in np.arange(count_new)]
         
         # Concatenating the old sleep subjects and sleepsessions and the newly labeled "RESAMPLED"
         s_ss_full_df = pd.concat([s_ss_df, s_ss_resampled_df], axis = 0)

@@ -17,8 +17,6 @@ class BuiltService(object):
         nightly_feature_dataframe = nightly_feature_dataframe[['subject_id', 'session_id']]
         for index, row in nightly_feature_dataframe.iterrows():
             subject_id = row['subject_id']
-            if(subject_id == "RESAMPLED"):
-                continue
             session_id = row['session_id']
             if subject_id not in subject_to_session_dictionary.keys():
                 subject_to_session_dictionary[subject_id] = []
