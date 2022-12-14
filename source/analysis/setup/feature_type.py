@@ -43,6 +43,7 @@ class FeatureType(Enum):
     nightly_sleep_quality = "Sleep Quality"
     nightly_hr = "HR"
     nightly_normalized_hr = "normalized HR"
+    nightly_reduced = "reduced"
     
     sleep_quality = "sleep quality"
     

@@ -15,6 +15,7 @@ from source.runner_parameters import RunnerParameters
 from source.exception_logger import ExceptionLogger
 from source.analysis.setup.upsampling_technique import UpsamplingTechnique
 from source.preprocessing.nightly.upsampler import Upsampler
+from source.preprocessing.nightly.feature_space_reducer import FeatureSpaceReducer
 
 import pandas as pd
 import numpy as np
@@ -76,6 +77,10 @@ class NightlyFeatureBuilder(object):
         elif RunnerParameters.UPSAMPLING_TECHNIQUE.name == UpsamplingTechnique.SMOTE.name:
             nightly_dataframe =  Upsampler.smote_upsampling(nightly_dataframe)
             nightly_dataframe_normalized = Upsampler.smote_upsampling(nightly_dataframe_normalized)
+        
+        if RunnerParameters.PCA_REDUCTION:
+            nightly_dataframe = FeatureSpaceReducer.PCA(nightly_dataframe)
+            nightly_dataframe_normalized = FeatureSpaceReducer.PCA(nightly_dataframe_normalized)
 
         DataWriter.write_nightly(nightly_dataframe, FeatureType.nightly, dataset)
         DataWriter.write_nightly(nightly_dataframe_normalized, FeatureType.normalized_nightly, dataset)

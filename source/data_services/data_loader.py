@@ -185,6 +185,8 @@ class DataLoader(object):
             nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("hr_.*"))
         elif(feature_type.name == FeatureType.nightly_sleep_quality.name):
             nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("sleep_quality"))
+        elif(feature_type.name == FeatureType.nightly_reduced.name):
+            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("reduced_"))
         else:
             raise Exception("FeatureType unknown to DataLoader: " + feature_type.name)
         

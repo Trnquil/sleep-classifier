@@ -34,11 +34,11 @@ def run_preprocessing():
     # Preprocessing.build_mss_epoched()
     # Preprocessing.build_mesa_epoched()
     
-    Preprocessing.build_cluster_features_usi()
-    Preprocessing.build_cluster_features_mesa()
+    # Preprocessing.build_cluster_features_usi()
+    # Preprocessing.build_cluster_features_mesa()
     # Preprocessing.build_cluster_features_mss()
     
-    Preprocessing.build_clusters()
+    # Preprocessing.build_clusters()
     
     Preprocessing.build_nightly_usi()
     # Preprocessing.build_nightly_mss()

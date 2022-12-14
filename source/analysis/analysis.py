@@ -57,11 +57,14 @@ class Analysis(object):
                                                      classifier=RandomForestClassifier(max_depth=10, random_state=0)),
                                   AttributedClassifier(name='SVM',
                                                      classifier=SVC(probability=True))]
-    
+        
         if(dataset.name == DataSet.usi.name):
             feature_sets = RunnerParameters.ANALYSIS_FEATURES_USI
         elif(dataset.name == DataSet.mss.name):
             feature_sets = RunnerParameters.ANALYSIS_FEATURES_MSS
+        
+        if(RunnerParameters.PCA_REDUCTION):
+            feature_sets = [[FeatureType.nightly_reduced]]
         
         for attributed_classifier in attributed_classifiers:
             if Constants.VERBOSE:
