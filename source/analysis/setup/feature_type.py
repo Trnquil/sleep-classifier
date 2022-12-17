@@ -22,6 +22,7 @@ class FeatureType(Enum):
     
     epoched = "epoched"
     
+    epoched_cluster_GEMINI = "epoched cluster GEMINI"
     epoched_cluster = "epoched cluster"
     epoched_hr = "epoched heart rate"
     epoched_normalized_hr = "epoched normalized hr"

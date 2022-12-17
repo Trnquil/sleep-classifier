@@ -17,6 +17,7 @@ class PathService(object):
         FeatureType.cropped_hr.name: "cropped_hr.out",
         FeatureType.cropped_normalized_hr.name: "cropped_normalized_hr.out",
         
+        FeatureType.epoched_cluster_GEMINI.name: "epoched_cluster_GEMINI.csv",
         FeatureType.epoched_hr.name: "epoched_hr.csv",
         FeatureType.epoched_normalized_hr.name: "epoched_normalized_hr.csv",
         FeatureType.epoched_count.name: "epoched_count.csv",

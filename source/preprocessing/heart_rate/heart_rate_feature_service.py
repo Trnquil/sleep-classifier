@@ -15,6 +15,7 @@ from source.preprocessing.usi_raw_data_processor import UsiRawDataProcessor
 
 
 from multipledispatch import dispatch
+import torch
 
 class HeartRateFeatureService(object):
     
@@ -55,6 +56,28 @@ class HeartRateFeatureService(object):
         hr_features_df = pd.DataFrame(heart_rate_features)
         hr_features_df.columns = ["epoch_timestamp", "hr_mean", "hr_std"]
         return hr_features_df
+    
+    def build_GEMINI_clusters(heart_rate_collection, valid_epochs, model):
+        clusters = np.zeros((0,2))
+        heart_rate_collection = FeatureService.interpolate(heart_rate_collection)
+        
+        interpolated_timestamps = heart_rate_collection.timestamps
+        interpolated_hr = heart_rate_collection.values
+
+        for epoch in valid_epochs:
+            indices_in_range = FeatureService.get_window(interpolated_timestamps, epoch)
+            heart_rate_values_in_range = interpolated_hr[indices_in_range]
+            
+            if(len(heart_rate_values_in_range) >= 500):
+                hr_values = np.expand_dims(heart_rate_values_in_range[:500].squeeze(), axis = (0,1))
+                cluster_onehot = model(torch.tensor(hr_values).float())
+                cluster = cluster_onehot[0].detach().numpy().argmax()         
+
+                clusters = np.concatenate([clusters, np.array([epoch.timestamp, cluster]).reshape(1,2)], axis=0)
+        
+        clusters_df = pd.DataFrame(clusters)
+        clusters_df.columns = ["epoch_timestamp", "cluster"]
+        return clusters_df
 
     @staticmethod
     def get_feature(heart_rate_values):

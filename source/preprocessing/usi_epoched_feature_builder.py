@@ -12,6 +12,8 @@ from source.data_services.dataset import DataSet
 from source.data_services.data_loader import DataLoader
 from source.exception_logger import ExceptionLogger
 
+sys.path.insert(1, '../../GEMINI')
+from gemini_service import GeminiService
 
 
 class UsiEpochedFeatureBuilder(object):
@@ -22,7 +24,12 @@ class UsiEpochedFeatureBuilder(object):
         try:
             count_feature = ActivityCountFeatureService.build_count_feature(subject_id, session_id, DataSet.usi)
             
-            hr_feature = HeartRateFeatureService.build(subject_id, session_id, DataSet.usi)
+            heart_rate_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_hr, DataSet.usi)
+            valid_epochs_hr = UsiRawDataProcessor.get_valid_epochs([heart_rate_collection])
+            
+            hr_feature = HeartRateFeatureService.build_from_collection(heart_rate_collection, valid_epochs_hr)
+            model = GeminiService.load_model()
+            hr_gemini_clusters = HeartRateFeatureService.build_GEMINI_clusters(heart_rate_collection, valid_epochs_hr, model)
             
             ibi_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_ibi, DataSet.usi)
             valid_epochs_ibi = UsiRawDataProcessor.get_valid_epochs([ibi_collection])
@@ -34,10 +41,12 @@ class UsiEpochedFeatureBuilder(object):
 
             
             DataWriter.write_epoched(count_feature, subject_id, session_id, FeatureType.epoched_count, DataSet.usi)
+            DataWriter.write_epoched(hr_gemini_clusters, subject_id, session_id, FeatureType.epoched_cluster_GEMINI, DataSet.usi)
             DataWriter.write_epoched(hr_feature, subject_id, session_id, FeatureType.epoched_hr, DataSet.usi)
             DataWriter.write_epoched(ibi_features, subject_id, session_id, FeatureType.epoched_ibi, DataSet.usi)
             DataWriter.write_epoched(ibi_features_from_ppg, subject_id, session_id, FeatureType.epoched_ibi_from_ppg, DataSet.usi)
         except:
             ExceptionLogger.append_exception(subject_id, session_id, "Epoched", DataSet.usi.name, sys.exc_info()[0])
             print("Skip subject ", str(subject_id), ", session ", str(session_id), " due to ", sys.exc_info()[0])
+    
         
