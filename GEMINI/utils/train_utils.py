@@ -1,9 +1,9 @@
-from losses.vat import VATLoss
+from GEMINI.losses.vat import VATLoss
 import torch
 from torch.utils.data import DataLoader, BatchSampler, RandomSampler,SequentialSampler
-from utils.metrics import AvgMetric
-from utils.utils import get_loss, get_optimiser
-from losses import base_loss
+from GEMINI.utils.metrics import AvgMetric
+from GEMINI.utils.utils import get_loss, get_optimiser
+from GEMINI.losses import base_loss
 from torch.utils.tensorboard import SummaryWriter
 import os
 import logging

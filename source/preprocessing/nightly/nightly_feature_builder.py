@@ -1,5 +1,4 @@
 import sys
-sys.path.insert(1, '../../..')
 
 from source.preprocessing.clustering.cluster_nightly_feature_service import ClusterNightlyFeatureService
 from source.preprocessing.ibi.ibi_nightly_feature_service import IbiNightlyFeatureService
@@ -16,6 +15,7 @@ from source.exception_logger import ExceptionLogger
 from source.analysis.setup.upsampling_technique import UpsamplingTechnique
 from source.preprocessing.nightly.upsampler import Upsampler
 from source.preprocessing.nightly.feature_space_reducer import FeatureSpaceReducer
+from source.analysis.setup.clustering_algorithm import ClusteringAlgorithm
 
 import pandas as pd
 import numpy as np
@@ -90,7 +90,12 @@ class NightlyFeatureBuilder(object):
     @staticmethod
     def build_feature_dict(subject_id, session_id, dataset):
         try:
-            clusters = DataFrameLoader.load_feature_dataframe(subject_id, session_id, [FeatureType.cluster], dataset)
+            if RunnerParameters.CLUSTERING_ALGO.name == ClusteringAlgorithm.GEMINI.name:
+                cluster_feature_type = FeatureType.epoched_cluster_GEMINI
+            else:
+                cluster_feature_type = FeatureType.cluster_features
+                
+            clusters = DataFrameLoader.load_feature_dataframe(subject_id, session_id, [cluster_feature_type], dataset)
             cluster_timestamps = clusters['epoch_timestamp']
             
             subject_session_dict = {'subject_id': subject_id, 'session_id': session_id}
@@ -98,7 +103,7 @@ class NightlyFeatureBuilder(object):
             merged_dict = subject_session_dict
             
             if(FeatureType.nightly_cluster.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
-                cluster_features_dict = ClusterNightlyFeatureService.build_feature_dict(subject_id, session_id, dataset)
+                cluster_features_dict = ClusterNightlyFeatureService.build_feature_dict(subject_id, session_id, cluster_feature_type, dataset)
                 merged_dict = merged_dict | cluster_features_dict
                                          
             if(FeatureType.nightly_count.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
@@ -109,7 +114,6 @@ class NightlyFeatureBuilder(object):
                 ibi_features_dict = IbiNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, dataset, cluster_timestamps)
                 merged_dict = merged_dict | ibi_features_dict
                 
-
                 
             # These Features only exist for USI
             if(dataset.name == DataSet.usi.name):

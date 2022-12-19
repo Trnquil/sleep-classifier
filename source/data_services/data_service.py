@@ -1,6 +1,3 @@
-import sys
-sys.path.insert(1, '../..') # tells system where project root is
-
 from source.analysis.setup.feature_type import FeatureType
 from source.preprocessing.built_service import BuiltService
 from source.preprocessing.sleep_session_services.sleep_session_service import SleepSessionService

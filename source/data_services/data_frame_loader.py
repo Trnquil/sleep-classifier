@@ -1,6 +1,3 @@
-import sys
-sys.path.insert(1, '../..') # tells system where project root is
-
 from source.data_services.data_loader import DataLoader
 from source.data_services.data_service import DataService
 from source.preprocessing.built_service import BuiltService
@@ -11,7 +8,7 @@ from source.exception_logger import ExceptionLogger
 
 import pandas as pd
 import numpy as np
-
+import sys
 
 
 class DataFrameLoader(object):

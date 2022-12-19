@@ -1,6 +1,3 @@
-import sys
-sys.path.insert(1, '../..')
-
 from source.data_services.data_loader import DataLoader
 from source.analysis.setup.feature_type import FeatureType
 from source.data_services.dataset import DataSet

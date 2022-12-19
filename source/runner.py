@@ -14,8 +14,10 @@ from source.data_services.dataset import DataSet
 import utils
 
 
+
 def run():
     
+
     run_preprocessing()
     
     # run_analysis()
@@ -28,20 +30,21 @@ def run_preprocessing():
     # ExceptionLogger.remove_logs()
     
     # Preprocessing.build_usi_cropped()
-    # Preprocessing.build_mss_cropped()
+    Preprocessing.build_mss_cropped()
     
     Preprocessing.build_usi_epoched()
-    # Preprocessing.build_mss_epoched()
-    # Preprocessing.build_mesa_epoched()
+    Preprocessing.build_mss_epoched()
+    Preprocessing.build_mesa_epoched()
     
-    # Preprocessing.build_cluster_features_usi()
-    # Preprocessing.build_cluster_features_mesa()
-    # Preprocessing.build_cluster_features_mss()
-    
-    # Preprocessing.build_clusters()
+    if not RunnerParameters.CLUSTERING_ALGO.name == ClusteringAlgorithm.GEMINI.name:
+        Preprocessing.build_cluster_features_usi()
+        Preprocessing.build_cluster_features_mesa()
+        Preprocessing.build_cluster_features_mss()
+        
+        Preprocessing.build_clusters()
     
     Preprocessing.build_nightly_usi()
-    # Preprocessing.build_nightly_mss()
+    Preprocessing.build_nightly_mss()
     
     end_time = time.time()
     

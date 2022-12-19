@@ -1,5 +1,4 @@
 import sys
-sys.path.insert(1, '../..')
 
 from source.preprocessing.ibi.ibi_feature_service import IbiFeatureService
 from source.preprocessing.activity_count.activity_count_feature_service import ActivityCountFeatureService
@@ -11,9 +10,9 @@ from source.preprocessing.heart_rate.heart_rate_feature_service import HeartRate
 from source.data_services.dataset import DataSet
 from source.data_services.data_loader import DataLoader
 from source.exception_logger import ExceptionLogger
+from source.runner_parameters import RunnerParameters
 
-sys.path.insert(1, '../../GEMINI')
-from gemini_service import GeminiService
+from GEMINI.gemini_service import GeminiService
 
 
 class UsiEpochedFeatureBuilder(object):

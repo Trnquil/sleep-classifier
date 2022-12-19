@@ -10,8 +10,19 @@ from source.figures_saver import FiguresSaver
 class RunnerParameters(object):
     PROCESS_USI_BVP_SEGMENTWISE = False
     
-    CLUSTERING_ALGO = ClusteringAlgorithm.KMeans
-    NUMBER_OF_CLUSTERS = 5
+    CLUSTERING_ALGO = ClusteringAlgorithm.GEMINI
+    
+    #This does not apply to GEMINI, as it has got its own Configuration File
+    NUMBER_OF_CLUSTERS = 6
+    
+    # If we have already trained a GEMINI model, we can set this to false. Models are saved after each training.
+    # If no model has been trained so far, training will happen even if GEMINI_TRAIN is set to false
+    # The most recently trained model is used for evaluation
+    GEMINI_TRAIN = True
+    # We are train on every stride-th epoch to conserve computing power
+    GEMINI_STRIDE = 4
+    # Maximum number of epochs we want to train on
+    GEMINI_TRAIN_EPOCHS_MAX = 10000
     
     CLUSTERING_DATASETS = [DataSet.mesa, DataSet.usi]
     
@@ -20,7 +31,7 @@ class RunnerParameters(object):
     CLUSTER_FEATURES_MESA = [FeatureType.epoched_ibi_from_ppg]
     CLUSTER_FEATURES_MSS = [FeatureType.epoched_ibi]
     
-    CLUSTERING_PER_SUBJECT_NORMALIZATION = True  # True: normalize clustering features over subjects, 
+    CLUSTERING_PER_SUBJECT_NORMALIZATION = False  # True: normalize clustering features over subjects, 
                                                  # False: normalize clustering features over all data  
     PCA_REDUCTION = False 
     PCA_COMPONENTS = 5

@@ -1,9 +1,9 @@
-from data.similarities import *
-from losses.gemini import *
+from GEMINI.data.similarities import *
+from GEMINI.losses.gemini import *
 import importlib
 import os
-from data.datasets import SimilarityDataset
-from models.model import DiscriminativeModel
+from GEMINI.data.datasets import SimilarityDataset
+from GEMINI.models.model import DiscriminativeModel
 from torch.utils.data import *
 from torch import optim
 import inspect

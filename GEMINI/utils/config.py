@@ -4,7 +4,7 @@ import yaml
 from easydict import EasyDict
 import logging
 
-from utils.utils import load_file_as_module
+from GEMINI.utils.utils import load_file_as_module
 
 def create_config(args):    
     # config of experiments: training and model parameters data handling

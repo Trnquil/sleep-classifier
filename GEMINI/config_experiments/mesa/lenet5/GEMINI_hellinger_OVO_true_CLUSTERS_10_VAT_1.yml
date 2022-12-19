@@ -30,7 +30,7 @@ model:
   clustering_head: /Users/julien/OneDrive/ETH/HS22/Bachelor Thesis/sleep-classifier/GEMINI/models/custom_models/clustering_head_linear.py
   clustering_head_kwargs:
     input_shape: 84
-    num_clusters: 5
+    num_clusters: 6
 
   
 
