@@ -149,7 +149,7 @@ class DataLoader(object):
         session_id = subject_sleepsession_dictionary[subject_id][0]
         if(feature_type.name in FeatureType.get_epoched_names() or feature_type.name == FeatureType.epoched.name):
             feature_dataframe = DataLoader.load_epoched(subject_id, session_id, feature_type, dataset)
-        elif(feature_type.name == FeatureType.cluster.name or feature_type.name == FeatureType.cluster_features.name):
+        elif(feature_type.name in FeatureType.get_cluster_names()):
             feature_dataframe = DataLoader.load_cluster(subject_id, session_id, feature_type, dataset)
         return feature_dataframe.columns
     
@@ -171,8 +171,12 @@ class DataLoader(object):
         nightly_feature_dataframe = nightly_feature_dataframe[nightly_feature_dataframe['subject_id'].eq(subject_id)]
         nightly_feature_dataframe = nightly_feature_dataframe[nightly_feature_dataframe['session_id'].eq(session_id)]
         
-        if(feature_type.name == FeatureType.nightly_cluster.name):
-            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("c_.*"))
+        if(feature_type.name == FeatureType.nightly_cluster_gmm.name):
+            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("gmm_c_.*"))
+        elif(feature_type.name == FeatureType.nightly_cluster_kmeans.name):
+            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("kmeans_c_.*"))
+        elif(feature_type.name == FeatureType.nightly_cluster_GEMINI.name):
+            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("GEMINI_c_.*"))
         elif(feature_type.name == FeatureType.nightly_count.name):
             nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("count_.*"))
         elif(feature_type.name == FeatureType.nightly_normalized_hr.name):

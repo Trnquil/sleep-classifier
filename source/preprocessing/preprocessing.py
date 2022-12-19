@@ -17,6 +17,8 @@ from source.mesa.mesa_data_service import MesaDataService
 from source.mesa.mesa_feature_builder import MesaFeatureBuilder
 from source.preprocessing.clustering.cluster_feature_builder import ClusterFeatureBuilder
 from source.runner_parameters import RunnerParameters
+from source.analysis.setup.clustering_algorithm import ClusteringAlgorithm
+
 from tqdm import tqdm
 
 from GEMINI.gemini_service import GeminiService
@@ -96,7 +98,9 @@ class Preprocessing(object):
     
     @staticmethod   
     def build_clusters():
-        clustering_model = ClusterFeatureService.get_fitted_model()
+        clustering_model_kmeans = ClusterFeatureService.get_fitted_model(ClusteringAlgorithm.KMeans)
+        clustering_model_gmm = ClusterFeatureService.get_fitted_model(ClusteringAlgorithm.GMM)
+        
         # Only building features for subjects and sleepsession for which folders exist
         subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(FeatureType.epoched, DataSet.usi)
         
@@ -104,21 +108,24 @@ class Preprocessing(object):
             t.set_description("Building USI Clusters")
             for subject in t:
                 for session in subject_sleepsession_dictionary[subject]:
-                    ClusterBuilder.build(subject, session, DataSet.usi, clustering_model)
+                    ClusterBuilder.build(subject, session, FeatureType.cluster_kmeans, DataSet.usi, clustering_model_kmeans)
+                    ClusterBuilder.build(subject, session, FeatureType.cluster_gmm, DataSet.usi, clustering_model_gmm)
                 
         subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(FeatureType.epoched, DataSet.mesa)
         with tqdm(subject_sleepsession_dictionary.keys(), unit='subject', colour='green') as t:
             for subject in t:
                 t.set_description("Building MESA Clusters")
                 for session in subject_sleepsession_dictionary[subject]:
-                    ClusterBuilder.build(subject, session, DataSet.mesa, clustering_model)
+                    ClusterBuilder.build(subject, session, FeatureType.cluster_kmeans, DataSet.mesa, clustering_model_kmeans)
+                    ClusterBuilder.build(subject, session, FeatureType.cluster_gmm, DataSet.mesa, clustering_model_gmm)
                     
         subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(FeatureType.epoched, DataSet.mss)
         with tqdm(subject_sleepsession_dictionary.keys(), unit='subject', colour='green') as t:
             for subject in t:
                 t.set_description("Building MSS Clusters")
                 for session in subject_sleepsession_dictionary[subject]:
-                    ClusterBuilder.build(subject, session, DataSet.mss, clustering_model)
+                    ClusterBuilder.build(subject, session, FeatureType.cluster_kmeans, DataSet.mss, clustering_model_kmeans)
+                    ClusterBuilder.build(subject, session, FeatureType.cluster_gmm, DataSet.mss, clustering_model_gmm)
                 
     @staticmethod   
     def build_nightly_usi():

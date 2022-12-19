@@ -1,4 +1,5 @@
 import sys
+sys.path.insert(1, "..")
 
 from GEMINI.utils.config import create_config
 from GEMINI.utils.train_utils import train_model
@@ -70,19 +71,19 @@ class GeminiService(object):
         print("\nGEMINI Model: \n")
         print(model)
         
-        ###################### For testing only
-        # val_dl = torch.utils.data.DataLoader(val_ds, batch_size=500, shuffle=False)
-        # train_dl = torch.utils.data.DataLoader(train_ds, batch_size=500, shuffle=False)
-        # 
-        # with torch.no_grad():   
-        #     for j, x_batch in enumerate(train_dl):
-        #         # separating features and labels into different tensors
-        #         features = x_batch[0].numpy()
-        #         labels = x_batch[1].numpy()
-        #         predictions = model(torch.tensor(features))[0].detach().numpy()
-        #         clusters = [x.argmax() for x in predictions]
-        #         break
-        ###################### For testing only
+        ##################### For testing only
+        val_dl = torch.utils.data.DataLoader(val_ds, batch_size=500, shuffle=False)
+        train_dl = torch.utils.data.DataLoader(train_ds, batch_size=500, shuffle=False)
+        
+        with torch.no_grad():   
+            for j, x_batch in enumerate(train_dl):
+                # separating features and labels into different tensors
+                features = x_batch[0].numpy()
+                labels = x_batch[1].numpy()
+                predictions = model(torch.tensor(features))[0].detach().numpy()
+                clusters = [x.argmax() for x in predictions]
+                break
+        ##################### For testing only
         
         if not config.no_csv:
             logging.info('Exporting csv results')

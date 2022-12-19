@@ -10,8 +10,6 @@ from source.figures_saver import FiguresSaver
 class RunnerParameters(object):
     PROCESS_USI_BVP_SEGMENTWISE = False
     
-    CLUSTERING_ALGO = ClusteringAlgorithm.GEMINI
-    
     #This does not apply to GEMINI, as it has got its own Configuration File
     NUMBER_OF_CLUSTERS = 6
     
@@ -21,6 +19,7 @@ class RunnerParameters(object):
     GEMINI_TRAIN = True
     # We are train on every stride-th epoch to conserve computing power
     GEMINI_STRIDE = 4
+    
     # Maximum number of epochs we want to train on
     GEMINI_TRAIN_EPOCHS_MAX = 10000
     
@@ -40,21 +39,26 @@ class RunnerParameters(object):
     USE_NIGHTLY_NORMALIZED = True
     UPSAMPLING_TECHNIQUE = UpsamplingTechnique.SMOTE
     
-    NIGHTLY_FEATURES = [FeatureType.nightly_cluster,
+    NIGHTLY_FEATURES = [FeatureType.nightly_cluster_kmeans,
+                        FeatureType.nightly_cluster_gmm,
+                        FeatureType.nightly_cluster_GEMINI,
                         FeatureType.nightly_hr, 
                         FeatureType.nightly_normalized_hr,
                         FeatureType.nightly_count,
                         FeatureType.nightly_ibi,
                         FeatureType.nightly_ibi_from_ppg]
     
-    ANALYSIS_FEATURES_USI = [[FeatureType.nightly_cluster],
-                            [FeatureType.nightly_cluster, FeatureType.nightly_hr],
-                            [FeatureType.nightly_cluster, FeatureType.nightly_normalized_hr],
+    ANALYSIS_FEATURES_USI = [[FeatureType.nightly_cluster_kmeans],
+                             [FeatureType.nightly_cluster_gmm],
+                             [FeatureType.nightly_cluster_GEMINI],
+                             [FeatureType.nightly_cluster_kmeans, FeatureType.nightly_cluster_gmm, FeatureType.nightly_cluster_GEMINI],
+                            [FeatureType.nightly_cluster_kmeans, FeatureType.nightly_hr],
+                            [FeatureType.nightly_cluster_kmeans, FeatureType.nightly_normalized_hr],
                             [FeatureType.nightly_ibi],
                             [FeatureType.nightly_ibi_from_ppg],
-                            [FeatureType.nightly_cluster, FeatureType.nightly_ibi, FeatureType.nightly_count],
-                            [FeatureType.nightly_cluster, FeatureType.nightly_normalized_hr, FeatureType.nightly_count],
-                            [FeatureType.nightly_cluster, 
+                            [FeatureType.nightly_cluster_kmeans, FeatureType.nightly_ibi, FeatureType.nightly_count],
+                            [FeatureType.nightly_cluster_kmeans, FeatureType.nightly_normalized_hr, FeatureType.nightly_count],
+                            [FeatureType.nightly_cluster_kmeans, 
                                              FeatureType.nightly_hr, 
                                              FeatureType.nightly_normalized_hr,
                                              FeatureType.nightly_count,
@@ -62,9 +66,9 @@ class RunnerParameters(object):
                                              FeatureType.nightly_ibi_from_ppg]
                             ]
     
-    ANALYSIS_FEATURES_MSS = [[FeatureType.nightly_cluster],
+    ANALYSIS_FEATURES_MSS = [[FeatureType.nightly_cluster_kmeans],
                             [FeatureType.nightly_ibi],
-                            [FeatureType.nightly_cluster, FeatureType.nightly_ibi, FeatureType.nightly_count]]
+                            [FeatureType.nightly_cluster_kmeans, FeatureType.nightly_ibi, FeatureType.nightly_count]]
     
         
     def print_settings(dataset):

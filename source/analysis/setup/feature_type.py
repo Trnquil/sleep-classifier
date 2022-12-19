@@ -31,13 +31,16 @@ class FeatureType(Enum):
     epoched_ibi_from_ppg = "epoched IBI from PPG"
     epoched_sleep_label = "epoched sleep label"
     
-    cluster = "cluster"
+    cluster_kmeans = "kmeans cluster"
+    cluster_gmm = "gmm cluster"
     cluster_features = "cluster features"
     
     nightly = "nightly"
     normalized_nightly = "normalized nightly"
     
-    nightly_cluster = "Cluster"
+    nightly_cluster_gmm = "GMM cluster"
+    nightly_cluster_kmeans = "KMeans cluster"
+    nightly_cluster_GEMINI = "GEMINI cluster"
     nightly_ibi = "IBI"
     nightly_ibi_from_ppg = "IBI_PPG"
     nightly_count = "Count"
@@ -55,6 +58,11 @@ class FeatureType(Enum):
     
     def get_epoched_names():
         r = re.compile("epoched_.*")
+        feature_type_list = [feature_type.name for feature_type in FeatureType]
+        return list(filter(r.match, feature_type_list))
+    
+    def get_cluster_names():
+        r = re.compile("cluster_.*")
         feature_type_list = [feature_type.name for feature_type in FeatureType]
         return list(filter(r.match, feature_type_list))
     

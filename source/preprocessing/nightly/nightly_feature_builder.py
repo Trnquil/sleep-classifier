@@ -43,20 +43,27 @@ class NightlyFeatureBuilder(object):
                     
                     if session_index == 0:
                         subject_dataframe = feature_row
-                    else:    
+                    else:
                         subject_dataframe = pd.concat([subject_dataframe, feature_row], axis=0)
                         
                     session_index += 1
                 
                 #Normalizing features across the subject and filling 0 for features with std 0
+                
                 if RunnerParameters.NIGHTLY_CLUSTER_NORMALIZATION:
+                    # regex for normalizing all features
                     regex="^((?!subject_|session_|sleep_quality).)*$"
                 else:
-                    regex="^((?!c_|subject_|session_|sleep_quality).)*$"
+                    # regex for normalizing all features except gmm and kmeans cluster features
+                    regex="^((?!gmm_c_|kmeans_c_|subject_|session_|sleep_quality).)*$"
+                    
+                    
                 subject_mean = np.mean(subject_dataframe.filter(regex=regex), axis=0)
                 subject_std = np.std(subject_dataframe.filter(regex=regex), axis=0)*2
                 
                 subject_dataframe_normalized = subject_dataframe.copy()
+                
+                # normalized subject dataframe
                 subject_dataframe_normalized[subject_dataframe_normalized.filter(regex=regex).columns] = (subject_dataframe_normalized.filter(regex=regex) - subject_mean)/subject_std
                 subject_dataframe_normalized = subject_dataframe_normalized.fillna(0)
                 
@@ -78,6 +85,7 @@ class NightlyFeatureBuilder(object):
             nightly_dataframe =  Upsampler.smote_upsampling(nightly_dataframe)
             nightly_dataframe_normalized = Upsampler.smote_upsampling(nightly_dataframe_normalized)
         
+        # Applying PCA Reduction if it is set to True in RunnerParameters
         if RunnerParameters.PCA_REDUCTION:
             nightly_dataframe = FeatureSpaceReducer.PCA(nightly_dataframe)
             nightly_dataframe_normalized = FeatureSpaceReducer.PCA(nightly_dataframe_normalized)
@@ -90,26 +98,40 @@ class NightlyFeatureBuilder(object):
     @staticmethod
     def build_feature_dict(subject_id, session_id, dataset):
         try:
-            if RunnerParameters.CLUSTERING_ALGO.name == ClusteringAlgorithm.GEMINI.name:
-                cluster_feature_type = FeatureType.epoched_cluster_GEMINI
-            else:
-                cluster_feature_type = FeatureType.cluster_features
+            cluster_feature_types = [FeatureType.cluster_gmm, FeatureType.cluster_kmeans, FeatureType.epoched_cluster_GEMINI]
                 
-            clusters = DataFrameLoader.load_feature_dataframe(subject_id, session_id, [cluster_feature_type], dataset)
+            clusters = DataFrameLoader.load_feature_dataframe(subject_id, session_id, cluster_feature_types, dataset)
             cluster_timestamps = clusters['epoch_timestamp']
             
             subject_session_dict = {'subject_id': subject_id, 'session_id': session_id}
             
             merged_dict = subject_session_dict
             
-            if(FeatureType.nightly_cluster.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
-                cluster_features_dict = ClusterNightlyFeatureService.build_feature_dict(subject_id, session_id, cluster_feature_type, dataset)
-                merged_dict = merged_dict | cluster_features_dict
-                                         
+            # Building Nightly GMM Cluster Features
+            if(FeatureType.nightly_cluster_gmm.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
+                cluster_features_gmm_dict = ClusterNightlyFeatureService.build_feature_dict(subject_id, session_id, FeatureType.cluster_gmm, dataset)
+                cluster_features_gmm_dict = {"gmm_" + str(key): val for key, val in cluster_features_gmm_dict.items()}
+                merged_dict = merged_dict | cluster_features_gmm_dict
+                
+            # Building Nightly KMeans Cluster Features
+            if(FeatureType.nightly_cluster_kmeans.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
+                cluster_features_kmeans_dict = ClusterNightlyFeatureService.build_feature_dict(subject_id, session_id, FeatureType.cluster_kmeans, dataset)
+                cluster_features_kmeans_dict = {"kmeans_" + str(key): val for key, val in cluster_features_kmeans_dict.items()}
+                merged_dict = merged_dict | cluster_features_kmeans_dict
+            
+            # Building Nightly GEMINI Cluster Features for USI DataSet
+            if(dataset.name == DataSet.usi.name):
+                if(FeatureType.nightly_cluster_GEMINI.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
+                    cluster_features_GEMINI_dict = ClusterNightlyFeatureService.build_feature_dict(subject_id, session_id, FeatureType.epoched_cluster_GEMINI, dataset)
+                    cluster_features_GEMINI_dict = {"GEMINI_" + str(key): val for key, val in cluster_features_GEMINI_dict.items()}
+                    merged_dict = merged_dict | cluster_features_GEMINI_dict
+            
+            # Building Nightly Count Features                          
             if(FeatureType.nightly_count.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
                 count_features_dict = ActivityCountNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, dataset, cluster_timestamps)
                 merged_dict = merged_dict | count_features_dict
                 
+            # Building Nightly Ibi Features           
             if(FeatureType.nightly_ibi.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
                 ibi_features_dict = IbiNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, dataset, cluster_timestamps)
                 merged_dict = merged_dict | ibi_features_dict
@@ -118,14 +140,17 @@ class NightlyFeatureBuilder(object):
             # These Features only exist for USI
             if(dataset.name == DataSet.usi.name):
                 
+                # Building Nightly HR Features     
                 if(FeatureType.nightly_hr.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
                     hr_features_dict = HeartRateNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, dataset, cluster_timestamps)
                     merged_dict = merged_dict | hr_features_dict
                     
+                # Building Nightly Ibi from ppg      
                 if(FeatureType.nightly_ibi_from_ppg.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
                     ibi_features_from_ppg_dict = IbiNightlyFeatureService.build_feature_dict_from_epoched_ppg(subject_id, session_id, dataset, cluster_timestamps)
                     merged_dict = merged_dict | ibi_features_from_ppg_dict
             
+            # Building nightly sleep qualiy
             sleepquality_avg = np.mean(DataService.load_feature_raw(subject_id, FeatureType.sleep_quality, dataset))
             sleepquality = DataService.load_feature_raw(subject_id, session_id, FeatureType.sleep_quality, dataset)
             sleepquality = 0 if sleepquality < sleepquality_avg else 1

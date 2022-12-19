@@ -27,21 +27,20 @@ def run_preprocessing():
     
     start_time = time.time()
         
-    # ExceptionLogger.remove_logs()
+    ExceptionLogger.remove_logs()
     
     # Preprocessing.build_usi_cropped()
-    Preprocessing.build_mss_cropped()
+    # Preprocessing.build_mss_cropped()
     
     Preprocessing.build_usi_epoched()
     Preprocessing.build_mss_epoched()
     Preprocessing.build_mesa_epoched()
     
-    if not RunnerParameters.CLUSTERING_ALGO.name == ClusteringAlgorithm.GEMINI.name:
-        Preprocessing.build_cluster_features_usi()
-        Preprocessing.build_cluster_features_mesa()
-        Preprocessing.build_cluster_features_mss()
+    Preprocessing.build_cluster_features_usi()
+    Preprocessing.build_cluster_features_mesa()
+    Preprocessing.build_cluster_features_mss()
         
-        Preprocessing.build_clusters()
+    Preprocessing.build_clusters()
     
     Preprocessing.build_nightly_usi()
     Preprocessing.build_nightly_mss()

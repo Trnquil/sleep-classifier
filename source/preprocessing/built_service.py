@@ -106,7 +106,7 @@ class BuiltService(object):
                 path = Constants.CROPPED_FILE_PATH.joinpath(Constants.MSS_FOLDER_NAME)
             
         # clusters
-        elif feature_type.name == FeatureType.cluster.name or feature_type.name == FeatureType.cluster_features.name:
+        elif feature_type.name in FeatureType.get_cluster_names():
             if(dataset.name == DataSet.usi.name):
                 path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
             elif(dataset.name == DataSet.mesa.name):

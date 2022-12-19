@@ -21,15 +21,15 @@ class ClusterFeatureService(object):
         return class_predictions
     
     @staticmethod
-    def get_fitted_model():
+    def get_fitted_model(clustering_algorithm):
         
         features_df = DataFrameLoader.load_feature_dataframe([FeatureType.cluster_features], RunnerParameters.CLUSTERING_DATASETS)
         features = features_df.drop(columns=['epoch_timestamp']).to_numpy().squeeze()
         
-        if RunnerParameters.CLUSTERING_ALGO.name == ClusteringAlgorithm.GMM.name:
+        if clustering_algorithm.name == ClusteringAlgorithm.GMM.name:
             classifier = GaussianMixture(n_components=RunnerParameters.NUMBER_OF_CLUSTERS)
             
-        elif RunnerParameters.CLUSTERING_ALGO.name == ClusteringAlgorithm.KMeans.name:
+        elif clustering_algorithm.name == ClusteringAlgorithm.KMeans.name:
             classifier = KMeans(n_clusters=RunnerParameters.NUMBER_OF_CLUSTERS, random_state=0)
 
 

@@ -26,7 +26,8 @@ class PathService(object):
         FeatureType.epoched_cluster.name: "clusters.csv",
         FeatureType.epoched_sleep_label.name: "sleep_labels.csv",
         
-        FeatureType.cluster.name: "clusters.csv",
+        FeatureType.cluster_kmeans.name: "clusters_kmeans.csv",
+        FeatureType.cluster_gmm.name: "clusters_gmm.csv",
         FeatureType.cluster_features.name: "cluster_features.csv",
         
         FeatureType.nightly.name: "nightly_features.csv",
