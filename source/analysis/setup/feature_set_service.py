@@ -23,7 +23,7 @@ class FeatureSetService(object):
 
     @staticmethod
     def get_color(feature_set: [FeatureType]):
-        if set(feature_set) == {FeatureType.nightly_cluster_kmeans_kmeans}:
+        if set(feature_set) == {FeatureType.nightly_cluster_kmeans}:
             return sns.xkcd_rgb["denim blue"]
         if set(feature_set) == {FeatureType.nightly_ibi}:
             return sns.xkcd_rgb["yellow orange"]
