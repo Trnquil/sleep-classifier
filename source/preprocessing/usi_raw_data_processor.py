@@ -129,7 +129,6 @@ class UsiRawDataProcessor:
         
     @staticmethod
     def get_valid_epoch_dictionary(timestamps):
-        start_time = 0
         epoch_dictionary = {}
         floored_timestamps = []
 
@@ -137,7 +136,7 @@ class UsiRawDataProcessor:
             time = timestamps[ind]
             
             #This line floors the timespamps to epoch increments
-            floored_timestamp = time - np.mod(time - start_time, Epoch.DURATION)
+            floored_timestamp = time - np.mod(time, Epoch.DURATION)
 
             epoch_dictionary[floored_timestamp] = True
             

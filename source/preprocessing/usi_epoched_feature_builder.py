@@ -11,6 +11,7 @@ from source.data_services.dataset import DataSet
 from source.data_services.data_loader import DataLoader
 from source.exception_logger import ExceptionLogger
 from source.runner_parameters import RunnerParameters
+from source.data_services.mss_loader import MssLoader
 
 from GEMINI.gemini_service import GeminiService
 
@@ -36,9 +37,14 @@ class UsiEpochedFeatureBuilder(object):
             
             ibi_collection_from_ppg = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_ibi_from_ppg, DataSet.usi)
             valid_epochs_ibi_from_ppg = UsiRawDataProcessor.get_valid_epochs([ibi_collection_from_ppg])
-            ibi_features_from_ppg = IbiFeatureService.build_from_collection(ibi_collection_from_ppg, DataSet.usi, valid_epochs_ibi_from_ppg)    
-
+            ibi_features_from_ppg = IbiFeatureService.build_from_collection(ibi_collection_from_ppg, DataSet.usi, valid_epochs_ibi_from_ppg)
             
+            ibi_mss_values = ['ibi_' + str(val) if val!="epoch_timestamp" else str(val) for val in MssLoader.MSS_feature_dict.values()]
+            ibi_mss_features = ibi_features_from_ppg[ibi_mss_values]
+            prefixed_columns = ['mss_' + str(val) if val!="epoch_timestamp" else str(val) for val in ibi_mss_features.columns]
+            ibi_mss_features.columns = prefixed_columns
+
+            DataWriter.write_epoched(ibi_mss_features, subject_id, session_id, FeatureType.epoched_ibi_mss, DataSet.usi)
             DataWriter.write_epoched(count_feature, subject_id, session_id, FeatureType.epoched_count, DataSet.usi)
             DataWriter.write_epoched(hr_gemini_clusters, subject_id, session_id, FeatureType.epoched_cluster_GEMINI, DataSet.usi)
             DataWriter.write_epoched(hr_feature, subject_id, session_id, FeatureType.epoched_hr, DataSet.usi)

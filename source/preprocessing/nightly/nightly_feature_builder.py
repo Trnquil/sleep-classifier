@@ -2,6 +2,7 @@ import sys
 
 from source.preprocessing.clustering.cluster_nightly_feature_service import ClusterNightlyFeatureService
 from source.preprocessing.ibi.ibi_nightly_feature_service import IbiNightlyFeatureService
+from source.preprocessing.ibi_mss_nightly_feature_service import IbiMssNightlyFeatureService
 from source.data_services.data_service import DataService
 from source.analysis.setup.feature_type import FeatureType
 from source.preprocessing.built_service import BuiltService
@@ -133,21 +134,26 @@ class NightlyFeatureBuilder(object):
             if(FeatureType.nightly_count.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
                 count_features_dict = ActivityCountNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, dataset, cluster_timestamps)
                 merged_dict = merged_dict | count_features_dict
-                
+
             # Building Nightly Ibi Features           
-            if(FeatureType.nightly_ibi.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
-                ibi_features_dict = IbiNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, dataset, cluster_timestamps)
-                merged_dict = merged_dict | ibi_features_dict
-                
+            if(FeatureType.nightly_ibi_mss.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
+                ibi_mss_features_dict = IbiMssNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, dataset, cluster_timestamps)
+                merged_dict = merged_dict | ibi_mss_features_dict
+            
+            # Building Nightly HR Features     
+            if(FeatureType.nightly_hr.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
+                hr_features_dict = HeartRateNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, dataset, cluster_timestamps)
+                merged_dict = merged_dict | hr_features_dict
+                    
                 
             # These Features only exist for USI
             if(dataset.name == DataSet.usi.name):
                 
-                # Building Nightly HR Features     
-                if(FeatureType.nightly_hr.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
-                    hr_features_dict = HeartRateNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, dataset, cluster_timestamps)
-                    merged_dict = merged_dict | hr_features_dict
-                    
+                # Building Nightly Ibi Features           
+                if(FeatureType.nightly_ibi.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
+                    ibi_features_dict = IbiNightlyFeatureService.build_feature_dict_from_epoched(subject_id, session_id, dataset, cluster_timestamps)
+                    merged_dict = merged_dict | ibi_features_dict
+                
                 # Building Nightly Ibi from ppg      
                 if(FeatureType.nightly_ibi_from_ppg.name in FeatureType.get_names(RunnerParameters.NIGHTLY_FEATURES)):
                     ibi_features_from_ppg_dict = IbiNightlyFeatureService.build_feature_dict_from_epoched_ppg(subject_id, session_id, dataset, cluster_timestamps)

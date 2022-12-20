@@ -22,6 +22,7 @@ class FeatureType(Enum):
     
     epoched = "epoched"
     
+    epoched_ibi_mss = "epoched ibi mss"
     epoched_cluster_GEMINI = "epoched cluster GEMINI"
     epoched_cluster = "epoched cluster"
     epoched_hr = "epoched heart rate"
@@ -43,6 +44,7 @@ class FeatureType(Enum):
     nightly_cluster_GEMINI = "GEMINI cluster"
     nightly_ibi = "IBI"
     nightly_ibi_from_ppg = "IBI_PPG"
+    nightly_ibi_mss = "IBI MSS"
     nightly_count = "Count"
     nightly_sleep_quality = "Sleep Quality"
     nightly_hr = "HR"

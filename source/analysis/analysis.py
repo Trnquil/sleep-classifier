@@ -14,7 +14,6 @@ from source.analysis.setup.feature_type import FeatureType
 from source.analysis.setup.subject_builder import SubjectBuilder
 from source.analysis.tables.table_builder import TableBuilder
 from source.constants import Constants
-from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 from source.analysis.clustering.cluster_analyzer import ClusterAnalyzer
@@ -50,12 +49,8 @@ class Analysis(object):
     
     @staticmethod
     def all_figures(dataset):
-        attributed_classifiers = [AttributedClassifier(name='Nearest Neighbors',
-                                                     classifier=KNeighborsClassifier()),
-                                  AttributedClassifier(name='Random Forest',
-                                                     classifier=RandomForestClassifier(max_depth=10, random_state=0)),
-                                  AttributedClassifier(name='SVM',
-                                                     classifier=SVC(probability=True))]
+        attributed_classifiers = utils.get_classifiers()
+
         
         if(dataset.name == DataSet.usi.name):
             feature_sets = RunnerParameters.ANALYSIS_FEATURES_USI

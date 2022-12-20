@@ -25,11 +25,11 @@ def run_preprocessing():
     ExceptionLogger.remove_logs()
     
     # Preprocessing.build_usi_cropped()
-    # Preprocessing.build_mss_cropped()
+    Preprocessing.build_mss_cropped()
     
-    # Preprocessing.build_usi_epoched()
-    # Preprocessing.build_mss_epoched()
-    # Preprocessing.build_mesa_epoched()
+    Preprocessing.build_usi_epoched()
+    Preprocessing.build_mss_epoched()
+    Preprocessing.build_mesa_epoched()
     
     Preprocessing.build_cluster_features_usi()
     Preprocessing.build_cluster_features_mesa()

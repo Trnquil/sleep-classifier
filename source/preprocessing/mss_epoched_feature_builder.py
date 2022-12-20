@@ -19,12 +19,18 @@ class MssEpochedFeatureBuilder(object):
         try:
             count_feature = ActivityCountFeatureService.build_count_feature(subject_id, session_id, DataSet.mss)
             
-            ibi_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_ibi, DataSet.mss)
-            valid_epochs_ibi = UsiRawDataProcessor.get_valid_epochs([ibi_collection])
-            ibi_features = IbiFeatureService.build_from_collection(ibi_collection, DataSet.mss, valid_epochs_ibi)
+            hr_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_hr, DataSet.mss)
+            valid_epochs_hr = UsiRawDataProcessor.get_valid_epochs([hr_collection])
+            hr_features = HeartRateFeatureService.build_from_collection(hr_collection, valid_epochs_hr)
             
+            hrv_features = MssLoader.load_epoched_hrv_features(subject_id, session_id)
+            hrv_features = hrv_features
+            prefixed_columns = ['mss_ibi_' + str(val) if val!="epoch_timestamp" else str(val) for val in hrv_features.columns]
+            hrv_features.columns = prefixed_columns
+            
+            DataWriter.write_epoched(hrv_features, subject_id, session_id, FeatureType.epoched_ibi_mss, DataSet.mss)
             DataWriter.write_epoched(count_feature, subject_id, session_id, FeatureType.epoched_count, DataSet.mss)
-            DataWriter.write_epoched(ibi_features, subject_id, session_id, FeatureType.epoched_ibi, DataSet.mss)
+            DataWriter.write_epoched(hr_features, subject_id, session_id, FeatureType.epoched_hr, DataSet.mss)
         except:
             ExceptionLogger.append_exception(subject_id, session_id, "Epoched", DataSet.usi.name, sys.exc_info()[0])
             print("Skip subject ", str(subject_id), ", session ", str(session_id), " due to ", sys.exc_info()[0])

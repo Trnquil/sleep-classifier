@@ -185,6 +185,8 @@ class DataLoader(object):
             nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("ibi_.*"))
         elif(feature_type.name == FeatureType.nightly_ibi_from_ppg.name):
             nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("ppg_ibi.*"))
+        elif(feature_type.name == FeatureType.nightly_ibi_mss.name):
+            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("mss_ibi.*"))
         elif(feature_type.name == FeatureType.nightly_hr.name):
             nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("hr_.*"))
         elif(feature_type.name == FeatureType.nightly_sleep_quality.name):

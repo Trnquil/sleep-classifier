@@ -11,7 +11,7 @@ class RunnerParameters(object):
     PROCESS_USI_BVP_SEGMENTWISE = False
     
     #This does not apply to GEMINI, as it has got its own Configuration File
-    NUMBER_OF_CLUSTERS = 5
+    NUMBER_OF_CLUSTERS = 6
     
     # If we have already trained a GEMINI model, we can set this to false. Models are saved after each training.
     # If no model has been trained so far, training will happen even if GEMINI_TRAIN is set to false
@@ -19,17 +19,17 @@ class RunnerParameters(object):
     GEMINI_TRAIN = True
     
     # We train on every stride-th epoch to conserve computing power
-    GEMINI_STRIDE = 4
+    GEMINI_STRIDE = 10
     
     # Maximum number of epochs we want to train on
-    GEMINI_TRAIN_EPOCHS_MAX = 20000
+    GEMINI_TRAIN_EPOCHS_MAX = 30000
     
     CLUSTERING_DATASETS = [DataSet.mesa, DataSet.usi]
     
     # The following three features need to have compatible types (like epoched_ibi and epoched_ibi_from_ppg)
-    CLUSTER_FEATURES_USI = [FeatureType.epoched_ibi_from_ppg, FeatureType.epoched_count]
-    CLUSTER_FEATURES_MESA = [FeatureType.epoched_ibi_from_ppg, FeatureType.epoched_count]
-    CLUSTER_FEATURES_MSS = [FeatureType.epoched_ibi, FeatureType.epoched_count]
+    CLUSTER_FEATURES_USI = [FeatureType.epoched_ibi_mss, FeatureType.epoched_count]
+    CLUSTER_FEATURES_MESA = [FeatureType.epoched_ibi_mss, FeatureType.epoched_count]
+    CLUSTER_FEATURES_MSS = [FeatureType.epoched_ibi_mss, FeatureType.epoched_count]
     
     CLUSTERING_PER_SUBJECT_NORMALIZATION = True  # True: normalize clustering features over subjects, 
                                                  # False: normalize clustering features over all data  
@@ -46,30 +46,28 @@ class RunnerParameters(object):
                         FeatureType.nightly_hr, 
                         FeatureType.nightly_normalized_hr,
                         FeatureType.nightly_count,
-                        FeatureType.nightly_ibi,
-                        FeatureType.nightly_ibi_from_ppg]
+                        FeatureType.nightly_ibi_mss]
     
     ANALYSIS_FEATURES_USI = [[FeatureType.nightly_cluster_kmeans],
                              [FeatureType.nightly_cluster_gmm],
                              [FeatureType.nightly_cluster_GEMINI],
                              [FeatureType.nightly_cluster_kmeans, FeatureType.nightly_cluster_gmm, FeatureType.nightly_cluster_GEMINI],
-                             [FeatureType.nightly_cluster_kmeans, FeatureType.nightly_cluster_gmm, FeatureType.nightly_cluster_GEMINI, FeatureType.nightly_ibi],
+                             [FeatureType.nightly_cluster_kmeans, FeatureType.nightly_cluster_gmm, FeatureType.nightly_cluster_GEMINI, FeatureType.nightly_ibi_mss],
                             [FeatureType.nightly_cluster_kmeans, FeatureType.nightly_hr],
-                            [FeatureType.nightly_ibi],
-                            [FeatureType.nightly_ibi_from_ppg],
+                            [FeatureType.nightly_ibi_mss],
                             [FeatureType.nightly_count],
-                            [FeatureType.nightly_cluster_kmeans, FeatureType.nightly_ibi, FeatureType.nightly_count],
+                            [FeatureType.nightly_cluster_kmeans, FeatureType.nightly_ibi_mss, FeatureType.nightly_count],
                             [FeatureType.nightly_cluster_kmeans, 
                                              FeatureType.nightly_hr, 
                                              FeatureType.nightly_normalized_hr,
                                              FeatureType.nightly_count,
-                                             FeatureType.nightly_ibi,
-                                             FeatureType.nightly_ibi_from_ppg]
+                                             FeatureType.nightly_ibi_mss]
                             ]
     
     ANALYSIS_FEATURES_MSS = [[FeatureType.nightly_cluster_kmeans],
-                            [FeatureType.nightly_ibi],
-                            [FeatureType.nightly_cluster_kmeans, FeatureType.nightly_ibi, FeatureType.nightly_count]]
+                             [FeatureType.nightly_count],
+                            [FeatureType.nightly_ibi_mss],
+                            [FeatureType.nightly_cluster_kmeans, FeatureType.nightly_ibi_mss, FeatureType.nightly_count]]
     
         
     def print_settings(dataset):

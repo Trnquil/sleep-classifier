@@ -19,6 +19,7 @@ from source.mesa.mesa_ppg_service import MesaPPGService
 from source.preprocessing.ibi.ibi_feature_service import IbiFeatureService
 from source.preprocessing.bvp_service import BvpService
 from source.preprocessing.collection import Collection
+from source.data_services.mss_loader import MssLoader
 
 import numpy as np
 import pandas as pd
@@ -73,10 +74,14 @@ class MesaFeatureBuilder(object):
 
                 ibi_features_from_ppg = IbiFeatureService.build_from_collection(ibi_collection, DataSet.mesa, valid_epochs)
                 
+                ibi_mss_values = {'ibi_' + str(val) if val!="epoch_timestamp" else str(val) for val in MssLoader.MSS_feature_dict.values()}
+                ibi_mss_features = ibi_features_from_ppg[list(ibi_mss_values)]
+                prefixed_columns = ['mss_' + str(val) if val!="epoch_timestamp" else str(val) for val in ibi_mss_features.columns]
+                ibi_mss_features.columns = prefixed_columns
+                
     
                 # Writing features to disk
-    
-                # Create needed folders if they don't already exist
+                DataWriter.write_epoched(ibi_mss_features, subject_id, 'SS_01', FeatureType.epoched_ibi_mss, DataSet.mesa)
                 DataWriter.write_epoched(hr_features, subject_id, 'SS_01', FeatureType.epoched_hr, DataSet.mesa)
                 DataWriter.write_epoched(ibi_features_from_ppg, subject_id, 'SS_01', FeatureType.epoched_ibi_from_ppg, DataSet.mesa)
                 DataWriter.write_epoched(count_feature, subject_id, 'SS_01', FeatureType.epoched_count, DataSet.mesa)

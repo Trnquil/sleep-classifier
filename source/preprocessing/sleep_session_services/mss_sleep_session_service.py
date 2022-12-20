@@ -72,6 +72,12 @@ class MssSleepSessionService(object):
                 print("Skip subject ", str(subject_id), " due to ", sys.exc_info()[0])
                 
         return sleepsessions
+    
+    @staticmethod
+    def load_sleepsession(subject_id, session_id):
+        sleepsessions = MssSleepSessionService.load(subject_id)
+        sleepsession = [session for session in sleepsessions if session.session_id == session_id][0]
+        return sleepsession
                 
                 
     @staticmethod

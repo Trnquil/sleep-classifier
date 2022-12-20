@@ -10,6 +10,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
+from sklearn.svm import SVC
 
 from source.analysis.setup.attributed_classifier import AttributedClassifier
 from source.analysis.setup.feature_type import FeatureType
@@ -27,6 +28,8 @@ def get_classifiers():
             AttributedClassifier(name='Logistic Regression',
                                  classifier=LogisticRegression(penalty='l1', solver='liblinear', verbose=0,
                                                                multi_class='auto')),
+            AttributedClassifier(name='SVM',
+                               classifier=SVC(probability=True)),
             AttributedClassifier(name='k-Nearest Neighbors',
                                  classifier=KNeighborsClassifier(weights='distance')),
             AttributedClassifier(name='Neural Net',
