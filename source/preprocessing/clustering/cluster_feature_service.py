@@ -24,7 +24,7 @@ class ClusterFeatureService(object):
     def get_fitted_model(clustering_algorithm):
         
         features_df = DataFrameLoader.load_feature_dataframe([FeatureType.cluster_features], RunnerParameters.CLUSTERING_DATASETS)
-        features = features_df.drop(columns=['epoch_timestamp']).to_numpy().squeeze()
+        features = features_df.drop(columns=['epoch_timestamp']).to_numpy().dropna().squeeze()
         
         if clustering_algorithm.name == ClusteringAlgorithm.GMM.name:
             classifier = GaussianMixture(n_components=RunnerParameters.NUMBER_OF_CLUSTERS)

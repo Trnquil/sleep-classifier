@@ -53,7 +53,7 @@ class RunnerParameters(object):
                              [FeatureType.nightly_cluster_gmm],
                              [FeatureType.nightly_cluster_GEMINI],
                              [FeatureType.nightly_cluster_kmeans, FeatureType.nightly_cluster_gmm, FeatureType.nightly_cluster_GEMINI],
-                             [FeatureType.nightly_cluster_kmeans, FeatureType.nightly_cluster_gmm, FeatureType.nightly_cluster_GEMINI, FeatureType.nightly_ibi]
+                             [FeatureType.nightly_cluster_kmeans, FeatureType.nightly_cluster_gmm, FeatureType.nightly_cluster_GEMINI, FeatureType.nightly_ibi],
                             [FeatureType.nightly_cluster_kmeans, FeatureType.nightly_hr],
                             [FeatureType.nightly_ibi],
                             [FeatureType.nightly_ibi_from_ppg],

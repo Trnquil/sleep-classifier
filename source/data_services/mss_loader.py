@@ -42,6 +42,7 @@ class MssLoader(object):
         feature_array.columns = MssLoader.MSS_feature_dict.values()
         
         feature_array['epoch_timestamp'] = (feature_array['epoch_timestamp']/1000 - Constants.TIME_CENTER_MSS).astype(int)
+        feature_array = feature_array.sort_values(by=['epoch_timestamp'])
         return feature_array
         
     @staticmethod
