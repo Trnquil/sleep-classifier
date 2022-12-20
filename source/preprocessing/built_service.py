@@ -85,8 +85,7 @@ class BuiltService(object):
     
     @staticmethod 
     def get_path(feature_type, dataset):
-        # Getting the correct path for every featuretype and dataset
-        # For nightly, we assume that the same subjects and sessions will have been built than for epoched
+        # Getting the correct folder path for every featuretype and dataset
         
         # epoched features
         if (feature_type.name == FeatureType.epoched.name or feature_type.name in FeatureType.get_epoched_names()

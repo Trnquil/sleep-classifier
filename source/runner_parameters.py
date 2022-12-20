@@ -17,7 +17,8 @@ class RunnerParameters(object):
     # If no model has been trained so far, training will happen even if GEMINI_TRAIN is set to false
     # The most recently trained model is used for evaluation
     GEMINI_TRAIN = True
-    # We are train on every stride-th epoch to conserve computing power
+    
+    # We train on every stride-th epoch to conserve computing power
     GEMINI_STRIDE = 4
     
     # Maximum number of epochs we want to train on

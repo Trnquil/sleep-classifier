@@ -5,18 +5,13 @@ import time
 
 from source.preprocessing.preprocessing import Preprocessing
 from source.analysis.analysis import Analysis
-from source.data_services.data_frame_loader import DataFrameLoader
 from source.exception_logger import ExceptionLogger
 from source.runner_parameters import RunnerParameters
-from source.analysis.setup.clustering_algorithm import ClusteringAlgorithm
 from source.figures_saver import FiguresSaver
 from source.data_services.dataset import DataSet
-import utils
-
 
 
 def run():
-    
 
     run_preprocessing()
     
@@ -32,17 +27,17 @@ def run_preprocessing():
     # Preprocessing.build_usi_cropped()
     # Preprocessing.build_mss_cropped()
     
-    Preprocessing.build_usi_epoched()
-    Preprocessing.build_mss_epoched()
-    Preprocessing.build_mesa_epoched()
+    # Preprocessing.build_usi_epoched()
+    # Preprocessing.build_mss_epoched()
+    # Preprocessing.build_mesa_epoched()
     
-    Preprocessing.build_cluster_features_usi()
-    Preprocessing.build_cluster_features_mesa()
-    Preprocessing.build_cluster_features_mss()
-        
-    Preprocessing.build_clusters()
+    # Preprocessing.build_cluster_features_usi()
+    # Preprocessing.build_cluster_features_mesa()
+    # Preprocessing.build_cluster_features_mss()
     
-    Preprocessing.build_nightly_usi()
+    # Preprocessing.build_clusters()
+    
+    # Preprocessing.build_nightly_usi()
     Preprocessing.build_nightly_mss()
     
     end_time = time.time()

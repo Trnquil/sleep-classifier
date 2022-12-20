@@ -98,7 +98,10 @@ class NightlyFeatureBuilder(object):
     @staticmethod
     def build_feature_dict(subject_id, session_id, dataset):
         try:
-            cluster_feature_types = [FeatureType.cluster_gmm, FeatureType.cluster_kmeans, FeatureType.epoched_cluster_GEMINI]
+            if(dataset.name == DataSet.usi.name):
+                cluster_feature_types = [FeatureType.cluster_gmm, FeatureType.cluster_kmeans, FeatureType.epoched_cluster_GEMINI]
+            else:
+                cluster_feature_types = [FeatureType.cluster_gmm, FeatureType.cluster_kmeans]
                 
             clusters = DataFrameLoader.load_feature_dataframe(subject_id, session_id, cluster_feature_types, dataset)
             cluster_timestamps = clusters['epoch_timestamp']
