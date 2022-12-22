@@ -24,7 +24,7 @@ class ClusterBuilder(object):
         
         try:
             features_df = DataFrameLoader.load_feature_dataframe(subject_id, session_id, [FeatureType.cluster_features], dataset)
-            data = features_df.to_numpy().squeeze()
+            data = features_df.drop(columns=['subject_id', 'session_id']).to_numpy().squeeze()
             features = data[:,1:].squeeze()
             timestamps = data[:,0].squeeze()
             

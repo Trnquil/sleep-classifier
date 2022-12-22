@@ -32,8 +32,9 @@ class DataFrameLoader(object):
                 final_features = feature_df
             else:
                 final_features = pd.merge(final_features, feature_df, how="inner", on=["epoch_timestamp"])
-            
             i += 1
+        final_features.insert(1, 'subject_id', str(subject_id))
+        final_features.insert(2, 'session_id', str(session_id))
         return final_features
     
     @staticmethod

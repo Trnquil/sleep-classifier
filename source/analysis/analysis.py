@@ -37,10 +37,10 @@ class Analysis(object):
         
         print("Running Cluster Analysis...")
         
-        feature_types = [FeatureType.cluster_features, FeatureType.cluster, FeatureType.epoched_sleep_label]
+        feature_types = [FeatureType.cluster_features, FeatureType.cluster_kmeans, FeatureType.epoched_sleep_label]
         full_df = DataFrameLoader.load_feature_dataframe(feature_types, DataSet.mesa)
         
-        features_df = full_df.drop(columns=["epoch_timestamp", "cluster", "sleep_label"])
+        features_df = full_df.drop(columns=["epoch_timestamp", "subject_id", "session_id", "cluster", "sleep_label"])
         clusters_df = full_df["cluster"]
         labels_df = full_df["sleep_label"]
         

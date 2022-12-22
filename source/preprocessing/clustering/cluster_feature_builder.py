@@ -27,8 +27,8 @@ class ClusterFeatureBuilder(object):
         
         if not RunnerParameters.CLUSTERING_PER_SUBJECT_NORMALIZATION:
             overall_df = DataFrameLoader.load_feature_dataframe(cluster_features, dataset)
-            overall_mean = np.mean(overall_df.iloc[:,1:], axis=0)
-            overall_std = np.std(overall_df.iloc[:,1:], axis=0)
+            overall_mean = np.mean(overall_df.iloc[:,3:], axis=0)
+            overall_std = np.std(overall_df.iloc[:,3:], axis=0)
         
         subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(FeatureType.epoched, dataset)
         
@@ -38,8 +38,8 @@ class ClusterFeatureBuilder(object):
                     t.set_description("Building " + dataset.name.upper() + " Cluster Features")
                     
                     subject_df = DataFrameLoader.load_feature_dataframe(subject_id, cluster_features, dataset)
-                    subject_mean = np.mean(subject_df.iloc[:,1:], axis=0)
-                    subject_std = np.std(subject_df.iloc[:,1:], axis=0)
+                    subject_mean = np.mean(subject_df.iloc[:,3:], axis=0)
+                    subject_std = np.std(subject_df.iloc[:,3:], axis=0)
                     
                     for session_id in subject_sleepsession_dictionary[subject_id]:
                         
@@ -48,11 +48,11 @@ class ClusterFeatureBuilder(object):
                             normalized_session_df = session_df
                             
                             if RunnerParameters.CLUSTERING_PER_SUBJECT_NORMALIZATION:
-                                normalized_session_df.iloc[:,1:] = (normalized_session_df.iloc[:,1:] - subject_mean)/subject_std
+                                normalized_session_df.iloc[:,3:] = (normalized_session_df.iloc[:,3:] - subject_mean)/subject_std
                                 if(FeatureType.epoched_count in cluster_features):
                                     normalized_session_df[['count']] = normalized_session_df[['count']] + (subject_mean['count']/subject_std['count'])
                             else:
-                                normalized_session_df.iloc[:,1:] = (normalized_session_df.iloc[:,1:] - overall_mean)/overall_std
+                                normalized_session_df.iloc[:,3:] = (normalized_session_df.iloc[:,3:] - overall_mean)/overall_std
                                 if(FeatureType.epoched_count in cluster_features):
                                     normalized_session_df[['count']] = normalized_session_df[['count']] + (overall_mean['count']/overall_std['count'])
                            
