@@ -20,10 +20,10 @@ import sys
 class ClusterBuilder(object):
 
     @staticmethod
-    def build(subject_id, session_id, feature_type, dataset, clustering_model):
+    def build(subject_id, session_id, feature_type, sleep_wake, dataset, clustering_model):
         
         try:
-            features_df = DataFrameLoader.load_feature_dataframe(subject_id, session_id, [FeatureType.cluster_features], dataset)
+            features_df = DataFrameLoader.load_feature_dataframe(subject_id, session_id, [FeatureType.cluster_features], sleep_wake, dataset)
             data = features_df.drop(columns=['subject_id', 'session_id']).to_numpy().squeeze()
             features = data[:,1:].squeeze()
             timestamps = data[:,0].squeeze()
@@ -51,7 +51,7 @@ class ClusterBuilder(object):
             timestamped_clusters = np.stack([timestamps, clusters], axis=1)
             clusters_df = pd.DataFrame(timestamped_clusters)
             clusters_df.columns = ["epoch_timestamp", "cluster"]
-            DataWriter.write_cluster(clusters_df, subject_id, session_id, feature_type, dataset)
+            DataWriter.write_cluster(clusters_df, subject_id, session_id, feature_type, sleep_wake, dataset)
         except:
             ExceptionLogger.append_exception(subject_id, session_id, "Nightly", dataset.name, sys.exc_info()[0])
             print("Skip subject ", str(subject_id), ", session ", str(session_id), " due to ", sys.exc_info()[0])

@@ -27,6 +27,28 @@ class Upsampler(object):
         nightly_dataframe = pd.concat([df_majority, df_minority_upsampled])
         return nightly_dataframe
     
+    @staticmethod 
+    def random_deletion_downsampling(nightly_dataframe):
+        
+        df_1 = nightly_dataframe[nightly_dataframe.sleep_quality==1]
+        df_0 = nightly_dataframe[nightly_dataframe.sleep_quality==0]
+        
+        if df_1.shape[0] > df_0.shape[0]:
+            df_majority = df_1
+            df_minority = df_0
+        else:
+            df_majority = df_0
+            df_minority = df_1
+                                        
+        df_majority_downsampled = resample(df_majority, 
+        replace=True,     # sample with replacement
+        n_samples=df_minority.shape[0],    # to match majority class
+        random_state=123)
+        
+        nightly_dataframe = pd.concat([df_majority_downsampled, df_minority])
+        return nightly_dataframe
+    
+    
     @staticmethod
     def smote_upsampling(nightly_dataframe):
         nightly_dataframe = nightly_dataframe.dropna()

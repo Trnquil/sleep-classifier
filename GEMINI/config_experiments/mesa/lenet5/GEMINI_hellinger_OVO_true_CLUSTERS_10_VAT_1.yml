@@ -3,16 +3,16 @@ gemini:
   distance: hellinger
   ovo: true
 
-result_path: /Users/julien/OneDrive/ETH/HS22/Bachelor Thesis/sleep-classifier/GEMINI/results/mesa/lenet5
-data_path: /Users/julien/OneDrive/ETH/HS22/Bachelor Thesis/sleep-classifier/GEMINI/data
+result_path: ../GEMINI/results/mesa/lenet5
+data_path: ../GEMINI/data
 
 # Dataset
-dataset: /Users/julien/OneDrive/ETH/HS22/Bachelor Thesis/sleep-classifier/GEMINI/data/custom_datasets/mesa_hr.py
+dataset: ../GEMINI/data/custom_datasets/mesa_hr.py
 dataset_kwargs:
 similarity_fct:
 similarity_kwargs:
 
-use_cuda: true
+use_cuda: false
 
 # Regularisation
 regularisations:
@@ -25,9 +25,9 @@ regularisations:
 
 # Model
 model:
-  encoder: /Users/julien/OneDrive/ETH/HS22/Bachelor Thesis/sleep-classifier/GEMINI/models/custom_models/encoder_lenet5_variation.py
+  encoder: ../GEMINI/models/custom_models/encoder_lenet5_variation.py
   encoder_kwargs:
-  clustering_head: /Users/julien/OneDrive/ETH/HS22/Bachelor Thesis/sleep-classifier/GEMINI/models/custom_models/clustering_head_linear.py
+  clustering_head: ../GEMINI/models/custom_models/clustering_head_linear.py
   clustering_head_kwargs:
     input_shape: 84
     num_clusters: 6

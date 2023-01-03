@@ -3,14 +3,15 @@ import pyedflib as pyedflib
 
 from source import utils
 from source.preprocessing.collection import Collection
+from source.constants import Constants
 
 
 class MesaHeartRateService(object):
     @staticmethod
     def load_raw(file_id):
-        project_root = str(utils.get_project_root())
+        project_root = utils.get_project_root()
 
-        edf_file = pyedflib.EdfReader(project_root + '/data/mesa/polysomnography/edfs/mesa-sleep-' + file_id + '.edf')
+        edf_file = pyedflib.EdfReader(str(project_root.joinpath(Constants.MESA_DATA_PATH.joinpath('polysomnography/edfs/mesa-sleep-' + file_id + '.edf'))))
         signal_labels = edf_file.getSignalLabels()
 
         hr_column = len(signal_labels) - 2

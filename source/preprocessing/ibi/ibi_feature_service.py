@@ -19,42 +19,42 @@ class IbiFeatureService(object):
 
         i = 0
         for epoch in valid_epochs:
-            indices_in_range = FeatureService.get_window(ibi_collection.timestamps, epoch)
-            
-            ibi_values_in_range = ibi_collection.values[indices_in_range].squeeze()
-            ibi_timestamps_in_range = ibi_collection.timestamps[indices_in_range].squeeze()
-            
-            if ibi_timestamps_in_range.shape[0] == 0:
-                continue
-            
-            ibi_values_delta = np.sum(ibi_values_in_range)
-            ibi_timestamps_delta = ibi_timestamps_in_range[-1] - ibi_timestamps_in_range[0]
-            
-            # We cannot apply this criterion on MSS Data,because MSS IBI is derived from heart rate values
-            if(not dataset.name == DataSet.mss.name):
-                if(ibi_values_delta/ibi_timestamps_delta < IbiFeatureService.DataRatio):
+            try:
+                indices_in_range = FeatureService.get_window(ibi_collection.timestamps, epoch)
+                
+                ibi_values_in_range = ibi_collection.values[indices_in_range].squeeze()
+                ibi_timestamps_in_range = ibi_collection.timestamps[indices_in_range].squeeze()
+                
+                ibi_values_delta = np.sum(ibi_values_in_range)
+                ibi_timestamps_delta = ibi_timestamps_in_range[-1] - ibi_timestamps_in_range[0]
+                
+                # We cannot apply this criterion on MSS Data,because MSS IBI is derived from heart rate values
+                if(not dataset.name == DataSet.mss.name):
+                    if(ibi_values_delta/ibi_timestamps_delta < IbiFeatureService.DataRatio):
+                        continue
+                    
+                # Applying another criterion
+                if(len(ibi_values_in_range) < IbiFeatureService.MinimumValueCount):
                     continue
                 
-            # Applying another criterion
-            if(len(ibi_values_in_range) < IbiFeatureService.MinimumValueCount):
-                continue
-            
-            # We need the IBI values in milliseconds, not seconds
-            ibi_values = ibi_values_in_range*1000
-            
-
-            feature_dict = IbiFeatureService.get_features(ibi_values)
+                # We need the IBI values in milliseconds, not seconds
+                ibi_values = ibi_values_in_range*1000
                 
-            epoch_timestamp_dict = {'epoch_timestamp': epoch.timestamp}
-            feature_dict = epoch_timestamp_dict | feature_dict
-                     
-            # initializing an array filled with nans
-            if(i == 0):
-                ibi_features = np.full((len(valid_epochs),len(list(feature_dict.keys()))),np.nan)
-                
-            ibi_features[i,:] = np.array(list(feature_dict.items()))[:,1]
-                
-            i += 1
+        
+                feature_dict = IbiFeatureService.get_features(ibi_values)
+                    
+                epoch_timestamp_dict = {'epoch_timestamp': epoch.timestamp}
+                feature_dict = epoch_timestamp_dict | feature_dict
+                         
+                # initializing an array filled with nans
+                if(len(ibi_features) == 0):
+                    ibi_features = np.full((len(valid_epochs),len(list(feature_dict.keys()))),np.nan)
+                    
+                ibi_features[i,:] = np.array(list(feature_dict.items()))[:,1]
+                    
+                i += 1
+            except:
+                pass
         
         if np.any(ibi_features):
             #removing any leftover nans

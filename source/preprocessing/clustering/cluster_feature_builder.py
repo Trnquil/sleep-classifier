@@ -16,7 +16,7 @@ from tqdm import tqdm
 class ClusterFeatureBuilder(object):
     
     @staticmethod
-    def build(dataset):
+    def build(dataset, sleep_wake):
         
         if(dataset.name == DataSet.usi.name):
             cluster_features = RunnerParameters.CLUSTER_FEATURES_USI
@@ -26,25 +26,24 @@ class ClusterFeatureBuilder(object):
             cluster_features = RunnerParameters.CLUSTER_FEATURES_MSS
         
         if not RunnerParameters.CLUSTERING_PER_SUBJECT_NORMALIZATION:
-            overall_df = DataFrameLoader.load_feature_dataframe(cluster_features, dataset)
+            overall_df = DataFrameLoader.load_feature_dataframe(cluster_features, sleep_wake, dataset)
             overall_mean = np.mean(overall_df.iloc[:,3:], axis=0)
             overall_std = np.std(overall_df.iloc[:,3:], axis=0)
         
-        subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(FeatureType.epoched, dataset)
+        subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(FeatureType.epoched, sleep_wake, dataset)
         
         with tqdm(subject_sleepsession_dictionary.keys(), unit='subject', colour='green') as t:
             for subject_id in t:
                 try:
                     t.set_description("Building " + dataset.name.upper() + " Cluster Features")
                     
-                    subject_df = DataFrameLoader.load_feature_dataframe(subject_id, cluster_features, dataset)
+                    subject_df = DataFrameLoader.load_feature_dataframe(subject_id, cluster_features, sleep_wake, dataset)
                     subject_mean = np.mean(subject_df.iloc[:,3:], axis=0)
                     subject_std = np.std(subject_df.iloc[:,3:], axis=0)
                     
                     for session_id in subject_sleepsession_dictionary[subject_id]:
-                        
                         try:
-                            session_df = DataFrameLoader.load_feature_dataframe(subject_id, session_id, cluster_features, dataset)
+                            session_df = DataFrameLoader.load_feature_dataframe(subject_id, session_id, cluster_features, sleep_wake, dataset)
                             normalized_session_df = session_df
                             
                             if RunnerParameters.CLUSTERING_PER_SUBJECT_NORMALIZATION:
@@ -56,7 +55,7 @@ class ClusterFeatureBuilder(object):
                                 if(FeatureType.epoched_count in cluster_features):
                                     normalized_session_df[['count']] = normalized_session_df[['count']] + (overall_mean['count']/overall_std['count'])
                            
-                            DataWriter.write_cluster(normalized_session_df, subject_id, session_id, FeatureType.cluster_features, dataset)
+                            DataWriter.write_cluster(normalized_session_df, subject_id, session_id, FeatureType.cluster_features, sleep_wake, dataset)
                         except:
                             ExceptionLogger.append_exception(subject_id, session_id, "Cluster Features", dataset.name, sys.exc_info()[0])
                             print("Skip subject ", str(subject_id), ", session ", str(session_id), " due to ", sys.exc_info()[0])

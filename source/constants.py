@@ -1,4 +1,5 @@
 from source import utils
+from pathlib import Path
 
 class Constants(object):
     # WAKE_THRESHOLD = 0.3  # These values were used for scikit-learn 0.20.3, See:
@@ -13,6 +14,7 @@ class Constants(object):
     SECONDS_PER_HOUR = 3600
     VERBOSE = True
     MAKE_PLOTS_PREPROCESSING = True
+    MESA_DATA_PATH = Path('/local/shared_data/data_mesa')
     CROPPED_FILE_PATH = utils.get_project_root().joinpath('outputs/cropped features/')
     EPOCHED_FILE_PATH = utils.get_project_root().joinpath('outputs/epoched features/')
     CLUSTERS_FILE_PATH = utils.get_project_root().joinpath('outputs/clusters/')

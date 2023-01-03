@@ -20,6 +20,7 @@ from source.preprocessing.ibi.ibi_feature_service import IbiFeatureService
 from source.preprocessing.bvp_service import BvpService
 from source.preprocessing.collection import Collection
 from source.data_services.mss_loader import MssLoader
+from source.preprocessing.sleep_wake import SleepWake
 
 import numpy as np
 import pandas as pd
@@ -30,7 +31,7 @@ class MesaFeatureBuilder(object):
     @staticmethod
     def build(subject_id):
             
-        try:
+        # try:
             raw_labeled_sleep = MesaPSGService.load_raw(subject_id)
             heart_rate_collection = MesaHeartRateService.load_raw(subject_id)
             activity_count_collection = MesaActigraphyService.load_raw(subject_id)
@@ -81,14 +82,14 @@ class MesaFeatureBuilder(object):
                 
     
                 # Writing features to disk
-                DataWriter.write_epoched(ibi_mss_features, subject_id, 'SS_01', FeatureType.epoched_ibi_mss, DataSet.mesa)
-                DataWriter.write_epoched(hr_features, subject_id, 'SS_01', FeatureType.epoched_hr, DataSet.mesa)
-                DataWriter.write_epoched(ibi_features_from_ppg, subject_id, 'SS_01', FeatureType.epoched_ibi_from_ppg, DataSet.mesa)
-                DataWriter.write_epoched(count_feature, subject_id, 'SS_01', FeatureType.epoched_count, DataSet.mesa)
-                DataWriter.write_epoched(labeled_sleep, subject_id, 'SS_01', FeatureType.epoched_sleep_label, DataSet.mesa)
-        except:
-            ExceptionLogger.append_exception(subject_id, "SS_01", "Epoched", DataSet.mesa.name, sys.exc_info()[0])
-            print("Skip subject ", str(subject_id), " due to ", sys.exc_info()[0])
+                DataWriter.write_epoched(ibi_mss_features, subject_id, 'SS_01', FeatureType.epoched_ibi_mss, SleepWake.sleep, DataSet.mesa)
+                DataWriter.write_epoched(hr_features, subject_id, 'SS_01', FeatureType.epoched_hr, SleepWake.sleep, DataSet.mesa)
+                DataWriter.write_epoched(ibi_features_from_ppg, subject_id, 'SS_01', FeatureType.epoched_ibi_from_ppg, SleepWake.sleep, DataSet.mesa)
+                DataWriter.write_epoched(count_feature, subject_id, 'SS_01', FeatureType.epoched_count, SleepWake.sleep, DataSet.mesa)
+                DataWriter.write_epoched(labeled_sleep, subject_id, 'SS_01', FeatureType.epoched_sleep_label, SleepWake.sleep, DataSet.mesa)
+        # except:
+        #     ExceptionLogger.append_exception(subject_id, "SS_01", "Epoched", DataSet.mesa.name, sys.exc_info()[0])
+        #     print("Skip subject ", str(subject_id), " due to ", sys.exc_info()[0])
     
     @staticmethod
     def downsample_signal(signal_collection, factor):

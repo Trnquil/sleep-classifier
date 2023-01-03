@@ -7,6 +7,8 @@ from source.data_services.data_writer import DataWriter
 from source.analysis.setup.feature_type import FeatureType
 from source.exception_logger import ExceptionLogger
 from source.data_services.dataset import DataSet
+from source.preprocessing.sleep_session_services.mss_sleep_session_service import MssSleepSessionService
+from source.preprocessing.sleep_wake import SleepWake
 
 import sys
 import numpy as np
@@ -24,8 +26,9 @@ class MssRawDataProcessor(object):
             
             
             '''splitting each collection into sleepsessions'''
-            motion_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, DataSet.mss, motion_collection)
-            hr_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, DataSet.mss, hr_collection)        
+            sleepsessions = MssSleepSessionService.load(subject_id)
+            motion_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(motion_collection, sleepsessions)
+            hr_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(hr_collection, sleepsessions)        
                     
     
             '''writing all the data to disk'''
@@ -38,11 +41,11 @@ class MssRawDataProcessor(object):
                                     
                     if(np.any(motion_collection.data)):
                         count_collection = ActivityCountService.build_activity_counts_without_matlab(subject_id, motion_collection.data)
-                        DataWriter.write_cropped(count_collection, session_id, FeatureType.cropped_count, DataSet.mss)
-                        DataWriter.write_cropped(motion_collection, session_id, FeatureType.cropped_motion, DataSet.mss)
+                        DataWriter.write_cropped(count_collection, session_id, FeatureType.cropped_count, SleepWake.sleep, DataSet.mss)
+                        DataWriter.write_cropped(motion_collection, session_id, FeatureType.cropped_motion, SleepWake.sleep, DataSet.mss)
                         
                     if(np.any(hr_collection.data)):
-                        DataWriter.write_cropped(hr_collection, session_id, FeatureType.cropped_hr, DataSet.mss)
+                        DataWriter.write_cropped(hr_collection, session_id, FeatureType.cropped_hr, SleepWake.sleep, DataSet.mss)
                         
                         
                 except:

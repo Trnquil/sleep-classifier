@@ -9,7 +9,7 @@ from source.exception_logger import ExceptionLogger
 from source.runner_parameters import RunnerParameters
 from source.figures_saver import FiguresSaver
 from source.data_services.dataset import DataSet
-
+from source.preprocessing.sleep_wake import SleepWake
 
 
 def run():
@@ -25,7 +25,7 @@ def run_preprocessing():
         
     ExceptionLogger.remove_logs()
     
-    # Preprocessing.build_usi_cropped()
+    Preprocessing.build_usi_cropped()
     Preprocessing.build_mss_cropped()
     
     Preprocessing.build_usi_epoched()
@@ -36,7 +36,9 @@ def run_preprocessing():
     Preprocessing.build_cluster_features_mesa()
     Preprocessing.build_cluster_features_mss()
     
-    Preprocessing.build_clusters()
+    Preprocessing.build_clusters(SleepWake.sleep)
+    Preprocessing.build_clusters(SleepWake.selfreported_sleep)
+    Preprocessing.build_clusters(SleepWake.wake)
     
     Preprocessing.build_nightly_usi()
     Preprocessing.build_nightly_mss()

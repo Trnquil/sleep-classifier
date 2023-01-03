@@ -74,16 +74,20 @@ class PathService(object):
         return file_dir
         
     @staticmethod
-    def create_cropped_folder_path(subject_id, session_id, dataset):
+    def create_cropped_folder_path(subject_id, session_id, sleep_wake, dataset):
         if(dataset.name == DataSet.usi.name):
             directory_path = Constants.CROPPED_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
         elif(dataset.name == DataSet.mss.name):
             directory_path = Constants.CROPPED_FILE_PATH.joinpath(Constants.MSS_FOLDER_NAME)
-        
+            
         if not (os.path.exists(directory_path)):
             os.mkdir(directory_path)
         
-        subject_path = directory_path.joinpath(subject_id)
+        sleep_wake_path = directory_path.joinpath(sleep_wake.name)
+        if not (os.path.exists(sleep_wake_path)):
+            os.mkdir(sleep_wake_path)
+            
+        subject_path = sleep_wake_path.joinpath(subject_id)
         if not (os.path.exists(subject_path)):
             os.mkdir(subject_path)
         
@@ -92,16 +96,16 @@ class PathService(object):
             os.mkdir(session_path)
             
     @staticmethod
-    def get_cropped_file_path(subject_id, session_id, feature_type, dataset):
+    def get_cropped_file_path(subject_id, session_id, feature_type, sleep_wake, dataset):
         if(dataset.name == DataSet.usi.name):
-            directory_path_string = Constants.USI_FOLDER_NAME + "/" + str(subject_id) + "/" + str(session_id)
+            directory_path_string = Constants.USI_FOLDER_NAME + "/" + str(sleep_wake.name) + "/" + str(subject_id) + "/" + str(session_id)
         elif(dataset.name == DataSet.mss.name):
-            directory_path_string = Constants.MSS_FOLDER_NAME + "/" + str(subject_id) + "/" + str(session_id)
+            directory_path_string = Constants.MSS_FOLDER_NAME + "/" + str(sleep_wake.name) + "/" + str(subject_id) + "/" + str(session_id)
         
         return str(Constants.CROPPED_FILE_PATH.joinpath(directory_path_string)) + "/" + PathService.filenames[feature_type.name]
     
     @staticmethod
-    def create_epoched_folder_path(subject_id, session_id, dataset):
+    def create_epoched_folder_path(subject_id, session_id, sleep_wake, dataset):
         if(dataset.name == DataSet.usi.name):
             directory_path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
         elif(dataset.name == DataSet.mesa.name):
@@ -111,8 +115,12 @@ class PathService(object):
         
         if not (os.path.exists(directory_path)):
             os.mkdir(directory_path)
+            
+        sleep_wake_path = directory_path.joinpath(sleep_wake.name)
+        if not (os.path.exists(sleep_wake_path)):
+            os.mkdir(sleep_wake_path)
         
-        subject_path = directory_path.joinpath(subject_id)
+        subject_path = sleep_wake_path.joinpath(subject_id)
         if not (os.path.exists(subject_path)):
             os.mkdir(subject_path)
         
@@ -121,7 +129,7 @@ class PathService(object):
             os.mkdir(session_path)
             
     @staticmethod
-    def get_epoched_file_path(subject_id, session_id, feature_type, dataset):
+    def get_epoched_file_path(subject_id, session_id, feature_type, sleep_wake, dataset):
         if(dataset.name == DataSet.usi.name):
             directory_path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
         elif(dataset.name == DataSet.mesa.name):
@@ -129,11 +137,11 @@ class PathService(object):
         elif(dataset.name == DataSet.mss.name):
             directory_path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.MSS_FOLDER_NAME)
             
-        full_path = directory_path.joinpath(subject_id + "/" + str(session_id))
+        full_path = directory_path.joinpath(str(sleep_wake.name) + "/" + subject_id + "/" + str(session_id))
         return str(full_path) + "/" + PathService.filenames[feature_type.name]
     
     @staticmethod
-    def create_clusters_folder_path(subject_id, session_id, dataset):
+    def create_clusters_folder_path(subject_id, session_id, sleep_wake, dataset):
         if(dataset.name == DataSet.usi.name):
             directory_path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
         elif(dataset.name == DataSet.mesa.name):
@@ -143,8 +151,12 @@ class PathService(object):
         
         if not (os.path.exists(directory_path)):
             os.mkdir(directory_path)
+            
+        sleep_wake_path = directory_path.joinpath(sleep_wake.name)
+        if not (os.path.exists(sleep_wake_path)):
+            os.mkdir(sleep_wake_path)
         
-        subject_path = directory_path.joinpath(subject_id)
+        subject_path = sleep_wake_path.joinpath(subject_id)
         if not (os.path.exists(subject_path)):
             os.mkdir(subject_path)
         
@@ -153,7 +165,7 @@ class PathService(object):
             os.mkdir(session_path)
     
     @staticmethod
-    def get_clusters_file_path(subject_id, session_id, feature_type, dataset):
+    def get_clusters_file_path(subject_id, session_id, feature_type, sleep_wake, dataset):
         if(dataset.name == DataSet.usi.name):
             directory_path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
         elif(dataset.name == DataSet.mesa.name):
@@ -161,7 +173,7 @@ class PathService(object):
         elif(dataset.name == DataSet.mss.name):
             directory_path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.MSS_FOLDER_NAME)
             
-        full_path = directory_path.joinpath(subject_id + "/" + str(session_id))
+        full_path = directory_path.joinpath(str(sleep_wake.name) + "/" + subject_id + "/" + str(session_id))
         return str(full_path) + "/" + PathService.filenames[feature_type.name]
        
     @staticmethod

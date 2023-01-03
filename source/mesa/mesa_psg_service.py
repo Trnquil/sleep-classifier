@@ -3,6 +3,7 @@ from xml.dom import minidom
 import numpy as np
 
 from source import utils
+from source.constants import Constants
 
 
 class MesaPSGService(object):
@@ -11,10 +12,10 @@ class MesaPSGService(object):
     def load_raw(file_id):
         stage_to_num = {'Stage 4 sleep|4': 4, 'Stage 3 sleep|3': 3, 'Stage 2 sleep|2': 2, 'Stage 1 sleep|1': 1,
                         'Wake|0': 0, 'REM sleep|5': 5}
-        project_root = str(utils.get_project_root())
+        project_root = utils.get_project_root()
 
         xml_document = minidom.parse(
-            project_root + '/data/mesa/polysomnography/annotations-events-nsrr/mesa-sleep-' + file_id + '-nsrr.xml')
+            str(project_root.joinpath(Constants.MESA_DATA_PATH.joinpath('polysomnography/annotations-events-nsrr/mesa-sleep-' + file_id + '-nsrr.xml'))))
         list_of_scored_events = xml_document.getElementsByTagName('ScoredEvent')
 
         stage_data = []

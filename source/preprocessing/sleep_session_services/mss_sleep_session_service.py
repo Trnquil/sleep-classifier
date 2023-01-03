@@ -22,20 +22,8 @@ class MssSleepSessionService(object):
     
     @staticmethod
     def load_sleepquality(subject_id, session_id):
-        wake_sleep_file = open(MssSleepSessionService.get_file_path())
-        wake_sleep_dict = json.load(wake_sleep_file)
-        wake_sleep_dict = wake_sleep_dict[subject_id]
-        
-        # We check which timestamp is lower and set it to start_timestamp and the other to end_timestamp
-        if(wake_sleep_dict[session_id][0] < wake_sleep_dict[session_id][1]):
-            start_timestamp = wake_sleep_dict[session_id][0]
-            end_timestamp = wake_sleep_dict[session_id][1]
-        else:
-            start_timestamp = wake_sleep_dict[session_id][1]
-            end_timestamp = wake_sleep_dict[session_id][0]
-            
-        sleepquality = MssSleepSessionService.get_sleepquality(subject_id, end_timestamp)
-        return int(sleepquality)
+        sleepsession = MssSleepSessionService.load_sleepsession(subject_id, session_id)
+        return int(sleepsession.sleepquality)
         
         
     @staticmethod
@@ -46,18 +34,20 @@ class MssSleepSessionService(object):
         
         sleepsessions = []
         
-        for session_id in wake_sleep_dict.keys():
+        for i in range (1,len(wake_sleep_dict.keys())):
+            previous_session_id = list(wake_sleep_dict.keys())[i - 1]
+            session_id = list(wake_sleep_dict.keys())[i]
             try:
                 # If the timestamps don't exist, we continue with the next session
-                if wake_sleep_dict[session_id][0] is None or wake_sleep_dict[session_id][1] is None:
+                start_timestamp = wake_sleep_dict[previous_session_id][1]
+                end_timestamp = wake_sleep_dict[session_id][0]
+                
+                if start_timestamp is None or end_timestamp is None:
                     continue
-                # We check which timestamp is lower and set it to start_timestamp and the other to end_timestamp
-                if(wake_sleep_dict[session_id][0] < wake_sleep_dict[session_id][1]):
-                    start_timestamp = wake_sleep_dict[session_id][0]
-                    end_timestamp = wake_sleep_dict[session_id][1]
-                else:
-                    start_timestamp = wake_sleep_dict[session_id][1]
-                    end_timestamp = wake_sleep_dict[session_id][0]
+                
+                # Making sure that the night length makes sense (between 0 and approx 15 hours)
+                if(end_timestamp  - start_timestamp < 0 or end_timestamp - start_timestamp > 50000):
+                    continue
                 
                 
                 end_timestamp_centered = end_timestamp - Constants.TIME_CENTER_MSS

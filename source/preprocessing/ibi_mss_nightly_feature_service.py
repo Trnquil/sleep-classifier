@@ -9,8 +9,8 @@ import pandas as pd
 class IbiMssNightlyFeatureService(object):
     
     @staticmethod
-    def build_feature_dict_from_epoched(subject_id, session_id, dataset, cluster_timestamps):
-        ibi_mss_feature = DataLoader.load_epoched(subject_id, session_id, FeatureType.epoched_ibi_mss, dataset)
+    def build_feature_dict_from_epoched(subject_id, session_id, sleep_wake, dataset, cluster_timestamps):
+        ibi_mss_feature = DataLoader.load_epoched(subject_id, session_id, FeatureType.epoched_ibi_mss, sleep_wake, dataset)
         ibi_mss_feature = pd.merge(cluster_timestamps, ibi_mss_feature, how="inner", on=["epoch_timestamp"])
         ibi_mss_feature = ibi_mss_feature.drop(columns=['epoch_timestamp'])
         ibi_mss_feature_avg = pd.DataFrame(np.mean(ibi_mss_feature, axis=0))

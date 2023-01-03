@@ -30,6 +30,7 @@ class DataLoader(object):
         for raw_path in raw_paths:
             if os.path.getsize(str(raw_path))==0:
                 continue
+            
             feature_array = pd.read_csv(str(raw_path))
             
             #unix start time of the data
@@ -121,36 +122,43 @@ class DataLoader(object):
         return (feature_height, feature_width)
     
     @staticmethod
-    def load_cropped(subject_id, session_id, feature_type, dataset):
-        file_path = PathService.get_cropped_file_path(subject_id, session_id, feature_type, dataset)
+    def load_cropped(subject_id, session_id, feature_type, sleep_wake, dataset):
+        file_path = PathService.get_cropped_file_path(subject_id, session_id, feature_type, sleep_wake, dataset)
         values = pd.read_csv(str(file_path), delimiter=" ").values
         return Collection(subject_id=subject_id, data=values, data_frequency=0)
     
     @staticmethod
-    def load_epoched(subject_id, session_id, feature_type, dataset):
+    def load_epoched(subject_id, session_id, feature_type, sleep_wake, dataset):
         
-        feature_path = PathService.get_epoched_file_path(subject_id, session_id, feature_type, dataset)
+        feature_path = PathService.get_epoched_file_path(subject_id, session_id, feature_type, sleep_wake, dataset)
         feature_dataframe = pd.read_csv(str(feature_path))
 
         return feature_dataframe
     
     @staticmethod
-    def load_cluster(subject_id, session_id, feature_type, dataset):
+    def load_cluster(subject_id, session_id, feature_type, sleep_wake, dataset):
         
-        feature_path = PathService.get_clusters_file_path(subject_id, session_id, feature_type, dataset)
+        feature_path = PathService.get_clusters_file_path(subject_id, session_id, feature_type, sleep_wake, dataset)
         feature_dataframe = pd.read_csv(str(feature_path))
 
         return feature_dataframe
     
     @staticmethod
-    def load_columns(feature_type, dataset):
-        subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(feature_type, dataset)
+    def load_columns(feature_type, sleep_wake, dataset):
+        subject_sleepsession_dictionary = BuiltService.get_built_subject_and_sleepsession_ids(feature_type, sleep_wake, dataset)
+        
+        # Get first built subject_id and session_id
         subject_id = list(subject_sleepsession_dictionary.keys())[0]
         session_id = subject_sleepsession_dictionary[subject_id][0]
+        
+        # load via the correct loader, some loaders not implemented because they're not needed
         if(feature_type.name in FeatureType.get_epoched_names() or feature_type.name == FeatureType.epoched.name):
-            feature_dataframe = DataLoader.load_epoched(subject_id, session_id, feature_type, dataset)
+            feature_dataframe = DataLoader.load_epoched(subject_id, session_id, feature_type, sleep_wake, dataset)
         elif(feature_type.name in FeatureType.get_cluster_names()):
-            feature_dataframe = DataLoader.load_cluster(subject_id, session_id, feature_type, dataset)
+            feature_dataframe = DataLoader.load_cluster(subject_id, session_id, feature_type, sleep_wake, dataset)
+        else:
+            raise NotImplementedError("FeatureType " + feature_type.name + " not implemented in load_columns()") 
+            
         return feature_dataframe.columns
     
     @staticmethod
@@ -171,12 +179,22 @@ class DataLoader(object):
         nightly_feature_dataframe = nightly_feature_dataframe[nightly_feature_dataframe['subject_id'].eq(subject_id)]
         nightly_feature_dataframe = nightly_feature_dataframe[nightly_feature_dataframe['session_id'].eq(session_id)]
         
-        if(feature_type.name == FeatureType.nightly_cluster_gmm.name):
-            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("gmm_c_.*"))
-        elif(feature_type.name == FeatureType.nightly_cluster_kmeans.name):
-            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("kmeans_c_.*"))
-        elif(feature_type.name == FeatureType.nightly_cluster_GEMINI.name):
-            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("GEMINI_c_.*"))
+        if(feature_type.name == FeatureType.nightly_cluster_wake_gmm.name):
+            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("wake_gmm_c_.*"))
+        elif(feature_type.name == FeatureType.nightly_cluster_wake_kmeans.name):
+            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("wake_kmeans_c_.*"))
+        elif(feature_type.name == FeatureType.nightly_cluster_sleep_gmm.name):
+            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("sleep_gmm_c_.*"))
+        elif(feature_type.name == FeatureType.nightly_cluster_sleep_kmeans.name):
+            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("sleep_kmeans_c_.*"))
+        elif(feature_type.name == FeatureType.nightly_cluster_sleep_GEMINI.name):
+            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("sleep_GEMINI_c_.*"))
+        elif(feature_type.name == FeatureType.nightly_cluster_selfreported_sleep_gmm.name):
+            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("selfreported_sleep_gmm_c_.*"))
+        elif(feature_type.name == FeatureType.nightly_cluster_selfreported_sleep_kmeans.name):
+            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("selfreported_sleep_kmeans_c_.*"))
+        elif(feature_type.name == FeatureType.nightly_cluster_selfreported_sleep_GEMINI.name):
+            nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("selfreported_sleep_GEMINI_c_.*"))
         elif(feature_type.name == FeatureType.nightly_count.name):
             nightly_feature_dataframe = nightly_feature_dataframe.filter(regex=("count_.*"))
         elif(feature_type.name == FeatureType.nightly_normalized_hr.name):
@@ -199,10 +217,10 @@ class DataLoader(object):
         return nightly_feature_dataframe
     
     @staticmethod
-    def load_common_epoched_timestamps(subject_id, session_id, feature_types, dataset):
+    def load_common_epoched_timestamps(subject_id, session_id, feature_types, sleep_wake, dataset):
         i = 0
         for feature_type in feature_types:
-            timestamp_df = DataLoader.load_epoched(subject_id, session_id, feature_type, dataset)['epoch_timestamp']
+            timestamp_df = DataLoader.load_epoched(subject_id, session_id, feature_type, sleep_wake, dataset)['epoch_timestamp']
             if i == 0:
                 common_timestamps = timestamp_df
             else:

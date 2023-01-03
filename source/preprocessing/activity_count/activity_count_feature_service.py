@@ -22,16 +22,16 @@ from multipledispatch import dispatch
 class ActivityCountFeatureService(object):
     
     @staticmethod
-    @dispatch(str, str, object)
-    def build_count_feature(subject_id, session_id, dataset):
-        activity_count_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_count, dataset)
+    @dispatch(str, str, object, object)
+    def build_count_feature(subject_id, session_id, sleep_wake, dataset):
+        activity_count_collection = DataLoader.load_cropped(subject_id, session_id, FeatureType.cropped_count, sleep_wake, dataset)
         valid_epochs = UsiRawDataProcessor.get_valid_epochs([activity_count_collection])
         return ActivityCountFeatureService.build_from_collection(activity_count_collection, valid_epochs)
     
     @staticmethod
-    @dispatch(str, object)
-    def build_count_feature(subject_id, dataset):
-        activity_count_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_count, dataset)
+    @dispatch(str, object, object)
+    def build_count_feature(subject_id, sleep_wake, dataset):
+        activity_count_feature = DataService.load_feature_raw(subject_id, FeatureType.cropped_count, sleep_wake, dataset)
         activity_count_collection = Collection(subject_id=subject_id, data=activity_count_feature, data_frequency=0)
         valid_epochs = UsiRawDataProcessor.get_valid_epochs([activity_count_collection])
         return ActivityCountFeatureService.build_from_collection(activity_count_collection, valid_epochs)

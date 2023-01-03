@@ -10,9 +10,9 @@ import pandas as pd
 class HeartRateNightlyFeatureService(object):
     
     @staticmethod
-    def build_feature_dict_from_cropped_normalized(subject_id, session_id, dataset):
+    def build_feature_dict_from_cropped_normalized(subject_id, session_id, sleep_wake, dataset):
         
-        heart_rate_feature_raw = DataService.load_feature_raw(subject_id, session_id, FeatureType.normalized_hr, dataset)
+        heart_rate_feature_raw = DataService.load_feature_raw(subject_id, session_id, FeatureType.normalized_hr, sleep_wake, dataset)
         
         features_dict = HeartRateNightlyFeatureService.build_var_features(heart_rate_feature_raw[:,1])
         merged_dict = features_dict
@@ -33,9 +33,9 @@ class HeartRateNightlyFeatureService(object):
         return features_dictionary
     
     @staticmethod
-    def build_feature_dict_from_epoched(subject_id, session_id, dataset, cluster_timestamps):
+    def build_feature_dict_from_epoched(subject_id, session_id, sleep_wake, dataset, cluster_timestamps):
         
-        heart_rate_feature = DataLoader.load_epoched(subject_id, session_id, FeatureType.epoched_hr , dataset)
+        heart_rate_feature = DataLoader.load_epoched(subject_id, session_id, FeatureType.epoched_hr, sleep_wake, dataset)
         heart_rate_feature = pd.merge(cluster_timestamps, heart_rate_feature, how="inner", on=["epoch_timestamp"])
         heart_rate_feature = heart_rate_feature.drop(columns=['epoch_timestamp'])
         heart_rate_feature_avg = pd.DataFrame(np.mean(heart_rate_feature, axis=0))

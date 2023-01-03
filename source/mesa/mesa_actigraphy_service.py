@@ -5,15 +5,16 @@ import pandas as pd
 
 from source import utils
 from source.preprocessing.collection import Collection
+from source.constants import Constants
 
 
 class MesaActigraphyService(object):
     @staticmethod
     def load_raw(file_id):
         line_align = -1  # Find alignment line between PSG and actigraphy
-        project_root = str(utils.get_project_root())
+        project_root = utils.get_project_root()
 
-        with open(project_root + '/data/mesa/overlap/mesa-actigraphy-psg-overlap.csv') as csv_file:
+        with open(str(project_root.joinpath(Constants.MESA_DATA_PATH.joinpath('overlap/mesa-actigraphy-psg-overlap.csv')))) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             next(csv_file)
             for row in csv_reader:
@@ -26,7 +27,7 @@ class MesaActigraphyService(object):
         if line_align == -1:  # If there was no alignment found
             return Collection(subject_id=file_id, data=np.array([[-1], [-1]]), data_frequency = 0)
 
-        with open(project_root + '/data/mesa/actigraphy/mesa-sleep-' + file_id + '.csv') as csv_file:
+        with open(str(project_root.joinpath(Constants.MESA_DATA_PATH.joinpath('actigraphy/mesa-sleep-' + file_id + '.csv')))) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             next(csv_file)
             for row in csv_reader:

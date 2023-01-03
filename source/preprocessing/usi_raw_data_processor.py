@@ -17,6 +17,8 @@ from source.constants import Constants
 from source.data_services.dataset import DataSet
 from source.runner_parameters import RunnerParameters
 from source.exception_logger import ExceptionLogger
+from source.preprocessing.sleep_session_services.usi_sleep_session_service import UsiSleepSessionService
+from source.preprocessing.sleep_wake import SleepWake
 
 from multipledispatch import dispatch
 
@@ -25,7 +27,7 @@ class UsiRawDataProcessor:
     BASE_FILE_PATH = utils.get_project_root().joinpath('outputs/cropped/')
     
     @staticmethod
-    def crop_all(subject_id):
+    def crop_all(subject_id, sleep_wake):
         
 
         '''Loading data'''
@@ -37,11 +39,18 @@ class UsiRawDataProcessor:
         
         
         '''splitting each collection into sleepsessions'''
-        motion_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, DataSet.usi, motion_collection)
-        hr_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, DataSet.usi, hr_collection)
-        bvp_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, DataSet.usi, bvp_collection)
-        ibi_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, DataSet.usi, ibi_collection)
-        normalized_hr_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(subject_id, DataSet.usi, normalized_hr_collection)
+        if sleep_wake.name == sleep_wake.selfreported_sleep.name:
+            sleepsessions = UsiSleepSessionService.load_selfreported_sleep(subject_id)
+        elif sleep_wake.name == sleep_wake.sleep.name:
+            sleepsessions = UsiSleepSessionService.load_sleep(subject_id)
+        if sleep_wake.name == sleep_wake.wake.name:
+            sleepsessions = UsiSleepSessionService.load_wake(subject_id)
+        
+        motion_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(motion_collection, sleepsessions)
+        hr_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(hr_collection, sleepsessions)
+        bvp_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(bvp_collection, sleepsessions)
+        ibi_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(ibi_collection, sleepsessions)
+        normalized_hr_sleepsession_tuples = SleepSessionService.assign_collection_to_sleepsession(normalized_hr_collection, sleepsessions)
         
                 
 
@@ -58,25 +67,25 @@ class UsiRawDataProcessor:
                                 
                 if(np.any(motion_collection.data)):
                     count_collection = ActivityCountService.build_activity_counts_without_matlab(subject_id, motion_collection.data)
-                    DataWriter.write_cropped(count_collection, session_id, FeatureType.cropped_count, DataSet.usi)
-                    DataWriter.write_cropped(motion_collection, session_id, FeatureType.cropped_motion, DataSet.usi)
+                    DataWriter.write_cropped(count_collection, session_id, FeatureType.cropped_count, sleep_wake, DataSet.usi)
+                    DataWriter.write_cropped(motion_collection, session_id, FeatureType.cropped_motion, sleep_wake, DataSet.usi)
                     
                 if(np.any(ibi_collection.data)):
-                    DataWriter.write_cropped(ibi_collection, session_id, FeatureType.cropped_ibi, DataSet.usi)
-                    
+                    DataWriter.write_cropped(ibi_collection, session_id, FeatureType.cropped_ibi, sleep_wake, DataSet.usi)
+                
                 if(np.any(bvp_collection.data)):
-                    if RunnerParameters.PROCESS_USI_BVP_SEGMENTWISE:
+                    if RunnerParameters.PROCESS_USI_BVP_SEGMENTWISE or sleep_wake.name != SleepWake.selfreported_sleep.name:
                         ibi_collection_from_ppg = BvpService.get_ibi_from_bvp_segmentwise(bvp_collection)
                     else:
                         ibi_collection_from_ppg = BvpService.get_ibi_from_bvp(bvp_collection)
                         
-                    DataWriter.write_cropped(ibi_collection_from_ppg, session_id, FeatureType.cropped_ibi_from_ppg, DataSet.usi)
+                    DataWriter.write_cropped(ibi_collection_from_ppg, session_id, FeatureType.cropped_ibi_from_ppg, sleep_wake, DataSet.usi)
                     
                 if(np.any(hr_collection.data)):
-                    DataWriter.write_cropped(hr_collection, session_id, FeatureType.cropped_hr, DataSet.usi)
+                    DataWriter.write_cropped(hr_collection, session_id, FeatureType.cropped_hr, sleep_wake, DataSet.usi)
                     
                 if(np.any(normalized_hr_collection.data)):
-                    DataWriter.write_cropped(normalized_hr_collection, session_id, FeatureType.cropped_normalized_hr, DataSet.usi)
+                    DataWriter.write_cropped(normalized_hr_collection, session_id, FeatureType.cropped_normalized_hr, sleep_wake, DataSet.usi)
                     
             except:
                 ExceptionLogger.append_exception(subject_id, session_id, "Cropped", DataSet.usi.name, sys.exc_info()[0])

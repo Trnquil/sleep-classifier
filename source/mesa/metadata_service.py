@@ -4,14 +4,15 @@ import glob
 import numpy as np
 
 from source import utils
+from source.constants import Constants
 
 
 class MetadataService(object):
 
     @staticmethod
     def get_all_files():
-        project_root = str(utils.get_project_root())
-        return glob.glob(project_root + "/data/mesa/polysomnography/edfs/*edf")
+        project_root = utils.get_project_root()
+        return glob.glob(str(project_root.joinpath(Constants.MESA_DATA_PATH.joinpath("polysomnography/edfs/*edf"))))
 
     @staticmethod
     def get_metadata_dictionary():

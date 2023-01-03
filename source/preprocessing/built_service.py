@@ -27,14 +27,14 @@ class BuiltService(object):
     
     # returns only subject and sleepsession ids for which there is data
     @staticmethod
-    def get_built_subject_and_sleepsession_ids(feature_type, dataset):
+    def get_built_subject_and_sleepsession_ids(feature_type, sleep_wake, dataset):
         
         if(feature_type.name == FeatureType.nightly.name or feature_type.name in FeatureType.get_nightly_names()):
             return BuiltService.get_built_nightly_subject_and_sleepsession_ids(dataset)
         
         subject_to_session_dictionary = {}
         
-        path = BuiltService.get_path(feature_type, dataset)
+        path = BuiltService.get_path(feature_type, sleep_wake, dataset)
 
         
         if(dataset.name == DataSet.usi.name):
@@ -42,7 +42,7 @@ class BuiltService(object):
             for subject_id in Constants.SUBJECT_IDS:
                     if subject_id in os.listdir(path):
                         session_dirs = os.listdir(path.joinpath(subject_id))
-                        for session_id in SleepSessionService.get_starttime_ordered_ids(subject_id, dataset):
+                        for session_id in SleepSessionService.get_starttime_ordered_ids(subject_id, sleep_wake, dataset):
                             if session_id in session_dirs:
                                 if subject_id not in subject_to_session_dictionary.keys():
                                     subject_to_session_dictionary[subject_id] = []
@@ -66,52 +66,52 @@ class BuiltService(object):
 
     # returns only sleepsession ids for which there is data
     @staticmethod 
-    def get_built_sleepsession_ids(subject_id, feature_type, dataset):
-        return BuiltService.get_built_subject_and_sleepsession_ids(feature_type, dataset)[subject_id]    
+    def get_built_sleepsession_ids(subject_id, feature_type, sleep_wake, dataset):
+        return BuiltService.get_built_subject_and_sleepsession_ids(feature_type, sleep_wake, dataset)[subject_id]    
 
     # returns only subject ids for which there is data
     @staticmethod 
-    def get_built_subject_ids(feature_type, dataset):
-        return list(BuiltService.get_built_subject_and_sleepsession_ids(feature_type, dataset).keys())
+    def get_built_subject_ids(feature_type, sleep_wake, dataset):
+        return list(BuiltService.get_built_subject_and_sleepsession_ids(feature_type, sleep_wake, dataset).keys())
     
     # returns only subject ids for which there is data
     @staticmethod 
-    def get_built_sleepsession_count(feature_type, dataset):
+    def get_built_sleepsession_count(feature_type, sleep_wake, dataset):
         count = 0
-        for subject_id in BuiltService.get_built_subject_ids(feature_type, dataset):
-            for session_id in BuiltService.get_built_sleepsession_ids(subject_id, feature_type, dataset):
+        for subject_id in BuiltService.get_built_subject_ids(feature_type, sleep_wake, dataset):
+            for session_id in BuiltService.get_built_sleepsession_ids(subject_id, feature_type, sleep_wake, dataset):
                 count += 1
         return count
     
     @staticmethod 
-    def get_path(feature_type, dataset):
+    def get_path(feature_type, sleep_wake, dataset):
         # Getting the correct folder path for every featuretype and dataset
         
         # epoched features
         if (feature_type.name == FeatureType.epoched.name or feature_type.name in FeatureType.get_epoched_names()
         or feature_type.name == FeatureType.sleep_quality.name):
             if(dataset.name == DataSet.usi.name):
-                path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
+                path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME + "/" + sleep_wake.name)
             elif(dataset.name == DataSet.mesa.name):
-                path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.MESA_FOLDER_NAME)
+                path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.MESA_FOLDER_NAME + "/" + sleep_wake.name)
             elif(dataset.name == DataSet.mss.name):
-                path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.MSS_FOLDER_NAME)
+                path = Constants.EPOCHED_FILE_PATH.joinpath(Constants.MSS_FOLDER_NAME + "/" + sleep_wake.name)
            
         # cropped features
         elif feature_type.name == FeatureType.cropped.name or feature_type.name in FeatureType.get_cropped_names():
             if(dataset.name == DataSet.usi.name):
-                path = Constants.CROPPED_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
+                path = Constants.CROPPED_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME + "/" + sleep_wake.name)
             elif(dataset.name == DataSet.mss.name):
-                path = Constants.CROPPED_FILE_PATH.joinpath(Constants.MSS_FOLDER_NAME)
+                path = Constants.CROPPED_FILE_PATH.joinpath(Constants.MSS_FOLDER_NAME + "/" + sleep_wake.name)
             
         # clusters
         elif feature_type.name in FeatureType.get_cluster_names():
             if(dataset.name == DataSet.usi.name):
-                path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME)
+                path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.USI_FOLDER_NAME + "/" + sleep_wake.name)
             elif(dataset.name == DataSet.mesa.name):
-                path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.MESA_FOLDER_NAME)
+                path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.MESA_FOLDER_NAME + "/" + sleep_wake.name)
             elif(dataset.name == DataSet.mss.name):
-                path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.MSS_FOLDER_NAME)
+                path = Constants.CLUSTERS_FILE_PATH.joinpath(Constants.MSS_FOLDER_NAME + "/" + sleep_wake.name)
         return path
     
     
